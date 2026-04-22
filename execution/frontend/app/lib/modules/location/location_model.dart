@@ -20,15 +20,15 @@ class LocationModel {
   });
 
   factory LocationModel.fromMap(Map<String, dynamic> map) => LocationModel(
-        id:        map['id'] as String,
-        name:      map['name'] as String,
-        address:   map['address'] as String?,
-        city:      map['city'] as String?,
-        phone:     map['phone'] as String?,
-        timezone:  map['timezone'] as String? ?? 'UTC',
-        isActive:  map['is_active'] as bool? ?? true,
-        sortOrder: map['sort_order'] as int? ?? 0,
-      );
+    id: map['id'] as String,
+    name: map['name'] as String,
+    address: map['address'] as String?,
+    city: map['city'] as String?,
+    phone: map['phone'] as String?,
+    timezone: map['timezone'] as String? ?? 'UTC',
+    isActive: map['is_active'] as bool? ?? true,
+    sortOrder: map['sort_order'] as int? ?? 0,
+  );
 
   String get displayAddress =>
       [address, city].where((s) => s != null && s.isNotEmpty).join(', ');

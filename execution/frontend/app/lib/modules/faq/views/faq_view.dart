@@ -13,11 +13,7 @@ class FaqView extends StatelessWidget {
       title: 'FAQ',
       description:
           'Answers to frequently asked questions about ${AppEnv.clientName}.',
-      child: AppShell(
-        child: SingleChildScrollView(
-          child: const FaqSection(),
-        ),
-      ),
+      child: AppShell(child: SingleChildScrollView(child: const FaqSection())),
     );
   }
 }

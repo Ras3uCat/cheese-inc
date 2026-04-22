@@ -24,67 +24,111 @@ class AdminShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile =
-        MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
+    final isMobile = MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
 
     if (isMobile) {
       return Scaffold(
         backgroundColor: EColors.surface,
         appBar: _AdminAppBar(isMaster: isMaster),
-        drawer: _AdminDrawer(
-            currentRoute: currentRoute, isMaster: isMaster),
+        drawer: _AdminDrawer(currentRoute: currentRoute, isMaster: isMaster),
         body: child,
       );
     }
 
     return Scaffold(
       backgroundColor: EColors.surface,
-      body: Row(children: [
-        _AdminSidebar(currentRoute: currentRoute, isMaster: isMaster),
-        const VerticalDivider(width: 1, thickness: 0.5),
-        Expanded(child: child),
-      ]),
+      body: Row(
+        children: [
+          _AdminSidebar(currentRoute: currentRoute, isMaster: isMaster),
+          const VerticalDivider(width: 1, thickness: 0.5),
+          Expanded(child: child),
+        ],
+      ),
     );
   }
 }
 
 // ── Nav items ─────────────────────────────────────────────────────────────────
 List<_NavEntry> get _masterNav => [
-  const _NavEntry('Bookings',      Icons.calendar_today_outlined,  ERoutes.admin),
-  const _NavEntry('Analytics',     Icons.bar_chart_outlined,       ERoutes.adminAnalytics),
+  const _NavEntry('Bookings', Icons.calendar_today_outlined, ERoutes.admin),
+  const _NavEntry(
+    'Analytics',
+    Icons.bar_chart_outlined,
+    ERoutes.adminAnalytics,
+  ),
   if (AppEnv.moduleEnabled('crm'))
-    const _NavEntry('Clients',     Icons.people_outline,           ERoutes.adminClients),
-  const _NavEntry('Services',      Icons.spa_outlined,             ERoutes.adminServices),
-  const _NavEntry('Team',          Icons.group_outlined,           ERoutes.adminStaff),
-  const _NavEntry('Gallery',       Icons.photo_library_outlined,   ERoutes.adminGallery),
-  const _NavEntry('Blog',          Icons.article_outlined,         ERoutes.adminBlog),
-  const _NavEntry('Testimonials',  Icons.format_quote_outlined,    ERoutes.adminTestimonials),
-  const _NavEntry('FAQ',           Icons.quiz_outlined,            ERoutes.adminFaq),
+    const _NavEntry('Clients', Icons.people_outline, ERoutes.adminClients),
+  const _NavEntry('Services', Icons.spa_outlined, ERoutes.adminServices),
+  const _NavEntry('Team', Icons.group_outlined, ERoutes.adminStaff),
+  const _NavEntry(
+    'Gallery',
+    Icons.photo_library_outlined,
+    ERoutes.adminGallery,
+  ),
+  const _NavEntry('Blog', Icons.article_outlined, ERoutes.adminBlog),
+  const _NavEntry(
+    'Testimonials',
+    Icons.format_quote_outlined,
+    ERoutes.adminTestimonials,
+  ),
+  const _NavEntry('FAQ', Icons.quiz_outlined, ERoutes.adminFaq),
   if (AppEnv.giftEnabled)
-    const _NavEntry('Gift Vouchers', Icons.card_giftcard_outlined, ERoutes.adminGiftVouchers),
+    const _NavEntry(
+      'Gift Vouchers',
+      Icons.card_giftcard_outlined,
+      ERoutes.adminGiftVouchers,
+    ),
   if (AppEnv.intakeEnabled)
-    const _NavEntry('Intake Forms',  Icons.assignment_outlined,    ERoutes.adminIntake),
+    const _NavEntry(
+      'Intake Forms',
+      Icons.assignment_outlined,
+      ERoutes.adminIntake,
+    ),
   if (AppEnv.waitlistEnabled)
-    const _NavEntry('Waitlist',      Icons.people_outline,         ERoutes.adminWaitlist),
+    const _NavEntry('Waitlist', Icons.people_outline, ERoutes.adminWaitlist),
   if (AppEnv.packagesEnabled)
-    const _NavEntry('Packages',      Icons.local_offer_outlined,   ERoutes.adminPackages),
+    const _NavEntry(
+      'Packages',
+      Icons.local_offer_outlined,
+      ERoutes.adminPackages,
+    ),
   if (AppEnv.reviewsEnabled)
-    const _NavEntry('Reviews',       Icons.rate_review_outlined,   ERoutes.adminReviews),
+    const _NavEntry(
+      'Reviews',
+      Icons.rate_review_outlined,
+      ERoutes.adminReviews,
+    ),
   if (AppEnv.clientPhotosEnabled)
-    const _NavEntry('Client Photos', Icons.photo_camera_outlined,  ERoutes.adminClientPhotos),
+    const _NavEntry(
+      'Client Photos',
+      Icons.photo_camera_outlined,
+      ERoutes.adminClientPhotos,
+    ),
   if (AppEnv.coursesEnabled)
     const _NavEntry('Courses', Icons.play_circle_outline, ERoutes.adminCourses),
-  const _NavEntry('Settings',      Icons.settings_outlined,        ERoutes.adminConfig),
-  const _NavEntry('Compliance',    Icons.shield_outlined,          ERoutes.adminCompliance),
+  const _NavEntry('Settings', Icons.settings_outlined, ERoutes.adminConfig),
+  const _NavEntry('Compliance', Icons.shield_outlined, ERoutes.adminCompliance),
   if (AppEnv.moduleEnabled('subscriptions')) ...[
-    _NavEntry('Subscription Plans',  Icons.card_membership_outlined, ERoutes.adminSubscriptionPlans),
-    _NavEntry('Subscribers',         Icons.people_outline,           ERoutes.adminSubscriptionMembers),
+    _NavEntry(
+      'Subscription Plans',
+      Icons.card_membership_outlined,
+      ERoutes.adminSubscriptionPlans,
+    ),
+    _NavEntry(
+      'Subscribers',
+      Icons.people_outline,
+      ERoutes.adminSubscriptionMembers,
+    ),
   ],
   if (AppEnv.moduleEnabled('referrals'))
     _NavEntry('Referrals', Icons.share_outlined, ERoutes.adminReferrals),
   if (AppEnv.moduleEnabled('shop')) ...[
-    _NavEntry('Products',   Icons.inventory_2_outlined,  ERoutes.adminShopProducts),
-    _NavEntry('Orders',     Icons.shopping_bag_outlined, ERoutes.adminShopOrders),
+    _NavEntry(
+      'Products',
+      Icons.inventory_2_outlined,
+      ERoutes.adminShopProducts,
+    ),
+    _NavEntry('Orders', Icons.shopping_bag_outlined, ERoutes.adminShopOrders),
   ],
   if (AppEnv.moduleEnabled('events'))
     _NavEntry('Events', Icons.event_outlined, ERoutes.adminEvents),
@@ -95,12 +139,20 @@ List<_NavEntry> get _masterNav => [
 ];
 
 List<_NavEntry> get _staffNav => [
-  const _NavEntry('My Bookings',  Icons.calendar_today_outlined,  ERoutes.staff),
-  const _NavEntry('Time Off',     Icons.event_busy_outlined,      ERoutes.staffTimeOff),
-  const _NavEntry('Promo Codes',  Icons.local_offer_outlined,     ERoutes.staffPromoCodes),
-  const _NavEntry('My Services',  Icons.spa_outlined,             ERoutes.staffServices),
-  const _NavEntry('My Hours',     Icons.schedule_outlined,        ERoutes.staffHours),
-  const _NavEntry('My Bundles',   Icons.local_offer_outlined,     ERoutes.staffBundles),
+  const _NavEntry('My Bookings', Icons.calendar_today_outlined, ERoutes.staff),
+  const _NavEntry('Time Off', Icons.event_busy_outlined, ERoutes.staffTimeOff),
+  const _NavEntry(
+    'Promo Codes',
+    Icons.local_offer_outlined,
+    ERoutes.staffPromoCodes,
+  ),
+  const _NavEntry('My Services', Icons.spa_outlined, ERoutes.staffServices),
+  const _NavEntry('My Hours', Icons.schedule_outlined, ERoutes.staffHours),
+  const _NavEntry(
+    'My Bundles',
+    Icons.local_offer_outlined,
+    ERoutes.staffBundles,
+  ),
 ];
 
 class _NavEntry {
@@ -140,10 +192,9 @@ class _AdminSidebar extends StatelessWidget {
             ),
           ),
           const Divider(height: 1, thickness: 0.5),
-          ...nav.map((e) => _SidebarItem(
-                entry: e,
-                isActive: currentRoute == e.route,
-              )),
+          ...nav.map(
+            (e) => _SidebarItem(entry: e, isActive: currentRoute == e.route),
+          ),
           const Spacer(),
           const Divider(height: 1, thickness: 0.5),
           _SignOutTile(),
@@ -165,22 +216,27 @@ class _SidebarItem extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(
-            horizontal: ESpacing.lg, vertical: ESpacing.md),
+          horizontal: ESpacing.lg,
+          vertical: ESpacing.md,
+        ),
         color: isActive ? EColors.primaryLight : Colors.transparent,
-        child: Row(children: [
-          Icon(entry.icon,
+        child: Row(
+          children: [
+            Icon(
+              entry.icon,
               size: 18,
-              color: isActive ? EColors.primary : EColors.onSurfaceMuted),
-          const SizedBox(width: ESpacing.sm),
-          Text(
-            entry.label,
-            style: ETextStyles.navItem.copyWith(
-              color: isActive ? EColors.primary : EColors.onSurface,
-              fontWeight:
-                  isActive ? FontWeight.w600 : FontWeight.w400,
+              color: isActive ? EColors.primary : EColors.onSurfaceMuted,
             ),
-          ),
-        ]),
+            const SizedBox(width: ESpacing.sm),
+            Text(
+              entry.label,
+              style: ETextStyles.navItem.copyWith(
+                color: isActive ? EColors.primary : EColors.onSurface,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -193,14 +249,21 @@ class _SignOutTile extends StatelessWidget {
       onTap: () => Get.find<AuthController>().signOut(),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: ESpacing.lg, vertical: ESpacing.md),
-        child: Row(children: [
-          Icon(Icons.logout, size: 18, color: EColors.onSurfaceMuted),
-          const SizedBox(width: ESpacing.sm),
-          Text('Sign Out',
+          horizontal: ESpacing.lg,
+          vertical: ESpacing.md,
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.logout, size: 18, color: EColors.onSurfaceMuted),
+            const SizedBox(width: ESpacing.sm),
+            Text(
+              'Sign Out',
               style: ETextStyles.navItem.copyWith(
-                  color: EColors.onSurfaceMuted)),
-        ]),
+                color: EColors.onSurfaceMuted,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -243,36 +306,48 @@ class _AdminDrawer extends StatelessWidget {
     final nav = isMaster ? _masterNav : _staffNav;
     return Drawer(
       backgroundColor: EColors.surfaceVariant,
-      child: Column(children: [
-        const SizedBox(height: ESpacing.xxl),
-        ...nav.map((e) => ListTile(
-              leading: Icon(e.icon,
-                  color: currentRoute == e.route
-                      ? EColors.primary
-                      : EColors.onSurfaceMuted),
-              title: Text(e.label,
-                  style: ETextStyles.navItem.copyWith(
-                    color: currentRoute == e.route
+      child: Column(
+        children: [
+          const SizedBox(height: ESpacing.xxl),
+          ...nav.map(
+            (e) => ListTile(
+              leading: Icon(
+                e.icon,
+                color:
+                    currentRoute == e.route
                         ? EColors.primary
-                        : EColors.onSurface,
-                  )),
+                        : EColors.onSurfaceMuted,
+              ),
+              title: Text(
+                e.label,
+                style: ETextStyles.navItem.copyWith(
+                  color:
+                      currentRoute == e.route
+                          ? EColors.primary
+                          : EColors.onSurface,
+                ),
+              ),
               selected: currentRoute == e.route,
               onTap: () {
                 Navigator.pop(context);
                 Get.offAllNamed(e.route);
               },
-            )),
-        const Spacer(),
-        ListTile(
-          leading:
-              Icon(Icons.logout, color: EColors.onSurfaceMuted),
-          title: Text('Sign Out',
-              style:
-                  ETextStyles.navItem.copyWith(color: EColors.onSurfaceMuted)),
-          onTap: () => Get.find<AuthController>().signOut(),
-        ),
-        const SizedBox(height: ESpacing.lg),
-      ]),
+            ),
+          ),
+          const Spacer(),
+          ListTile(
+            leading: Icon(Icons.logout, color: EColors.onSurfaceMuted),
+            title: Text(
+              'Sign Out',
+              style: ETextStyles.navItem.copyWith(
+                color: EColors.onSurfaceMuted,
+              ),
+            ),
+            onTap: () => Get.find<AuthController>().signOut(),
+          ),
+          const SizedBox(height: ESpacing.lg),
+        ],
+      ),
     );
   }
 }

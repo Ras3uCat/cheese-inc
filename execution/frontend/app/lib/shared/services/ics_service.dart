@@ -19,11 +19,12 @@ class IcsService {
   }
 
   static String _buildIcs(BookingModel booking) {
-    final now     = DateTime.now().toUtc();
-    final start   = booking.startTime.toUtc();
-    final end     = booking.endTime.toUtc();
-    final uid     = '${booking.id}@${AppEnv.clientSlug}';
-    final summary = '${booking.serviceNames.join(', ')} with ${booking.artistName}';
+    final now = DateTime.now().toUtc();
+    final start = booking.startTime.toUtc();
+    final end = booking.endTime.toUtc();
+    final uid = '${booking.id}@${AppEnv.clientSlug}';
+    final summary =
+        '${booking.serviceNames.join(', ')} with ${booking.artistName}';
 
     final lines = [
       'BEGIN:VCALENDAR',
@@ -46,12 +47,12 @@ class IcsService {
   }
 
   static String _fmt(DateTime dt) {
-    final y  = dt.year.toString().padLeft(4, '0');
+    final y = dt.year.toString().padLeft(4, '0');
     final mo = dt.month.toString().padLeft(2, '0');
-    final d  = dt.day.toString().padLeft(2, '0');
-    final h  = dt.hour.toString().padLeft(2, '0');
-    final m  = dt.minute.toString().padLeft(2, '0');
-    final s  = dt.second.toString().padLeft(2, '0');
+    final d = dt.day.toString().padLeft(2, '0');
+    final h = dt.hour.toString().padLeft(2, '0');
+    final m = dt.minute.toString().padLeft(2, '0');
+    final s = dt.second.toString().padLeft(2, '0');
     return '$y$mo${d}T$h$m${s}Z';
   }
 }

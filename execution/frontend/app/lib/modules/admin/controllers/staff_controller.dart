@@ -13,13 +13,13 @@ class StaffController extends GetxController {
 
   // ── State ─────────────────────────────────────────────────────────────────
   final isLoading = false.obs;
-  final error     = RxnString();
+  final error = RxnString();
 
   // ── Bookings ──────────────────────────────────────────────────────────────
   final bookings = <BookingModel>[].obs;
 
   // ── Calendar token ────────────────────────────────────────────────────────
-  final calendarToken    = RxnString();
+  final calendarToken = RxnString();
   final isCalendarLoading = false.obs;
 
   // ── Time-off ──────────────────────────────────────────────────────────────
@@ -43,8 +43,8 @@ class StaffController extends GetxController {
         _repo.getTimeOff(_artistId),
         _repo.getPromoCodes(_artistId),
       ]);
-      bookings.value   = results[0] as List<BookingModel>;
-      timeOff.value    = results[1] as List<Map<String, dynamic>>;
+      bookings.value = results[0] as List<BookingModel>;
+      timeOff.value = results[1] as List<Map<String, dynamic>>;
       promoCodes.value = results[2] as List<Map<String, dynamic>>;
     } catch (e) {
       error.value = 'Failed to load your data.';
@@ -80,7 +80,11 @@ class StaffController extends GetxController {
   }) async {
     try {
       await _repo.addTimeOff(
-          artistId: _artistId, start: start, end: end, reason: reason);
+        artistId: _artistId,
+        start: start,
+        end: end,
+        reason: reason,
+      );
       timeOff.value = await _repo.getTimeOff(_artistId);
       return true;
     } catch (_) {
@@ -103,11 +107,11 @@ class StaffController extends GetxController {
   }) async {
     try {
       await _repo.createPromoCode({
-        'code':           code.toUpperCase().trim(),
-        'artist_id':      _artistId,
-        'discount_type':  discountType,
+        'code': code.toUpperCase().trim(),
+        'artist_id': _artistId,
+        'discount_type': discountType,
         'discount_value': discountValue,
-        'max_uses':   maxUses,
+        'max_uses': maxUses,
         'expires_at': expiresAt?.toUtc().toIso8601String(),
       });
       promoCodes.value = await _repo.getPromoCodes(_artistId);
@@ -128,12 +132,14 @@ class StaffController extends GetxController {
   }
 
   // ── Computed ──────────────────────────────────────────────────────────────
-  List<BookingModel> get upcomingBookings => bookings
-      .where((b) =>
-          b.startTime.isAfter(DateTime.now()) && b.status != 'cancelled')
-      .toList();
+  List<BookingModel> get upcomingBookings =>
+      bookings
+          .where(
+            (b) =>
+                b.startTime.isAfter(DateTime.now()) && b.status != 'cancelled',
+          )
+          .toList();
 
-  List<BookingModel> get pastBookings => bookings
-      .where((b) => b.startTime.isBefore(DateTime.now()))
-      .toList();
+  List<BookingModel> get pastBookings =>
+      bookings.where((b) => b.startTime.isBefore(DateTime.now())).toList();
 }

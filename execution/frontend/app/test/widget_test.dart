@@ -7,9 +7,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:raspucat_client/core/config/app_env.dart';
-import 'package:raspucat_client/core/theme/e_colors.dart';
-import 'package:raspucat_client/core/theme/e_spacing.dart';
+import 'package:cheese_inc/core/config/app_env.dart';
+import 'package:cheese_inc/core/theme/e_colors.dart';
+import 'package:cheese_inc/core/theme/e_spacing.dart';
 
 void main() {
   // ── EColors ────────────────────────────────────────────────────────────────
@@ -44,16 +44,16 @@ void main() {
 
   group('ESpacing', () {
     test('base scale follows 8pt grid', () {
-      expect(ESpacing.xs,   8.0);
-      expect(ESpacing.sm,  12.0);
-      expect(ESpacing.md,  16.0);
-      expect(ESpacing.lg,  24.0);
-      expect(ESpacing.xl,  32.0);
+      expect(ESpacing.xs, 8.0);
+      expect(ESpacing.sm, 12.0);
+      expect(ESpacing.md, 16.0);
+      expect(ESpacing.lg, 24.0);
+      expect(ESpacing.xl, 32.0);
       expect(ESpacing.xxl, 48.0);
     });
 
     test('section gap constants are defined', () {
-      expect(ESpacing.sectionGapV,       80.0);
+      expect(ESpacing.sectionGapV, 80.0);
       expect(ESpacing.sectionGapVMobile, 56.0);
     });
 
@@ -85,7 +85,7 @@ void main() {
     });
 
     test('font fields are non-empty', () {
-      expect(AppEnv.fontPrimary,   isNotEmpty);
+      expect(AppEnv.fontPrimary, isNotEmpty);
       expect(AppEnv.fontSecondary, isNotEmpty);
     });
 

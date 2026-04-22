@@ -29,9 +29,16 @@ class _ReviewsViewState extends State<ReviewsView> {
     try {
       List rows;
       if (_showAll) {
-        rows = await _db.from('reviews').select().order('created_at', ascending: false);
+        rows = await _db
+            .from('reviews')
+            .select()
+            .order('created_at', ascending: false);
       } else {
-        rows = await _db.from('reviews').select().eq('is_approved', false).order('created_at', ascending: false);
+        rows = await _db
+            .from('reviews')
+            .select()
+            .eq('is_approved', false)
+            .order('created_at', ascending: false);
       }
       setState(() => _reviews = rows.cast<Map<String, dynamic>>());
     } finally {
@@ -65,7 +72,10 @@ class _ReviewsViewState extends State<ReviewsView> {
                 const Spacer(),
                 Switch(
                   value: _showAll,
-                  onChanged: (v) { _showAll = v; _load(); },
+                  onChanged: (v) {
+                    _showAll = v;
+                    _load();
+                  },
                   activeTrackColor: EColors.primary,
                 ),
                 const SizedBox(width: ESpacing.xs),
@@ -77,7 +87,10 @@ class _ReviewsViewState extends State<ReviewsView> {
               const Center(child: CircularProgressIndicator())
             else if (_reviews.isEmpty)
               Center(
-                child: Text('No reviews to moderate.', style: ETextStyles.bodyMd),
+                child: Text(
+                  'No reviews to moderate.',
+                  style: ETextStyles.bodyMd,
+                ),
               )
             else
               Expanded(
@@ -87,31 +100,43 @@ class _ReviewsViewState extends State<ReviewsView> {
                   itemBuilder: (_, i) {
                     final r = _reviews[i];
                     final approved = r['is_approved'] as bool? ?? false;
-                    final rating   = (r['rating'] as num?)?.toInt() ?? 0;
+                    final rating = (r['rating'] as num?)?.toInt() ?? 0;
                     return ListTile(
                       contentPadding: const EdgeInsets.symmetric(
-                          vertical: ESpacing.sm, horizontal: 0),
+                        vertical: ESpacing.sm,
+                        horizontal: 0,
+                      ),
                       title: Row(
                         children: [
-                          Text(r['client_name'] as String? ?? 'Anonymous',
-                              style: ETextStyles.labelSm),
+                          Text(
+                            r['client_name'] as String? ?? 'Anonymous',
+                            style: ETextStyles.labelSm,
+                          ),
                           const SizedBox(width: ESpacing.sm),
                           Row(
-                            children: List.generate(5, (j) => Icon(
-                              j < rating ? Icons.star : Icons.star_border,
-                              size: 14,
-                              color: EColors.primary,
-                            )),
+                            children: List.generate(
+                              5,
+                              (j) => Icon(
+                                j < rating ? Icons.star : Icons.star_border,
+                                size: 14,
+                                color: EColors.primary,
+                              ),
+                            ),
                           ),
                           if (approved) ...[
                             const SizedBox(width: ESpacing.sm),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 2),
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               color: EColors.primary.withValues(alpha: 0.15),
-                              child: Text('APPROVED',
-                                  style: ETextStyles.labelSm
-                                      .copyWith(fontSize: 10)),
+                              child: Text(
+                                'APPROVED',
+                                style: ETextStyles.labelSm.copyWith(
+                                  fontSize: 10,
+                                ),
+                              ),
                             ),
                           ],
                         ],
@@ -128,15 +153,21 @@ class _ReviewsViewState extends State<ReviewsView> {
                           if (!approved)
                             TextButton(
                               onPressed: () => _approve(r['id'] as String),
-                              child: Text('Approve',
-                                  style: ETextStyles.labelSm
-                                      .copyWith(color: EColors.primary)),
+                              child: Text(
+                                'Approve',
+                                style: ETextStyles.labelSm.copyWith(
+                                  color: EColors.primary,
+                                ),
+                              ),
                             ),
                           TextButton(
                             onPressed: () => _delete(r['id'] as String),
-                            child: Text('Delete',
-                                style: ETextStyles.labelSm
-                                    .copyWith(color: EColors.error)),
+                            child: Text(
+                              'Delete',
+                              style: ETextStyles.labelSm.copyWith(
+                                color: EColors.error,
+                              ),
+                            ),
                           ),
                         ],
                       ),

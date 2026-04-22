@@ -34,11 +34,12 @@ class _ReferralsViewState extends State<ReferralsView> {
     setState(() => _loading = true);
     try {
       final uid = _db.auth.currentUser!.id;
-      final profileRow = await _db
-          .from('profiles')
-          .select('referral_code')
-          .eq('id', uid)
-          .single();
+      final profileRow =
+          await _db
+              .from('profiles')
+              .select('referral_code')
+              .eq('id', uid)
+              .single();
       _referralCode = profileRow['referral_code'] as String?;
 
       final statsResult = await _db.rpc('get_referral_stats');
@@ -49,9 +50,10 @@ class _ReferralsViewState extends State<ReferralsView> {
           .select()
           .eq('referrer_id', uid)
           .order('created_at', ascending: false);
-      _referrals = (rows as List)
-          .map((r) => ReferralModel.fromMap(r as Map<String, dynamic>))
-          .toList();
+      _referrals =
+          (rows as List)
+              .map((r) => ReferralModel.fromMap(r as Map<String, dynamic>))
+              .toList();
     } catch (_) {
       // ignore — show empty state
     } finally {
@@ -65,9 +67,9 @@ class _ReferralsViewState extends State<ReferralsView> {
     final link = '${AppEnv.siteUrl}/booking?ref=$code';
     await Clipboard.setData(ClipboardData(text: link));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Link copied!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Link copied!')));
   }
 
   @override
@@ -91,8 +93,11 @@ class _ReferralsViewState extends State<ReferralsView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Sign in to access your referral link',
-                style: ETextStyles.body, textAlign: TextAlign.center),
+            Text(
+              'Sign in to access your referral link',
+              style: ETextStyles.body,
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: ESpacing.lg),
             ElevatedButton(
               onPressed: () => Get.toNamed(ERoutes.login),
@@ -151,16 +156,16 @@ class _ReferralsViewState extends State<ReferralsView> {
   }
 
   Widget _buildStatsRow() {
-    final total    = (_stats?['total']    as num?)?.toInt() ?? 0;
+    final total = (_stats?['total'] as num?)?.toInt() ?? 0;
     final rewarded = (_stats?['rewarded'] as num?)?.toInt() ?? 0;
-    final pending  = (_stats?['pending']  as num?)?.toInt() ?? 0;
+    final pending = (_stats?['pending'] as num?)?.toInt() ?? 0;
     return Row(
       children: [
-        Expanded(child: _StatCard(label: 'Total',    value: total)),
+        Expanded(child: _StatCard(label: 'Total', value: total)),
         const SizedBox(width: ESpacing.sm),
         Expanded(child: _StatCard(label: 'Rewarded', value: rewarded)),
         const SizedBox(width: ESpacing.sm),
-        Expanded(child: _StatCard(label: 'Pending',  value: pending)),
+        Expanded(child: _StatCard(label: 'Pending', value: pending)),
       ],
     );
   }
@@ -175,10 +180,12 @@ class _ReferralsViewState extends State<ReferralsView> {
       ];
     }
     return _referrals
-        .map((r) => Padding(
-              padding: const EdgeInsets.only(bottom: ESpacing.sm),
-              child: _ReferralRow(referral: r),
-            ))
+        .map(
+          (r) => Padding(
+            padding: const EdgeInsets.only(bottom: ESpacing.sm),
+            child: _ReferralRow(referral: r),
+          ),
+        )
         .toList();
   }
 }
@@ -192,7 +199,9 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          vertical: ESpacing.md, horizontal: ESpacing.sm),
+        vertical: ESpacing.md,
+        horizontal: ESpacing.sm,
+      ),
       decoration: BoxDecoration(
         border: Border.all(color: EColors.divider),
         borderRadius: BorderRadius.circular(8),
@@ -233,7 +242,9 @@ class _ReferralRow extends StatelessWidget {
           const SizedBox(width: ESpacing.sm),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: ESpacing.xs, vertical: 2),
+              horizontal: ESpacing.xs,
+              vertical: 2,
+            ),
             decoration: BoxDecoration(
               color: (rewarded ? Colors.green : EColors.onSurfaceMuted)
                   .withValues(alpha: 0.12),
@@ -248,9 +259,10 @@ class _ReferralRow extends StatelessWidget {
           ),
           if (rewarded && referral.referrerPromoCode != null) ...[
             const SizedBox(width: ESpacing.sm),
-            Text(referral.referrerPromoCode!,
-                style: ETextStyles.labelSm
-                    .copyWith(color: EColors.primary)),
+            Text(
+              referral.referrerPromoCode!,
+              style: ETextStyles.labelSm.copyWith(color: EColors.primary),
+            ),
           ],
         ],
       ),

@@ -4,7 +4,7 @@ import '../models/testimonial_model.dart';
 
 class TestimonialsController extends GetxController {
   final testimonials = <TestimonialModel>[].obs;
-  final isLoading    = false.obs;
+  final isLoading = false.obs;
 
   @override
   void onInit() {
@@ -20,9 +20,10 @@ class TestimonialsController extends GetxController {
           .select()
           .eq('is_active', true)
           .order('display_order');
-      testimonials.value = (rows as List)
-          .map((r) => TestimonialModel.fromMap(r as Map<String, dynamic>))
-          .toList();
+      testimonials.value =
+          (rows as List)
+              .map((r) => TestimonialModel.fromMap(r as Map<String, dynamic>))
+              .toList();
     } catch (_) {
       testimonials.value = [];
     } finally {

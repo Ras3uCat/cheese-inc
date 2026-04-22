@@ -144,9 +144,8 @@ class _CourseSectionEditorState extends State<CourseSectionEditor> {
                     videoStoragePath: videoPath.isNotEmpty ? videoPath : null,
                     durationSeconds: duration,
                     isPreview: isPreview,
-                    displayOrder: _lessons
-                        .where((l) => l.sectionId == section.id)
-                        .length,
+                    displayOrder:
+                        _lessons.where((l) => l.sectionId == section.id).length,
                   ),
                 );
                 await _loadData();
@@ -168,75 +167,81 @@ class _CourseSectionEditorState extends State<CourseSectionEditor> {
         title: Text('Edit Sections: ${_course.title}'),
         elevation: 1,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(ESpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: _onCreateSection,
-                    icon: const Icon(Icons.add),
-                    label: const Text('New Section'),
-                  ),
-                  const SizedBox(height: ESpacing.lg),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _sections.length,
-                      itemBuilder: (_, i) {
-                        final section = _sections[i];
-                        final secLessons = _lessons
-                            .where((l) => l.sectionId == section.id)
-                            .toList();
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: ESpacing.lg),
-                          child: Padding(
-                            padding: const EdgeInsets.all(ESpacing.md),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(section.title, style: ETextStyles.h3),
-                                    TextButton.icon(
-                                      onPressed: () => _onCreateLesson(section),
-                                      icon: const Icon(Icons.add, size: 18),
-                                      label: const Text('Add Lesson'),
-                                    ),
-                                  ],
-                                ),
-                                const Divider(),
-                                if (secLessons.isEmpty)
-                                  const Padding(
-                                    padding: EdgeInsets.all(ESpacing.md),
-                                    child: Text('No lessons yet.'),
-                                  )
-                                else
-                                  ...secLessons.map(
-                                    (l) => ListTile(
-                                      title: Text(l.title),
-                                      subtitle: Text(
-                                        'Path: ${l.videoStoragePath ?? "None"} • ${l.durationSeconds}s • ${l.isPreview ? "Preview" : "Paid"}',
-                                      ),
-                                      trailing: const Icon(
-                                        Icons.edit,
-                                        size: 16,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                padding: const EdgeInsets.all(ESpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: _onCreateSection,
+                      icon: const Icon(Icons.add),
+                      label: const Text('New Section'),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: ESpacing.lg),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _sections.length,
+                        itemBuilder: (_, i) {
+                          final section = _sections[i];
+                          final secLessons =
+                              _lessons
+                                  .where((l) => l.sectionId == section.id)
+                                  .toList();
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: ESpacing.lg),
+                            child: Padding(
+                              padding: const EdgeInsets.all(ESpacing.md),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        section.title,
+                                        style: ETextStyles.h3,
+                                      ),
+                                      TextButton.icon(
+                                        onPressed:
+                                            () => _onCreateLesson(section),
+                                        icon: const Icon(Icons.add, size: 18),
+                                        label: const Text('Add Lesson'),
+                                      ),
+                                    ],
+                                  ),
+                                  const Divider(),
+                                  if (secLessons.isEmpty)
+                                    const Padding(
+                                      padding: EdgeInsets.all(ESpacing.md),
+                                      child: Text('No lessons yet.'),
+                                    )
+                                  else
+                                    ...secLessons.map(
+                                      (l) => ListTile(
+                                        title: Text(l.title),
+                                        subtitle: Text(
+                                          'Path: ${l.videoStoragePath ?? "None"} • ${l.durationSeconds}s • ${l.isPreview ? "Preview" : "Paid"}',
+                                        ),
+                                        trailing: const Icon(
+                                          Icons.edit,
+                                          size: 16,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
     );
   }
 }

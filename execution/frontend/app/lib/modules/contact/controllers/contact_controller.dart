@@ -2,12 +2,12 @@ import 'package:get/get.dart';
 import '../../../shared/services/supabase_service.dart';
 
 class ContactController extends GetxController {
-  final name    = ''.obs;
-  final email   = ''.obs;
+  final name = ''.obs;
+  final email = ''.obs;
   final message = ''.obs;
   final loading = false.obs;
-  final sent    = false.obs;
-  final error   = ''.obs;
+  final sent = false.obs;
+  final error = ''.obs;
 
   bool get canSubmit =>
       name.value.trim().length >= 2 &&
@@ -18,14 +18,14 @@ class ContactController extends GetxController {
   Future<void> submit() async {
     if (!canSubmit) return;
     loading.value = true;
-    error.value   = '';
+    error.value = '';
 
     try {
       await SupabaseService.client.functions.invoke(
         'send-contact',
         body: {
-          'name':    name.value.trim(),
-          'email':   email.value.trim(),
+          'name': name.value.trim(),
+          'email': email.value.trim(),
           'message': message.value.trim(),
         },
       );
@@ -38,10 +38,10 @@ class ContactController extends GetxController {
   }
 
   void reset() {
-    name.value    = '';
-    email.value   = '';
+    name.value = '';
+    email.value = '';
     message.value = '';
-    sent.value    = false;
-    error.value   = '';
+    sent.value = false;
+    error.value = '';
   }
 }

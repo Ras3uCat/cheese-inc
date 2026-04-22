@@ -25,6 +25,7 @@ class ETextStyles {
         letterSpacing: letterSpacing,
         color: color ?? EColors.onSurface,
         height: height,
+        decoration: TextDecoration.none,
       );
     } catch (_) {
       return TextStyle(
@@ -33,6 +34,7 @@ class ETextStyles {
         letterSpacing: letterSpacing,
         color: color ?? EColors.onSurface,
         height: height,
+        decoration: TextDecoration.none,
       );
     }
   }
@@ -52,6 +54,7 @@ class ETextStyles {
         letterSpacing: letterSpacing,
         color: color ?? EColors.onSurface,
         height: height,
+        decoration: TextDecoration.none,
       );
     } catch (_) {
       return TextStyle(
@@ -60,6 +63,7 @@ class ETextStyles {
         letterSpacing: letterSpacing,
         color: color ?? EColors.onSurface,
         height: height,
+        decoration: TextDecoration.none,
       );
     }
   }
@@ -74,76 +78,58 @@ class ETextStyles {
 
   // ─── Display / Hero ───────────────────────────────────────────────────────
   static TextStyle get displayXL => _primary(
-        size: 72 * _ds,
-        weight: _p.headingWeight,
-        letterSpacing: _p.headingLetterSpacing,
-        height: 1.05,
-      );
+    size: 72 * _ds,
+    weight: _p.headingWeight,
+    letterSpacing: _p.headingLetterSpacing,
+    height: 1.05,
+  );
 
   static TextStyle get displayLg => _primary(
-        size: 56 * _ds,
-        weight: _p.headingWeight,
-        letterSpacing: _p.headingLetterSpacing,
-        height: 1.1,
-      );
+    size: 56 * _ds,
+    weight: _p.headingWeight,
+    letterSpacing: _p.headingLetterSpacing,
+    height: 1.1,
+  );
 
   static TextStyle get displayMd => _primary(
-        size: 40 * _ds,
-        weight: _p.headingWeight,
-        letterSpacing: _p.headingLetterSpacing * 0.5,
-        height: 1.15,
-      );
+    size: 40 * _ds,
+    weight: _p.headingWeight,
+    letterSpacing: _p.headingLetterSpacing * 0.5,
+    height: 1.15,
+  );
 
   // ─── Headings ─────────────────────────────────────────────────────────────
   static TextStyle get h1 => _primary(
-        size: 32 * _hs,
-        weight: _p.headingWeight,
-        letterSpacing: _p.headingLetterSpacing * 0.4,
-        height: 1.2,
-      );
+    size: 32 * _hs,
+    weight: _p.headingWeight,
+    letterSpacing: _p.headingLetterSpacing * 0.4,
+    height: 1.2,
+  );
 
-  static TextStyle get h2 => _primary(
-        size: 24 * _hs,
-        weight: _p.headingWeight,
-        height: 1.25,
-      );
+  static TextStyle get h2 => _primary(size: 24 * _hs, weight: _p.headingWeight, height: 1.25);
 
-  static TextStyle get h3 => _secondary(
-        size: 20 * _hs,
-        weight: FontWeight.w600,
-        height: 1.3,
-      );
+  static TextStyle get h3 => _primary(size: 20 * _hs, weight: FontWeight.w600, height: 1.3);
 
   // ─── Body ──────────────────────────────────────────────────────────────────
+  // Body stays secondary (Playfair Display) for editorial warmth on long-form text.
   static TextStyle get bodyLg => _secondary(size: 18, height: 1.7);
-  static TextStyle get body   => _secondary(size: 16, height: 1.65);
+  static TextStyle get body => _secondary(size: 16, height: 1.65);
   static TextStyle get bodySm => _secondary(size: 14, height: 1.6);
 
   // ─── UI Elements ──────────────────────────────────────────────────────────
-  static TextStyle get label    => _secondary(size: 14, weight: FontWeight.w500, letterSpacing: 0.5);
-  static TextStyle get labelSm  => _secondary(size: 12, weight: FontWeight.w500, letterSpacing: 0.5);
-  static TextStyle get caption  => _secondary(size: 12, color: EColors.onSurfaceMuted);
-  static TextStyle get overline => _secondary(
-        size: 11,
-        weight: FontWeight.w600,
-        letterSpacing: 2.0,
-        color: EColors.primary,
-      );
+  // UI chrome uses primary (Space Grotesk) — crisp, geometric, brand-forward.
+  static TextStyle get label => _primary(size: 14, weight: FontWeight.w500, letterSpacing: 0.5);
+  static TextStyle get labelSm => _primary(size: 12, weight: FontWeight.w500, letterSpacing: 0.5);
+  static TextStyle get caption => _primary(size: 12, color: EColors.onSurfaceMuted);
+  static TextStyle get overline =>
+      _primary(size: 11, weight: FontWeight.w600, letterSpacing: 2.5, color: EColors.primary);
 
-  static TextStyle get button => _secondary(
-        size: 14,
-        weight: FontWeight.w600,
-        letterSpacing: 0.8,
-      );
+  static TextStyle get button => _primary(size: 14, weight: FontWeight.w600, letterSpacing: 0.8);
 
-  static TextStyle get navItem => _secondary(
-        size: 14,
-        weight: FontWeight.w500,
-        letterSpacing: 0.3,
-      );
+  static TextStyle get navItem => _primary(size: 14, weight: FontWeight.w500, letterSpacing: 0.3);
 
   // ─── Muted variants ───────────────────────────────────────────────────────
-  static TextStyle get bodyMuted   => body.copyWith(color: EColors.onSurfaceMuted);
+  static TextStyle get bodyMuted => body.copyWith(color: EColors.onSurfaceMuted);
   static TextStyle get bodySmMuted => bodySm.copyWith(color: EColors.onSurfaceMuted);
 
   // ─── Booking / domain-specific ────────────────────────────────────────────
@@ -155,18 +141,15 @@ class ETextStyles {
 
   /// Small tracking label for duration/time display (e.g. "45min", "→ 2:30 PM").
   static TextStyle get duration => _secondary(
-        size: 11,
-        weight: FontWeight.w500,
-        letterSpacing: 1.2,
-        color: EColors.onSurfaceMuted,
-      );
+    size: 11,
+    weight: FontWeight.w500,
+    letterSpacing: 1.2,
+    color: EColors.onSurfaceMuted,
+  );
 
   /// Price display — secondary font, bold, primary-colored.
-  static TextStyle get price => _secondary(
-        size: 20,
-        weight: FontWeight.w700,
-        color: EColors.primary,
-      );
+  static TextStyle get price =>
+      _secondary(size: 20, weight: FontWeight.w700, color: EColors.primary);
 
   /// Form field input text.
   static TextStyle get inputText => body;

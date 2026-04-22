@@ -9,7 +9,9 @@ class AdminBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<AdminRepository>(() => AdminRepository());
-    Get.lazyPut<CalendarTokenRepository>(() => SupabaseCalendarTokenRepository());
+    Get.lazyPut<CalendarTokenRepository>(
+      () => SupabaseCalendarTokenRepository(),
+    );
     Get.lazyPut<MasterController>(() => MasterController());
     Get.lazyPut<StaffController>(() => StaffController());
     Get.lazyPut<AnalyticsController>(() => AnalyticsController());

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Alignment Report — Cheese Inc.</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0D0907;
+    --bg-card: #151008;
+    --bg-card-alt: #1A1208;
+    --border: rgba(240,230,208,0.08);
+    --text: #F0E6D0;
+    --text-muted: rgba(240,230,208,0.5);
+    --accent: #FF4500;
+    --accent-dim: rgba(255,69,0,0.12);
+    --amber: #D4A853;
+    --amber-dim: rgba(212,168,83,0.12);
+    --green: #5A9E7A;
+    --red: #CC3322;
+    --orange: #E8650A;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .page { max-width: 960px; margin: 0 auto; padding: 60px 40px; }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-bottom: 80px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cover-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 24px;
+  }
+  .cover-title {
+    font-size: clamp(48px, 8vw, 88px);
+    font-weight: 800; letter-spacing: -0.025em; line-height: 1.0;
+    margin-bottom: 20px;
+  }
+  .cover-subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 56px; }
+  .cover-meta { display: flex; gap: 40px; flex-wrap: wrap; }
+  .cover-meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .cover-meta-item .label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+  .cover-meta-item .value { font-size: 14px; font-weight: 600; }
+
+  /* ── SECTIONS ── */
+  .section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: 30px; font-weight: 700; letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .section-intro { font-size: 15px; color: var(--text-muted); max-width: 600px; margin-bottom: 44px; }
+
+  /* ── COLOR PALETTE ── */
+  .palette-row { margin-bottom: 36px; }
+  .palette-row-label {
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 16px;
+  }
+  .swatches { display: flex; gap: 20px; flex-wrap: wrap; }
+  .swatch-item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .swatch-circle {
+    width: 52px; height: 52px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    flex-shrink: 0;
+  }
+  .swatch-info { text-align: center; }
+  .swatch-hex { font-size: 12px; font-weight: 600; font-family: 'Courier New', monospace; }
+  .swatch-token { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .swatch-change {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    padding: 2px 7px; border-radius: 4px; margin-top: 4px;
+  }
+  .change-new { background: rgba(90,158,122,0.15); color: var(--green); }
+  .change-keep { background: rgba(212,168,83,0.1); color: var(--amber); }
+
+  /* ── TYPOGRAPHY ── */
+  .font-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 600px) { .font-cards { grid-template-columns: 1fr; } }
+  .font-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+  }
+  .font-role { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .font-name { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 20px; }
+  .font-display { font-size: 36px; font-weight: 700; line-height: 1.1; margin-bottom: 10px; }
+  .font-body { font-size: 14px; color: var(--text-muted); }
+
+  /* ── SECTION FLOW ── */
+  .flow-row { margin-bottom: 32px; }
+  .flow-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+  .flow-pills { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .flow-pill {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 7px 14px; border-radius: 24px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+  }
+  .flow-pill.removed {
+    background: rgba(204,51,34,0.1);
+    border-color: rgba(204,51,34,0.25);
+    color: #CC5544;
+    text-decoration: line-through;
+  }
+  .flow-pill.new-pos {
+    background: rgba(90,158,122,0.1);
+    border-color: rgba(90,158,122,0.25);
+    color: var(--green);
+  }
+  .flow-arrow { color: var(--text-muted); font-size: 14px; }
+
+  /* ── ANIMATION TABLE ── */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th {
+    text-align: left; padding: 10px 16px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .priority-high { font-size: 10px; font-weight: 700; color: var(--accent); background: var(--accent-dim); padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+  .priority-med { font-size: 10px; font-weight: 700; color: var(--amber); background: var(--amber-dim); padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    background: rgba(255,255,255,0.06);
+    padding: 2px 6px; border-radius: 4px;
+  }
+
+  /* ── GUEST FLOW FUNNEL ── */
+  .funnel { display: flex; flex-direction: column; gap: 4px; }
+  .funnel-step {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 24px;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+  .funnel-num {
+    font-size: 20px; font-weight: 800; color: var(--accent);
+    line-height: 1;
+  }
+  .funnel-step-title { font-size: 15px; font-weight: 700; }
+  .funnel-step-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+  .funnel-connector {
+    display: flex; justify-content: center;
+    color: var(--text-muted); font-size: 18px; padding: 2px 0;
+  }
+
+  /* ── CONFLICTS & GAPS ── */
+  .gaps-table { display: flex; flex-direction: column; gap: 8px; }
+  .gap-row {
+    background: var(--bg-card);
+    border-radius: 10px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 160px 1fr;
+  }
+  .gap-badge {
+    padding: 16px 18px;
+    display: flex; align-items: flex-start;
+    font-size: 12px; font-weight: 700;
+    gap: 6px;
+  }
+  .gap-badge.critical { background: rgba(204,51,34,0.12); color: #E06050; border-right: 1px solid rgba(204,51,34,0.2); }
+  .gap-badge.moderate { background: rgba(212,168,83,0.1); color: var(--amber); border-right: 1px solid rgba(212,168,83,0.2); }
+  .gap-badge.aligned { background: rgba(90,158,122,0.1); color: var(--green); border-right: 1px solid rgba(90,158,122,0.2); }
+  .gap-content { padding: 16px 20px; font-size: 13px; line-height: 1.6; }
+  .gap-title { font-weight: 700; margin-bottom: 3px; }
+  .gap-body { color: var(--text-muted); }
+
+  /* ── DIFF BLOCK ── */
+  .diff-block {
+    background: #0A0806;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+  }
+  .diff-header {
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .diff-line { padding: 6px 20px; line-height: 1.6; }
+  .diff-line.removed { background: rgba(204,51,34,0.08); color: #E07060; border-left: 3px solid #CC3322; }
+  .diff-line.added { background: rgba(90,158,122,0.08); color: #80D0A0; border-left: 3px solid #5A9E7A; }
+  .diff-line.separator { color: var(--text-muted); padding: 8px 20px; }
+
+  /* ── PRINT ── */
+  @media print {
+    .no-print { display: none; }
+    body { background: white; color: #111; }
+    .section { page-break-before: always; }
+    .cover { page-break-before: avoid; }
+    .gap-row, .funnel-step, .font-card { break-inside: avoid; }
+    :root {
+      --bg: white; --bg-card: #F5F0E8; --text: #111;
+      --text-muted: #666; --border: rgba(0,0,0,0.1);
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-eyebrow">Brand Alignment Report · v2</div>
+    <h1 class="cover-title">Cheese<br>Inc.</h1>
+    <p class="cover-subtitle">Artisan Cheese Shop · Tacoma, Washington</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><span class="label">Prepared by</span><span class="value">Raspucat</span></div>
+      <div class="cover-meta-item"><span class="label">Date</span><span class="value">April 20, 2026</span></div>
+      <div class="cover-meta-item"><span class="label">Sources Analyzed</span><span class="value">3 Inspo + 5 Competitors</span></div>
+      <div class="cover-meta-item"><span class="label">Recommended Personality</span><span class="value">Editorial-Dark · Indulgent · Playful</span></div>
+    </div>
+  </div>
+
+  <!-- COLOR PALETTE -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-eyebrow">Section 01</div>
+    <h2 class="section-title">Color Palette</h2>
+    <p class="section-intro">Current tokens vs. recommended — based on cross-site signal extraction from 3 inspiration sources and 5 competitor profiles.</p>
+
+    <div class="palette-row">
+      <div class="palette-row-label">Current</div>
+      <div class="swatches">
+        <div class="swatch-item">
+          <div class="swatch-circle" style="background:#0D0D0D;"></div>
+          <div class="swatch-info"><div class="swatch-hex">#0D0D0D</div><div class="swatch-token">COLOR_SURFACE</div></div>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-circle" style="background:#FFFFFF; border-color: rgba(0,0,0,0.2);"></div>
+          <div class="swatch-info"><div class="swatch-hex">#FFFFFF</div><div class="swatch-token">COLOR_ON_SURFACE</div></div>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-circle" style="background:#CC2200;"></div>
+          <div class="swatch-info"><div class="swatch-hex">#CC2200</div><div class="swatch-token">COLOR_PRIMARY</div></div>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-circle" style="background:#F5F0E8; border-color: rgba(0,0,0,0.15);"></div>
+          <div class="swatch-info"><div class="swatch-hex">#F5F0E8</div><div class="swatch-token">COLOR_SECONDARY</div></div>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-circle" style="background:#E8650A;"></div>
+          <div class="swatch-info"><div class="swatch-hex">#E8650A</div><div class="swatch-token">COLOR_ACCENT</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="palette-row">
+      <div class="palette-row-label">Recommended</div>
+      <div class="swatches">
+        <div class="swatch-item">
+          <div class="swatch-circle" style="background:#0D0907;"></div>
+          <div class="swatch-info">
+            <div class="swatch-hex">#0D0907</div>
+            <div class="swatch-token">COLOR_SURFACE</div>
+            <div class="swatch-change change-new">CHANGE</div>
+          </div>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-circle" style="background:#F0E6D0;"></div>
+          <div class="swatch-info">
+            <div class="swatch-hex">#F0E6D0</div>
+            <div class="swatch-token">COLOR_ON_SURFACE</div>
+            <div class="swatch-change change-new">CHANGE</div>
+          </div>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-circle" style="background:#FF4500;"></div>
+          <div class="swatch-info">
+            <div class="swatch-hex">#FF4500</div>
+            <div class="swatch-token">COLOR_PRIMARY</div>
+            <div class="swatch-change change-new">CHANGE</div>
+          </div>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-circle" style="background:#D4A853;"></div>
+          <div class="swatch-info">
+            <div class="swatch-hex">#D4A853</div>
+            <div class="swatch-token">COLOR_SECONDARY</div>
+            <div class="swatch-change change-new">CHANGE</div>
+          </div>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-circle" style="background:#E8650A;"></div>
+          <div class="swatch-info">
+            <div class="swatch-hex">#E8650A</div>
+            <div class="swatch-token">COLOR_ACCENT</div>
+            <div class="swatch-change change-keep">KEEP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-eyebrow">Section 02</div>
+    <h2 class="section-title">Typography</h2>
+    <p class="section-intro">Both fonts are confirmed — no changes. Space Grotesk leads editorial hierarchy; Playfair Display carries heritage and warmth.</p>
+
+    <div class="font-cards">
+      <div class="font-card">
+        <div class="font-role">Primary — Headlines & UI</div>
+        <div class="font-name">Space Grotesk ✅ Keep</div>
+        <div class="font-display" style="font-family: system-ui, sans-serif; letter-spacing: -0.02em;">TASTE THE<br>COLLECTION</div>
+        <div class="font-body">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z<br>0 1 2 3 4 5 6 7 8 9</div>
+      </div>
+      <div class="font-card">
+        <div class="font-role">Secondary — Body & Subheads</div>
+        <div class="font-name">Playfair Display ✅ Keep</div>
+        <div class="font-display" style="font-family: Georgia, serif; font-style: italic;">Aged. Indulgent.<br>Obsessively crafted.</div>
+        <div class="font-body" style="font-family: Georgia, serif;">Artisan cheeses, small-batch boards, tasting experiences designed for the adventurous palate.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION FLOW -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-eyebrow">Section 03</div>
+    <h2 class="section-title">Homepage Section Flow</h2>
+    <p class="section-intro">Reordering based on cross-site consensus: establish offer before visual proof, convert before validating.</p>
+
+    <div class="flow-row">
+      <div class="flow-label">Current</div>
+      <div class="flow-pills">
+        <span class="flow-pill">Hero</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-pill">Gallery</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-pill">Services</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-pill removed">Blog</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-pill">Testimonials</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-pill">CTA</span>
+      </div>
+    </div>
+
+    <div class="flow-row" style="margin-top: 28px;">
+      <div class="flow-label">Recommended</div>
+      <div class="flow-pills">
+        <span class="flow-pill">Hero</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-pill new-pos">Services</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-pill new-pos">Gallery</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-pill new-pos">CTA</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-pill new-pos">Testimonials</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px; padding: 20px; background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border); font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+      <strong style="color: var(--text);">Why:</strong> All 3 inspo sites and all 5 competitors establish what they offer before showing visual proof. "Blog" appears on 0 of 8 analyzed homepages — it belongs in the nav, not the scroll. CTA before testimonials (convert first, validate second) is the consensus pattern across both inspo and competitor data.
+    </div>
+  </div>
+
+  <!-- ANIMATION VOCABULARY -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-eyebrow">Section 04</div>
+    <h2 class="section-title">Animation Vocabulary</h2>
+    <p class="section-intro">Flutter widgets recommended to match the motion language detected across the 3 inspiration sites.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Effect</th>
+          <th>Flutter Widget</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Brand loading screen before hero</td>
+          <td><code>NeonPulse</code> on logo + fade reveal</td>
+          <td><span class="priority-high">HIGH</span></td>
+        </tr>
+        <tr>
+          <td>Headline reveals on scroll</td>
+          <td><code>TextReveal</code> (word mode)</td>
+          <td><span class="priority-high">HIGH</span></td>
+        </tr>
+        <tr>
+          <td>Gallery / product cards</td>
+          <td><code>TiltCard</code> + <code>InertiaCarousel</code></td>
+          <td><span class="priority-high">HIGH</span></td>
+        </tr>
+        <tr>
+          <td>Hero background depth</td>
+          <td><code>ParallaxLayer</code> (0.2 bg / 0.6 content)</td>
+          <td><span class="priority-high">HIGH</span></td>
+        </tr>
+        <tr>
+          <td>Section entrances</td>
+          <td><code>RevealOnScroll</code> + <code>StaggerGroup</code></td>
+          <td><span class="priority-high">HIGH</span></td>
+        </tr>
+        <tr>
+          <td>Desktop cursor</td>
+          <td><code>CursorOverlay</code> (ring expands on CTAs)</td>
+          <td><span class="priority-med">MEDIUM</span></td>
+        </tr>
+        <tr>
+          <td>Page transitions</td>
+          <td>Diagonal clip-path wipe (350ms)</td>
+          <td><span class="priority-med">MEDIUM</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GUEST FLOW -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-eyebrow">Section 05</div>
+    <h2 class="section-title">Guest Flow</h2>
+    <p class="section-intro">Recommended conversion path for an adventurous food lover aged 25–45 who shares everything on Instagram.</p>
+
+    <div class="funnel">
+      <div class="funnel-step">
+        <div class="funnel-num">01</div>
+        <div>
+          <div class="funnel-step-title">"TASTE THE COLLECTION"</div>
+          <div class="funnel-step-sub">Hero — fullscreen, single CTA, brand loading screen on first visit</div>
+        </div>
+      </div>
+      <div class="funnel-connector">↓</div>
+      <div class="funnel-step">
+        <div class="funnel-num">02</div>
+        <div>
+          <div class="funnel-step-title">Services — what we offer</div>
+          <div class="funnel-step-sub">Boards, pairings, tasting experiences, shop. CTA: "BUILD YOUR BOARD"</div>
+        </div>
+      </div>
+      <div class="funnel-connector">↓</div>
+      <div class="funnel-step">
+        <div class="funnel-num">03</div>
+        <div>
+          <div class="funnel-step-title">Gallery — appetite appeal</div>
+          <div class="funnel-step-sub">Full-bleed artisan photography + embedded origin story callout card</div>
+        </div>
+      </div>
+      <div class="funnel-connector">↓</div>
+      <div class="funnel-step">
+        <div class="funnel-num">04</div>
+        <div>
+          <div class="funnel-step-title">"SHOP NOW" — primary conversion</div>
+          <div class="funnel-step-sub">CTA section — the decision moment. No competing links.</div>
+        </div>
+      </div>
+      <div class="funnel-connector">↓</div>
+      <div class="funnel-step">
+        <div class="funnel-num">05</div>
+        <div>
+          <div class="funnel-step-title">Testimonials + Footer</div>
+          <div class="funnel-step-sub">Social proof closes the page. Location, hours, Tacoma identity in footer.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFLICTS & GAPS -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-eyebrow">Section 06</div>
+    <h2 class="section-title">Conflicts &amp; Gaps</h2>
+    <p class="section-intro">Critical issues vs. moderate opportunities vs. already-aligned elements.</p>
+
+    <div class="gaps-table">
+      <div class="gap-row">
+        <div class="gap-badge critical">🔴 Critical</div>
+        <div class="gap-content">
+          <div class="gap-title">White surface (#FFFFFF)</div>
+          <div class="gap-body">All 3 inspo sites and 0 of 5 competitors use white. Change COLOR_SURFACE to #0D0907 — single biggest visual mismatch.</div>
+        </div>
+      </div>
+      <div class="gap-row">
+        <div class="gap-badge critical">🔴 Critical</div>
+        <div class="gap-content">
+          <div class="gap-title">Blog in HOME_SECTIONS</div>
+          <div class="gap-body">Zero of 8 analyzed sites (3 inspo + 5 competitors) surface a blog on the homepage. Remove it from HOME_SECTIONS.</div>
+        </div>
+      </div>
+      <div class="gap-row">
+        <div class="gap-badge critical">🔴 Critical</div>
+        <div class="gap-content">
+          <div class="gap-title">PERSONALITY: "bold" too generic</div>
+          <div class="gap-body">Replace with "editorial-dark indulgent playful" — this directive is actionable and specific, "bold" is not.</div>
+        </div>
+      </div>
+      <div class="gap-row">
+        <div class="gap-badge moderate">🟡 Moderate</div>
+        <div class="gap-content">
+          <div class="gap-title">No branded loading screen</div>
+          <div class="gap-body">2 of 3 inspo sites use a loading sequence. NeonPulse logo + fade reveal would immediately elevate the editorial feel.</div>
+        </div>
+      </div>
+      <div class="gap-row">
+        <div class="gap-badge moderate">🟡 Moderate</div>
+        <div class="gap-content">
+          <div class="gap-title">No origin story callout</div>
+          <div class="gap-body">All 5 competitors use a founding story as a trust anchor. Embed a callout card inside the gallery section.</div>
+        </div>
+      </div>
+      <div class="gap-row">
+        <div class="gap-badge moderate">🟡 Moderate</div>
+        <div class="gap-content">
+          <div class="gap-title">Tacoma identity absent from SEO fields</div>
+          <div class="gap-body">Zero competitors target Tacoma — it's an open keyword. Add to SEO_TITLE and SEO_DESCRIPTION.</div>
+        </div>
+      </div>
+      <div class="gap-row">
+        <div class="gap-badge aligned">🟢 Aligned</div>
+        <div class="gap-content">
+          <div class="gap-title">HERO_VARIANT, NAV_STYLE, FONT_PRIMARY, FONT_SECONDARY, COLOR_ACCENT</div>
+          <div class="gap-body">All confirmed against inspo and competitor data. No changes needed.</div>
+        </div>
+      </div>
+      <div class="gap-row">
+        <div class="gap-badge aligned">🟢 Aligned</div>
+        <div class="gap-content">
+          <div class="gap-title">BRAND_THREE_WORDS + BRAND_CELEBRITY</div>
+          <div class="gap-body">"Bold Sensory Playful" and "Wes Anderson" both confirmed against inspo site signals. High confidence.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIFF SUMMARY -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-eyebrow">Section 07</div>
+    <h2 class="section-title">Recommended Changes</h2>
+    <p class="section-intro">Apply these 6 changes to client.json, then run <code>./deliver.sh --skip-db --skip-functions</code>.</p>
+
+    <div class="diff-block">
+      <div class="diff-header">client.json diff</div>
+      <div class="diff-line removed">- "PERSONALITY": "bold",</div>
+      <div class="diff-line added">+ "PERSONALITY": "editorial-dark indulgent playful",</div>
+      <div class="diff-line separator"> </div>
+      <div class="diff-line removed">- "HOME_SECTIONS": "hero,gallery,services,blog,testimonials,cta",</div>
+      <div class="diff-line added">+ "HOME_SECTIONS": "hero,services,gallery,cta,testimonials",</div>
+      <div class="diff-line separator"> </div>
+      <div class="diff-line removed">- "COLOR_PRIMARY": "CC2200",</div>
+      <div class="diff-line added">+ "COLOR_PRIMARY": "FF4500",</div>
+      <div class="diff-line separator"> </div>
+      <div class="diff-line removed">- "COLOR_SECONDARY": "F5F0E8",</div>
+      <div class="diff-line added">+ "COLOR_SECONDARY": "D4A853",</div>
+      <div class="diff-line separator"> </div>
+      <div class="diff-line removed">- "COLOR_SURFACE": "FFFFFF",</div>
+      <div class="diff-line added">+ "COLOR_SURFACE": "0D0907",</div>
+      <div class="diff-line separator"> </div>
+      <div class="diff-line removed">- "COLOR_ON_SURFACE": "0D0D0D",</div>
+      <div class="diff-line added">+ "COLOR_ON_SURFACE": "F0E6D0",</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

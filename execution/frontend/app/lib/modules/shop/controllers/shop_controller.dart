@@ -9,14 +9,14 @@ class ShopController extends GetxController {
   ShopController(this._repo);
   final ShopRepository _repo;
 
-  final products         = <ProductModel>[].obs;
-  final categories       = <Map<String, dynamic>>[].obs;
-  final cart             = <String, CartItemModel>{}.obs;
+  final products = <ProductModel>[].obs;
+  final categories = <Map<String, dynamic>>[].obs;
+  final cart = <String, CartItemModel>{}.obs;
   final selectedCategory = RxnString();
-  final discountCode     = ''.obs;
-  final discountPct      = 0.obs;
-  final isLoading        = false.obs;
-  final isCheckingOut    = false.obs;
+  final discountCode = ''.obs;
+  final discountPct = 0.obs;
+  final isLoading = false.obs;
+  final isCheckingOut = false.obs;
 
   static final _fmt = NumberFormat.simpleCurrency(decimalDigits: 2);
 
@@ -34,13 +34,16 @@ class ShopController extends GetxController {
   }
 
   Future<void> _loadCategories() async {
-    try { categories.value = await _repo.getCategories(); } catch (_) {}
+    try {
+      categories.value = await _repo.getCategories();
+    } catch (_) {}
   }
 
   Future<void> _loadProducts() async {
     try {
       products.value = await _repo.getActiveProducts(
-          categoryId: selectedCategory.value);
+        categoryId: selectedCategory.value,
+      );
     } catch (_) {}
   }
 
@@ -73,17 +76,17 @@ class ShopController extends GetxController {
   void clearCart() {
     cart.clear();
     discountCode.value = '';
-    discountPct.value  = 0;
+    discountPct.value = 0;
   }
 
-  List<CartItemModel> get cartItems  => cart.values.toList();
-  int  get cartCount                 => cart.values.fold(0, (s, i) => s + i.quantity);
-  int  get subtotalCents             => cart.values.fold(0, (s, i) => s + i.subtotalCents);
-  int  get discountCents             => (subtotalCents * discountPct.value / 100).round();
-  int  get totalCents                => subtotalCents - discountCents;
-  String get formattedSubtotal       => _fmt.format(subtotalCents / 100);
-  String get formattedDiscount       => _fmt.format(discountCents / 100);
-  String get formattedTotal          => _fmt.format(totalCents / 100);
+  List<CartItemModel> get cartItems => cart.values.toList();
+  int get cartCount => cart.values.fold(0, (s, i) => s + i.quantity);
+  int get subtotalCents => cart.values.fold(0, (s, i) => s + i.subtotalCents);
+  int get discountCents => (subtotalCents * discountPct.value / 100).round();
+  int get totalCents => subtotalCents - discountCents;
+  String get formattedSubtotal => _fmt.format(subtotalCents / 100);
+  String get formattedDiscount => _fmt.format(discountCents / 100);
+  String get formattedTotal => _fmt.format(totalCents / 100);
 
   // ── Discount ──────────────────────────────────────────────────────────────────
 
@@ -91,7 +94,7 @@ class ShopController extends GetxController {
     try {
       final pct = await _repo.validateDiscountCode(code.trim().toUpperCase());
       if (pct > 0) {
-        discountPct.value  = pct;
+        discountPct.value = pct;
         discountCode.value = code.trim().toUpperCase();
         return true;
       }
@@ -103,7 +106,7 @@ class ShopController extends GetxController {
 
   void removeDiscount() {
     discountCode.value = '';
-    discountPct.value  = 0;
+    discountPct.value = 0;
   }
 
   // ── Checkout ──────────────────────────────────────────────────────────────────
@@ -112,24 +115,31 @@ class ShopController extends GetxController {
     if (cart.isEmpty) return;
     isCheckingOut.value = true;
     try {
-      final items = cart.values
-          .map((i) => {'product_id': i.product.id, 'quantity': i.quantity})
-          .toList();
+      final items =
+          cart.values
+              .map((i) => {'product_id': i.product.id, 'quantity': i.quantity})
+              .toList();
       final url = await _repo.checkout(
-        items:        items,
-        clientEmail:  clientEmail,
-        clientName:   clientName,
+        items: items,
+        clientEmail: clientEmail,
+        clientName: clientName,
         discountCode: discountCode.value.isNotEmpty ? discountCode.value : null,
       );
       if (url != null) {
         await launchUrl(Uri.parse(url), mode: LaunchMode.platformDefault);
       } else {
-        Get.snackbar('Error', 'Could not start checkout. Please try again.',
-            snackPosition: SnackPosition.BOTTOM);
+        Get.snackbar(
+          'Error',
+          'Could not start checkout. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
       }
     } catch (_) {
-      Get.snackbar('Error', 'Checkout failed. Please try again.',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Checkout failed. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } finally {
       isCheckingOut.value = false;
     }

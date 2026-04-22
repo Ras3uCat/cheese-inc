@@ -3,16 +3,13 @@ import '../../../shared/services/supabase_service.dart';
 import '../models/faq_item_model.dart';
 
 class FaqController extends GetxController {
-  final faqs      = <FaqItemModel>[].obs;
+  final faqs = <FaqItemModel>[].obs;
   final isLoading = false.obs;
 
   /// All unique categories in display order.
   List<String> get categories {
     final seen = <String>{};
-    return faqs
-        .map((f) => f.category ?? '')
-        .where(seen.add)
-        .toList();
+    return faqs.map((f) => f.category ?? '').where(seen.add).toList();
   }
 
   List<FaqItemModel> itemsForCategory(String category) =>
@@ -32,9 +29,10 @@ class FaqController extends GetxController {
           .select()
           .eq('is_active', true)
           .order('display_order');
-      faqs.value = (rows as List)
-          .map((r) => FaqItemModel.fromMap(r as Map<String, dynamic>))
-          .toList();
+      faqs.value =
+          (rows as List)
+              .map((r) => FaqItemModel.fromMap(r as Map<String, dynamic>))
+              .toList();
     } catch (_) {
       faqs.value = [];
     } finally {

@@ -39,9 +39,10 @@ class BlogPostView extends GetView<BlogPostController> {
           );
         }
         final post = controller.post.value!;
-        final dateStr = post.publishedAt != null
-            ? DateFormat('MMMM d, yyyy').format(post.publishedAt!.toLocal())
-            : '';
+        final dateStr =
+            post.publishedAt != null
+                ? DateFormat('MMMM d, yyyy').format(post.publishedAt!.toLocal())
+                : '';
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,10 +53,12 @@ class BlogPostView extends GetView<BlogPostController> {
                   width: double.infinity,
                   height: 280,
                   fit: BoxFit.cover,
-                  placeholder: (_, _) =>
-                      Container(height: 280, color: EColors.surfaceVariant),
-                  errorWidget: (_, _, _) =>
-                      Container(height: 280, color: EColors.surfaceVariant),
+                  placeholder:
+                      (_, _) =>
+                          Container(height: 280, color: EColors.surfaceVariant),
+                  errorWidget:
+                      (_, _, _) =>
+                          Container(height: 280, color: EColors.surfaceVariant),
                 ),
               Padding(
                 padding: const EdgeInsets.all(ESpacing.lg),
@@ -65,10 +68,13 @@ class BlogPostView extends GetView<BlogPostController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (dateStr.isNotEmpty)
-                        Text(dateStr,
-                            style: ETextStyles.bodyMd.copyWith(
-                                color: EColors.onSurfaceMuted,
-                                fontSize: 13)),
+                        Text(
+                          dateStr,
+                          style: ETextStyles.bodyMd.copyWith(
+                            color: EColors.onSurfaceMuted,
+                            fontSize: 13,
+                          ),
+                        ),
                       const SizedBox(height: ESpacing.sm),
                       Text(post.title, style: ETextStyles.h2),
                       const SizedBox(height: ESpacing.lg),
@@ -92,11 +98,12 @@ class _BodyText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final paragraphs = body
-        .split('\n\n')
-        .map((p) => p.trim())
-        .where((p) => p.isNotEmpty)
-        .toList();
+    final paragraphs =
+        body
+            .split('\n\n')
+            .map((p) => p.trim())
+            .where((p) => p.isNotEmpty)
+            .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

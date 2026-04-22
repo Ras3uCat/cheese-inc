@@ -13,26 +13,26 @@ class BlogModule implements AppModule {
 
   @override
   NavItem get navItem => const NavItem(
-        label: 'Blog',
-        icon: Icons.article_outlined,
-        route: ERoutes.blog,
-      );
+    label: 'Blog',
+    icon: Icons.article_outlined,
+    route: ERoutes.blog,
+  );
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.blog,
-          page: () => const BlogListView(),
-          binding: BlogListBinding(),
-          transition: Transition.fadeIn,
-        ),
-        GetPage(
-          name: ERoutes.blogPost,
-          page: () => const BlogPostView(),
-          binding: BlogPostBinding(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.blog,
+      page: () => const BlogListView(),
+      binding: BlogListBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: ERoutes.blogPost,
+      page: () => const BlogPostView(),
+      binding: BlogPostBinding(),
+      transition: Transition.fadeIn,
+    ),
+  ];
 
   @override
   Bindings? get binding => null;

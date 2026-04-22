@@ -31,7 +31,8 @@ class StaffBookingsView extends GetView<StaffController> {
                 padding: const EdgeInsets.all(ESpacing.lg),
                 decoration: BoxDecoration(
                   border: Border(
-                      bottom: BorderSide(color: EColors.divider, width: 0.5)),
+                    bottom: BorderSide(color: EColors.divider, width: 0.5),
+                  ),
                 ),
                 child: Text('My Bookings', style: ETextStyles.h2),
               ),
@@ -46,10 +47,12 @@ class StaffBookingsView extends GetView<StaffController> {
                 dividerColor: EColors.divider,
               ),
               Expanded(
-                child: TabBarView(children: [
-                  _BookingList(bookings: controller.upcomingBookings),
-                  _BookingList(bookings: controller.pastBookings),
-                ]),
+                child: TabBarView(
+                  children: [
+                    _BookingList(bookings: controller.upcomingBookings),
+                    _BookingList(bookings: controller.pastBookings),
+                  ],
+                ),
               ),
             ],
           ),
@@ -66,8 +69,7 @@ class _BookingList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (bookings.isEmpty) {
-      return Center(
-          child: Text('No bookings.', style: ETextStyles.bodyMuted));
+      return Center(child: Text('No bookings.', style: ETextStyles.bodyMuted));
     }
     return ListView.separated(
       padding: const EdgeInsets.all(ESpacing.lg),
@@ -90,39 +92,54 @@ class _BookingCard extends StatelessWidget {
         color: EColors.surfaceVariant,
         border: Border.all(color: EColors.divider, width: 0.5),
       ),
-      child: Row(children: [
-        // Date block
-        Container(
-          width: 48,
-          alignment: Alignment.center,
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Text(
-              DateFormat('MMM').format(booking.startTime).toUpperCase(),
-              style: ETextStyles.labelSm.copyWith(color: EColors.primary),
+      child: Row(
+        children: [
+          // Date block
+          Container(
+            width: 48,
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  DateFormat('MMM').format(booking.startTime).toUpperCase(),
+                  style: ETextStyles.labelSm.copyWith(color: EColors.primary),
+                ),
+                Text('${booking.startTime.day}', style: ETextStyles.h2),
+              ],
             ),
-            Text('${booking.startTime.day}', style: ETextStyles.h2),
-          ]),
-        ),
-        const SizedBox(width: ESpacing.md),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(booking.clientName, style: ETextStyles.h4),
-            Text(booking.clientEmail,
-                style: ETextStyles.bodySm.copyWith(
-                    color: EColors.onSurfaceMuted)),
-            const SizedBox(height: ESpacing.xs),
-            Text(
-              '${booking.formattedTime} · ${booking.formattedDuration}',
-              style: ETextStyles.bodySm.copyWith(color: EColors.primary),
+          ),
+          const SizedBox(width: ESpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(booking.clientName, style: ETextStyles.h4),
+                Text(
+                  booking.clientEmail,
+                  style: ETextStyles.bodySm.copyWith(
+                    color: EColors.onSurfaceMuted,
+                  ),
+                ),
+                const SizedBox(height: ESpacing.xs),
+                Text(
+                  '${booking.formattedTime} · ${booking.formattedDuration}',
+                  style: ETextStyles.bodySm.copyWith(color: EColors.primary),
+                ),
+                Text(
+                  booking.serviceNames.join(', '),
+                  style: ETextStyles.bodySmMuted,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
-            Text(booking.serviceNames.join(', '),
-                style: ETextStyles.bodySmMuted,
-                overflow: TextOverflow.ellipsis),
-          ]),
-        ),
-        Text(booking.formattedPrice,
-            style: ETextStyles.price.copyWith(fontSize: 16)),
-      ]),
+          ),
+          Text(
+            booking.formattedPrice,
+            style: ETextStyles.price.copyWith(fontSize: 16),
+          ),
+        ],
+      ),
     );
   }
 }

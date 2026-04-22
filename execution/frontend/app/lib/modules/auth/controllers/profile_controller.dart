@@ -9,13 +9,14 @@ import '../../booking/repositories/booking_repository.dart';
 class ProfileController extends GetxController {
   final BookingRepository _repo = Get.find<BookingRepository>();
 
-  final bookings        = <BookingModel>[].obs;
-  final isLoading       = false.obs;
-  final isCancelling    = ''.obs; // booking id currently being cancelled, '' = none
-  final loyaltyBalance  = 0.obs;
+  final bookings = <BookingModel>[].obs;
+  final isLoading = false.obs;
+  final isCancelling =
+      ''.obs; // booking id currently being cancelled, '' = none
+  final loyaltyBalance = 0.obs;
 
   // Cancellation policy from business_config
-  int cancellationHours     = 24;
+  int cancellationHours = 24;
   int cancellationRefundPct = 100;
 
   @override
@@ -54,7 +55,9 @@ class ProfileController extends GetxController {
           .select('points')
           .eq('client_email', email);
       final total = (rows as List).fold<int>(
-          0, (sum, r) => sum + ((r['points'] as num?)?.toInt() ?? 0));
+        0,
+        (sum, r) => sum + ((r['points'] as num?)?.toInt() ?? 0),
+      );
       loyaltyBalance.value = total;
     } catch (_) {
       // keep default 0
@@ -63,12 +66,13 @@ class ProfileController extends GetxController {
 
   Future<void> _loadCancellationPolicy() async {
     try {
-      final row = await Supabase.instance.client
-          .from('business_config')
-          .select('cancellation_hours, cancellation_refund_pct')
-          .limit(1)
-          .single();
-      cancellationHours     = (row['cancellation_hours']     as num).toInt();
+      final row =
+          await Supabase.instance.client
+              .from('business_config')
+              .select('cancellation_hours, cancellation_refund_pct')
+              .limit(1)
+              .single();
+      cancellationHours = (row['cancellation_hours'] as num).toInt();
       cancellationRefundPct = (row['cancellation_refund_pct'] as num).toInt();
     } catch (_) {
       // keep defaults
@@ -91,9 +95,10 @@ class ProfileController extends GetxController {
   Future<void> resumePayment(String bookingId) async {
     try {
       final url = await _repo.createCheckoutSession(
-        bookingId:  bookingId,
-        successUrl: '${AppEnv.siteUrl}${ERoutes.confirmation}?booking_id=$bookingId',
-        cancelUrl:  '${AppEnv.siteUrl}${ERoutes.profile}',
+        bookingId: bookingId,
+        successUrl:
+            '${AppEnv.siteUrl}${ERoutes.confirmation}?booking_id=$bookingId',
+        cancelUrl: '${AppEnv.siteUrl}${ERoutes.profile}',
       );
       await launchUrl(Uri.parse(url), mode: LaunchMode.platformDefault);
     } catch (_) {}
@@ -111,8 +116,7 @@ class ProfileController extends GetxController {
 
   /// Whether the booking is within the no-refund/restricted cancellation window.
   bool isWithinCancellationWindow(BookingModel b) {
-    final deadline = b.startTime
-        .subtract(Duration(hours: cancellationHours));
+    final deadline = b.startTime.subtract(Duration(hours: cancellationHours));
     return DateTime.now().isAfter(deadline);
   }
 }

@@ -23,8 +23,8 @@ class StaffCalendarDialog extends StatefulWidget {
 
 class _StaffCalendarDialogState extends State<StaffCalendarDialog> {
   String? _token;
-  bool    _loading = true;
-  bool    _regenerating = false;
+  bool _loading = true;
+  bool _regenerating = false;
 
   String _feedUrl(String token) =>
       '${AppEnv.supabaseUrl}/functions/v1/staff-calendar?token=$token';
@@ -37,9 +37,14 @@ class _StaffCalendarDialogState extends State<StaffCalendarDialog> {
 
   Future<void> _load() async {
     try {
-      final token = await Get.find<MasterController>()
-          .getStaffCalendarToken(widget.staffId);
-      if (mounted) setState(() { _token = token; _loading = false; });
+      final token = await Get.find<MasterController>().getStaffCalendarToken(
+        widget.staffId,
+      );
+      if (mounted)
+        setState(() {
+          _token = token;
+          _loading = false;
+        });
     } catch (_) {
       if (mounted) setState(() => _loading = false);
     }
@@ -65,9 +70,9 @@ class _StaffCalendarDialogState extends State<StaffCalendarDialog> {
   void _copy() {
     if (_token == null) return;
     Clipboard.setData(ClipboardData(text: _feedUrl(_token!)));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Calendar URL copied!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Calendar URL copied!')));
   }
 
   @override
@@ -82,27 +87,31 @@ class _StaffCalendarDialogState extends State<StaffCalendarDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Calendar Feed', style: ETextStyles.h3),
-                      Text(widget.staffName, style: ETextStyles.bodyMuted),
-                    ],
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Calendar Feed', style: ETextStyles.h3),
+                        Text(widget.staffName, style: ETextStyles.bodyMuted),
+                      ],
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
-                ),
-              ]),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
               const SizedBox(height: ESpacing.lg),
               if (_loading)
                 const Center(child: CircularProgressIndicator())
               else if (_token == null)
-                Text('No token yet — generate one below.',
-                    style: ETextStyles.bodyMuted)
+                Text(
+                  'No token yet — generate one below.',
+                  style: ETextStyles.bodyMuted,
+                )
               else ...[
                 Text('Feed URL', style: ETextStyles.label),
                 const SizedBox(height: ESpacing.xs),
@@ -110,13 +119,14 @@ class _StaffCalendarDialogState extends State<StaffCalendarDialog> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(ESpacing.sm),
                   decoration: BoxDecoration(
-                    color:  EColors.surfaceVariant,
+                    color: EColors.surfaceVariant,
                     border: Border.all(color: EColors.divider),
                   ),
                   child: SelectableText(
                     _feedUrl(_token!),
-                    style: ETextStyles.caption
-                        .copyWith(fontFamily: 'monospace'),
+                    style: ETextStyles.caption.copyWith(
+                      fontFamily: 'monospace',
+                    ),
                   ),
                 ),
                 const SizedBox(height: ESpacing.sm),
@@ -134,8 +144,9 @@ class _StaffCalendarDialogState extends State<StaffCalendarDialog> {
               if (_token != null)
                 Text(
                   'Regenerating breaks existing calendar subscriptions.',
-                  style: ETextStyles.caption
-                      .copyWith(color: EColors.onSurfaceMuted),
+                  style: ETextStyles.caption.copyWith(
+                    color: EColors.onSurfaceMuted,
+                  ),
                 ),
               const SizedBox(height: ESpacing.sm),
               SizedBox(
@@ -148,13 +159,19 @@ class _StaffCalendarDialogState extends State<StaffCalendarDialog> {
                     shape: const RoundedRectangleBorder(),
                     padding: const EdgeInsets.symmetric(vertical: ESpacing.md),
                   ),
-                  child: _regenerating
-                      ? const SizedBox(
-                          width: 16, height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2))
-                      : Text(
-                          _token == null ? 'Generate Token' : 'Regenerate Token',
-                          style: ETextStyles.button),
+                  child:
+                      _regenerating
+                          ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : Text(
+                            _token == null
+                                ? 'Generate Token'
+                                : 'Regenerate Token',
+                            style: ETextStyles.button,
+                          ),
                 ),
               ),
             ],

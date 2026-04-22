@@ -148,7 +148,11 @@ class _TopBarShellState extends State<_TopBarShell> {
     final pt = PersonalityTheme.fromEnv();
     return Stack(
       children: [
-        SingleChildScrollView(controller: _scroll, child: widget.child),
+        SingleChildScrollView(
+          controller: _scroll,
+          physics: const BouncingScrollPhysics(),
+          child: widget.child,
+        ),
         Positioned(
           top: 0,
           left: 0,

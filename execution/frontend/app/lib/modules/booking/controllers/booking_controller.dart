@@ -14,10 +14,10 @@ class BookingController extends GetxController {
   final BookingRepository _repository = Get.find<BookingRepository>();
 
   // ── Loading / error ──────────────────────────────────────────────────────
-  final isLoading     = false.obs;
-  final slotsLoading  = false.obs;
-  final isConfirming  = false.obs;
-  final error         = RxnString();
+  final isLoading = false.obs;
+  final slotsLoading = false.obs;
+  final isConfirming = false.obs;
+  final error = RxnString();
 
   // ── Step tracking ────────────────────────────────────────────────────────
   final currentStep = 0.obs;
@@ -26,25 +26,25 @@ class BookingController extends GetxController {
   final isAnyArtist = false.obs;
 
   // ── Selections ───────────────────────────────────────────────────────────
-  final selectedArtist    = Rxn<ArtistModel>();
+  final selectedArtist = Rxn<ArtistModel>();
   final selectedServiceIds = <String>[].obs;
-  final selectedSlot      = Rxn<TimeSlotModel>();
-  final promoCode         = RxnString();
+  final selectedSlot = Rxn<TimeSlotModel>();
+  final promoCode = RxnString();
 
   // ── Client form ──────────────────────────────────────────────────────────
-  final clientName  = ''.obs;
+  final clientName = ''.obs;
   final clientEmail = ''.obs;
   final clientNotes = ''.obs;
 
   // ── Packages ─────────────────────────────────────────────────────────────
-  final packages          = <PackageModel>[].obs;
+  final packages = <PackageModel>[].obs;
   final selectedPackageId = RxnString();
 
   // ── Loaded data ──────────────────────────────────────────────────────────
-  final artists          = <ArtistModel>[].obs;
-  final services         = <ServiceModel>[].obs;
-  final filteredArtists  = <ArtistModel>[].obs;
-  final availableSlots   = <TimeSlotModel>[].obs;
+  final artists = <ArtistModel>[].obs;
+  final services = <ServiceModel>[].obs;
+  final filteredArtists = <ArtistModel>[].obs;
+  final availableSlots = <TimeSlotModel>[].obs;
   final confirmedBooking = Rxn<BookingModel>();
 
   // ── Location (LOCATIONS_ENABLED) ─────────────────────────────────────────
@@ -61,9 +61,9 @@ class BookingController extends GetxController {
   final _referralCode = RxnString();
 
   // ── Waitlist ──────────────────────────────────────────────────────────────
-  final waitlistSubmitted  = false.obs;
-  final isJoiningWaitlist  = false.obs;
-  final waitlistError      = RxnString();
+  final waitlistSubmitted = false.obs;
+  final isJoiningWaitlist = false.obs;
+  final waitlistError = RxnString();
 
   // ── Date picker ──────────────────────────────────────────────────────────
   final selectedDateIndex = 0.obs;
@@ -102,7 +102,7 @@ class BookingController extends GetxController {
         _repository.getArtists(),
         _repository.getServices(),
       ]);
-      artists.value  = results[0] as List<ArtistModel>;
+      artists.value = results[0] as List<ArtistModel>;
       services.value = results[1] as List<ServiceModel>;
     } catch (e) {
       error.value = 'Failed to load booking data. Please try again.';
@@ -113,14 +113,15 @@ class BookingController extends GetxController {
 
   // ── Computed ─────────────────────────────────────────────────────────────
   int get totalDurationMinutes => selectedServiceIds.fold(0, (sum, id) {
-        final svc = services.firstWhereOrNull((s) => s.id == id);
-        return sum + (svc?.durationMinutes ?? 0);
-      });
+    final svc = services.firstWhereOrNull((s) => s.id == id);
+    return sum + (svc?.durationMinutes ?? 0);
+  });
 
   double get totalPrice {
-    final pkg = selectedPackageId.value != null
-        ? packages.firstWhereOrNull((p) => p.id == selectedPackageId.value)
-        : null;
+    final pkg =
+        selectedPackageId.value != null
+            ? packages.firstWhereOrNull((p) => p.id == selectedPackageId.value)
+            : null;
     if (pkg != null) return pkg.effectivePrice(services);
     return selectedServiceIds.fold(0.0, (sum, id) {
       final svc = services.firstWhereOrNull((s) => s.id == id);
@@ -165,12 +166,12 @@ class BookingController extends GetxController {
 
   // ── Step 1 — Artist selection ─────────────────────────────────────────────
   void selectArtist(ArtistModel artist) {
-    isAnyArtist.value    = false;
+    isAnyArtist.value = false;
     selectedArtist.value = artist;
   }
 
   void selectAnyArtist() {
-    isAnyArtist.value    = true;
+    isAnyArtist.value = true;
     selectedArtist.value = null;
   }
 
@@ -201,9 +202,9 @@ class BookingController extends GetxController {
   }
 
   void selectPackage(PackageModel pkg) {
-    selectedPackageId.value  = pkg.id;
+    selectedPackageId.value = pkg.id;
     selectedServiceIds.value = List.from(pkg.serviceIds);
-    selectedSlot.value       = null;
+    selectedSlot.value = null;
   }
 
   void clearPackage() {
@@ -212,8 +213,9 @@ class BookingController extends GetxController {
 
   Future<void> _refreshFilteredArtists() async {
     try {
-      filteredArtists.value =
-          await _repository.getArtistsForServices(selectedServiceIds);
+      filteredArtists.value = await _repository.getArtistsForServices(
+        selectedServiceIds,
+      );
     } catch (_) {
       filteredArtists.value = [];
     }
@@ -261,22 +263,29 @@ class BookingController extends GetxController {
     if (allDates.isEmpty) return [];
     final date = allDates[selectedDateIndex.value];
     return availableSlots
-        .where((s) =>
-            s.startTime.year  == date.year &&
-            s.startTime.month == date.month &&
-            s.startTime.day   == date.day)
+        .where(
+          (s) =>
+              s.startTime.year == date.year &&
+              s.startTime.month == date.month &&
+              s.startTime.day == date.day,
+        )
         .toList();
   }
 
   List<DateTime> get availableDates {
-    final seen  = <String>{};
+    final seen = <String>{};
     final dates = <DateTime>[];
     for (final slot in availableSlots) {
       final key =
           '${slot.startTime.year}-${slot.startTime.month}-${slot.startTime.day}';
       if (seen.add(key)) {
-        dates.add(DateTime(
-            slot.startTime.year, slot.startTime.month, slot.startTime.day));
+        dates.add(
+          DateTime(
+            slot.startTime.year,
+            slot.startTime.month,
+            slot.startTime.day,
+          ),
+        );
       }
     }
     return dates;
@@ -302,10 +311,10 @@ class BookingController extends GetxController {
     waitlistError.value = null;
     try {
       await _repository.joinWaitlist(
-        artistId:     artist.id,
-        serviceIds:   List.from(selectedServiceIds),
-        clientName:   name.trim(),
-        clientEmail:  email.trim(),
+        artistId: artist.id,
+        serviceIds: List.from(selectedServiceIds),
+        clientName: name.trim(),
+        clientEmail: email.trim(),
         preferredDate: preferredDate,
       );
       waitlistSubmitted.value = true;
@@ -320,31 +329,33 @@ class BookingController extends GetxController {
   Future<void> confirmBooking() async {
     if (!canConfirm || isConfirming.value) return;
     final artist = selectedArtist.value!;
-    final slot   = selectedSlot.value!;
+    final slot = selectedSlot.value!;
     final addons = Get.find<BookingAddonsController>();
 
     isConfirming.value = true;
     error.value = null;
     try {
-      final notes         = clientNotes.value.trim();
-      final phone         = addons.smsPhone.value.trim();
-      final useStripe     = AppEnv.stripeMode != 'none' && AppEnv.stripePk.isNotEmpty;
-      final noPaymentNow  = !addons.isPaymentRequired; // deposit_pct == 0 → pay at appointment
+      final notes = clientNotes.value.trim();
+      final phone = addons.smsPhone.value.trim();
+      final useStripe =
+          AppEnv.stripeMode != 'none' && AppEnv.stripePk.isNotEmpty;
+      final noPaymentNow =
+          !addons.isPaymentRequired; // deposit_pct == 0 → pay at appointment
 
       confirmedBooking.value = await _repository.confirmBooking(
-        artistId:             artist.id,
-        serviceIds:           List.from(selectedServiceIds),
-        serviceNames:         selectedServices.map((s) => s.name).toList(),
-        startTime:            slot.startTime,
+        artistId: artist.id,
+        serviceIds: List.from(selectedServiceIds),
+        serviceNames: selectedServices.map((s) => s.name).toList(),
+        startTime: slot.startTime,
         totalDurationMinutes: totalDurationMinutes,
-        totalPrice:           totalPrice,
-        clientName:           clientName.value.trim(),
-        clientEmail:          clientEmail.value.trim(),
-        promoCodeId:          promoCode.value,
-        clientNotes:          notes.isEmpty ? null : notes,
-        clientPhone:          phone.isEmpty ? null : phone,
-        locationId:           selectedLocationId.value,
-        initialStatus:        (useStripe && !noPaymentNow) ? 'pending' : 'confirmed',
+        totalPrice: totalPrice,
+        clientName: clientName.value.trim(),
+        clientEmail: clientEmail.value.trim(),
+        promoCodeId: promoCode.value,
+        clientNotes: notes.isEmpty ? null : notes,
+        clientPhone: phone.isEmpty ? null : phone,
+        locationId: selectedLocationId.value,
+        initialStatus: (useStripe && !noPaymentNow) ? 'pending' : 'confirmed',
       );
       final booking = confirmedBooking.value!;
 
@@ -353,9 +364,9 @@ class BookingController extends GetxController {
       if (refCode != null && refCode.isNotEmpty) {
         try {
           await _repository.recordReferral(
-            referralCode:  refCode,
+            referralCode: refCode,
             referredEmail: clientEmail.value.trim(),
-            bookingId:     booking.id,
+            bookingId: booking.id,
           );
         } catch (_) {
           // Best-effort — don't fail the booking if referral recording fails
@@ -371,10 +382,11 @@ class BookingController extends GetxController {
       final charge = addons.chargeAmount(booking.totalPrice);
       if (charge == 0) {
         await _repository.applyFullDiscount(
-          bookingId:           booking.id,
-          giftVoucherCode:     addons.giftVoucherId.value != null
-              ? addons.giftVoucherCode.value
-              : null,
+          bookingId: booking.id,
+          giftVoucherCode:
+              addons.giftVoucherId.value != null
+                  ? addons.giftVoucherCode.value
+                  : null,
           loyaltyPointsRedeem: addons.loyaltyRedeemPoints.value,
         );
         Get.offAllNamed(ERoutes.confirmation, arguments: booking);
@@ -383,14 +395,17 @@ class BookingController extends GetxController {
 
       // Partial discount or no discount — Stripe Checkout
       final checkoutUrl = await _repository.createCheckoutSession(
-        bookingId:           booking.id,
-        successUrl:          '${AppEnv.siteUrl}${ERoutes.confirmation}?booking_id=${booking.id}',
-        cancelUrl:           '${AppEnv.siteUrl}${ERoutes.booking}?cancelled_booking_id=${booking.id}',
-        giftVoucherCode:     addons.giftVoucherId.value != null
-            ? addons.giftVoucherCode.value
-            : null,
+        bookingId: booking.id,
+        successUrl:
+            '${AppEnv.siteUrl}${ERoutes.confirmation}?booking_id=${booking.id}',
+        cancelUrl:
+            '${AppEnv.siteUrl}${ERoutes.booking}?cancelled_booking_id=${booking.id}',
+        giftVoucherCode:
+            addons.giftVoucherId.value != null
+                ? addons.giftVoucherCode.value
+                : null,
         loyaltyPointsRedeem: addons.loyaltyRedeemPoints.value,
-        tipAmountCents:      addons.tipAmountCents.value,
+        tipAmountCents: addons.tipAmountCents.value,
       );
       await launchUrl(Uri.parse(checkoutUrl), mode: LaunchMode.platformDefault);
     } catch (_) {
@@ -411,25 +426,25 @@ class BookingController extends GetxController {
   }
 
   void reset() {
-    currentStep.value       = 0;
-    isAnyArtist.value       = false;
-    selectedArtist.value    = null;
+    currentStep.value = 0;
+    isAnyArtist.value = false;
+    selectedArtist.value = null;
     selectedServiceIds.clear();
-    selectedSlot.value      = null;
+    selectedSlot.value = null;
     filteredArtists.clear();
     availableSlots.clear();
-    clientName.value        = '';
-    clientEmail.value       = '';
-    clientNotes.value       = '';
-    promoCode.value         = null;
-    confirmedBooking.value  = null;
+    clientName.value = '';
+    clientEmail.value = '';
+    clientNotes.value = '';
+    promoCode.value = null;
+    confirmedBooking.value = null;
     selectedDateIndex.value = 0;
-    error.value             = null;
-    waitlistSubmitted.value  = false;
-    waitlistError.value      = null;
-    selectedPackageId.value  = null;
+    error.value = null;
+    waitlistSubmitted.value = false;
+    waitlistError.value = null;
+    selectedPackageId.value = null;
     packages.clear();
-    _referralCode.value     = null;
+    _referralCode.value = null;
     Get.find<BookingAddonsController>().reset();
   }
 
@@ -439,7 +454,7 @@ class BookingController extends GetxController {
   void _applyBookAgainArgs() {
     final args = Get.arguments as Map<String, dynamic>?;
     if (args == null) return;
-    final artistId   = args['artistId']   as String?;
+    final artistId = args['artistId'] as String?;
     final serviceIds = args['serviceIds'] as List?;
     if (artistId == null || serviceIds == null) return;
 
@@ -448,10 +463,10 @@ class BookingController extends GetxController {
       if (loading) return;
       final artist = artists.firstWhereOrNull((a) => a.id == artistId);
       if (artist == null) return;
-      selectedArtist.value    = artist;
-      isAnyArtist.value       = false;
+      selectedArtist.value = artist;
+      isAnyArtist.value = false;
       selectedServiceIds.value = List<String>.from(serviceIds);
-      currentStep.value       = 2;
+      currentStep.value = 2;
       _loadSlots();
     });
   }

@@ -13,39 +13,36 @@ class ShopModule implements AppModule {
   String get moduleId => 'shop';
 
   @override
-  NavItem? get navItem => NavItem(
-        label: 'Shop',
-        icon: Icons.store_outlined,
-        route: ERoutes.shop,
-      );
+  NavItem? get navItem =>
+      NavItem(label: 'Shop', icon: Icons.store_outlined, route: ERoutes.shop);
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.shop,
-          page: () => const ShopView(),
-          binding: ShopBinding(),
-          transition: Transition.fadeIn,
-        ),
-        GetPage(
-          name: ERoutes.shopProduct,
-          page: () => const ProductDetailView(),
-          binding: ShopBinding(),
-          transition: Transition.fadeIn,
-        ),
-        GetPage(
-          name: ERoutes.shopCart,
-          page: () => const CartView(),
-          binding: ShopBinding(),
-          transition: Transition.fadeIn,
-        ),
-        GetPage(
-          name: ERoutes.shopConfirmation,
-          page: () => const OrderConfirmationView(),
-          binding: ShopBinding(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.shop,
+      page: () => const ShopView(),
+      binding: ShopBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: ERoutes.shopProduct,
+      page: () => const ProductDetailView(),
+      binding: ShopBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: ERoutes.shopCart,
+      page: () => const CartView(),
+      binding: ShopBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: ERoutes.shopConfirmation,
+      page: () => const OrderConfirmationView(),
+      binding: ShopBinding(),
+      transition: Transition.fadeIn,
+    ),
+  ];
 
   @override
   Bindings? get binding => null;

@@ -17,27 +17,31 @@ class SupabaseCalendarTokenRepository implements CalendarTokenRepository {
 
   @override
   Future<String?> getToken(String staffId) async {
-    final row = await _db
-        .from('calendar_tokens')
-        .select('token')
-        .eq('staff_id', staffId)
-        .maybeSingle();
+    final row =
+        await _db
+            .from('calendar_tokens')
+            .select('token')
+            .eq('staff_id', staffId)
+            .maybeSingle();
     return row?['token'] as String?;
   }
 
   @override
   Future<String> ensureToken(String staffId) async {
     // Upsert (ignore if row already exists) then re-read the current token.
-    await _db.from('calendar_tokens').upsert(
-      {'staff_id': staffId},
-      onConflict: 'staff_id',
-      ignoreDuplicates: true,
-    );
-    final row = await _db
+    await _db
         .from('calendar_tokens')
-        .select('token')
-        .eq('staff_id', staffId)
-        .single();
+        .upsert(
+          {'staff_id': staffId},
+          onConflict: 'staff_id',
+          ignoreDuplicates: true,
+        );
+    final row =
+        await _db
+            .from('calendar_tokens')
+            .select('token')
+            .eq('staff_id', staffId)
+            .single();
     return row['token'] as String;
   }
 

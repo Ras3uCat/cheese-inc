@@ -20,7 +20,7 @@ class AdminRepository {
     // Apply filters before order/limit (eq not available on TransformBuilder)
     var q = _db.from('bookings').select();
     if (artistId != null) q = q.eq('artist_id', artistId);
-    if (status   != null) q = q.eq('status', status);
+    if (status != null) q = q.eq('status', status);
     final rows = await q.order('start_time', ascending: false).limit(limit);
     return (rows as List)
         .map((r) => BookingModel.fromMap(r as Map<String, dynamic>))
@@ -30,20 +30,22 @@ class AdminRepository {
   Future<void> updateBookingStatus(String bookingId, String status) async {
     if (status == 'cancelled') {
       // cancel-booking handles Stripe refund, DB update, and notifications
-      await _db.functions.invoke('cancel-booking', body: {
-        'booking_id':    bookingId,
-        'notify_client': true,
-      });
+      await _db.functions.invoke(
+        'cancel-booking',
+        body: {'booking_id': bookingId, 'notify_client': true},
+      );
       return;
     }
 
     await _db.from('bookings').update({'status': status}).eq('id', bookingId);
 
     if (status == 'confirmed') {
-      _db.functions.invoke('send-notification', body: {
-        'booking_id': bookingId,
-        'type':       'confirmation',
-      }).ignore();
+      _db.functions
+          .invoke(
+            'send-notification',
+            body: {'booking_id': bookingId, 'type': 'confirmation'},
+          )
+          .ignore();
     }
   }
 
@@ -81,12 +83,18 @@ class AdminRepository {
   }
 
   Future<void> setArtistServices(
-      String artistId, List<String> serviceIds) async {
+    String artistId,
+    List<String> serviceIds,
+  ) async {
     await _db.from('artist_services').delete().eq('artist_id', artistId);
     if (serviceIds.isNotEmpty) {
-      await _db.from('artist_services').insert(serviceIds
-          .map((sid) => {'artist_id': artistId, 'service_id': sid})
-          .toList());
+      await _db
+          .from('artist_services')
+          .insert(
+            serviceIds
+                .map((sid) => {'artist_id': artistId, 'service_id': sid})
+                .toList(),
+          );
     }
   }
 
@@ -101,14 +109,14 @@ class AdminRepository {
 
   // ── Business hours ────────────────────────────────────────────────────────
   Future<List<Map<String, dynamic>>> getBusinessHours() async {
-    final rows = await _db
-        .from('business_hours')
-        .select()
-        .order('weekday');
+    final rows = await _db.from('business_hours').select().order('weekday');
     return List<Map<String, dynamic>>.from(rows as List);
   }
 
-  Future<void> updateBusinessHour(int weekday, Map<String, dynamic> data) async {
+  Future<void> updateBusinessHour(
+    int weekday,
+    Map<String, dynamic> data,
+  ) async {
     await _db.from('business_hours').update(data).eq('weekday', weekday);
   }
 
@@ -132,7 +140,7 @@ class AdminRepository {
     await _db.from('time_off').insert({
       'artist_id': artistId,
       'start_time': start.toUtc().toIso8601String(),
-      'end_time':   end.toUtc().toIso8601String(),
+      'end_time': end.toUtc().toIso8601String(),
       'reason': reason,
     });
   }
@@ -165,10 +173,7 @@ class AdminRepository {
 
   // ── Testimonials ──────────────────────────────────────────────────────────
   Future<List<TestimonialModel>> getTestimonials() async {
-    final rows = await _db
-        .from('testimonials')
-        .select()
-        .order('display_order');
+    final rows = await _db.from('testimonials').select().order('display_order');
     return (rows as List)
         .map((r) => TestimonialModel.fromMap(r as Map<String, dynamic>))
         .toList();
@@ -230,8 +235,8 @@ class AdminRepository {
     int displayOrder = 0,
   }) async {
     await _db.from('gallery_photos').insert({
-      'storage_path':  storagePath,
-      'caption':       caption,
+      'storage_path': storagePath,
+      'caption': caption,
       'display_order': displayOrder,
     });
   }
@@ -255,17 +260,13 @@ class AdminRepository {
     return List<Map<String, dynamic>>.from(rows as List);
   }
 
-  Future<void> updateStaffProfile(
-      String id, Map<String, dynamic> data) async {
+  Future<void> updateStaffProfile(String id, Map<String, dynamic> data) async {
     await _db.from('profiles').update(data).eq('id', id);
   }
 
   // ── FAQ ───────────────────────────────────────────────────────────────────
   Future<List<FaqItemModel>> getFaqs() async {
-    final rows = await _db
-        .from('faqs')
-        .select()
-        .order('display_order');
+    final rows = await _db.from('faqs').select().order('display_order');
     return (rows as List)
         .map((r) => FaqItemModel.fromMap(r as Map<String, dynamic>))
         .toList();

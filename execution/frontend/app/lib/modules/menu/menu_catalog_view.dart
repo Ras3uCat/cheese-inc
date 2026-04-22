@@ -25,17 +25,20 @@ class MenuCatalogView extends GetView<MenuCatalogController> {
         }
         if (controller.items.isEmpty) {
           return Center(
-              child: Text('No items yet.', style: ETextStyles.bodyMuted));
+            child: Text('No items yet.', style: ETextStyles.bodyMuted),
+          );
         }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _CategoryFilter(controller: controller),
             Expanded(
-              child: Obx(() => ListView(
-                    padding: const EdgeInsets.all(ESpacing.lg),
-                    children: _buildGrouped(controller.filteredItems),
-                  )),
+              child: Obx(
+                () => ListView(
+                  padding: const EdgeInsets.all(ESpacing.lg),
+                  children: _buildGrouped(controller.filteredItems),
+                ),
+              ),
             ),
           ],
         );
@@ -72,29 +75,34 @@ class _CategoryFilter extends StatelessWidget {
         color: EColors.surfaceVariant,
         border: Border(bottom: BorderSide(color: EColors.divider, width: 0.5)),
       ),
-      child: Obx(() => ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: controller.categories.length,
-            separatorBuilder: (_, _) => const SizedBox(width: ESpacing.sm),
-            itemBuilder: (_, i) {
-              final cat = controller.categories[i];
-              final isActive = controller.selectedCategory.value == cat;
-              return GestureDetector(
-                onTap: () => controller.selectedCategory.value = cat,
-                child: Chip(
-                  label: Text(cat,
-                      style: ETextStyles.labelSm.copyWith(
-                        color: isActive ? EColors.secondary : EColors.onSurface,
-                      )),
-                  backgroundColor: isActive ? EColors.primary : EColors.surface,
-                  side: BorderSide(
-                      color: isActive ? EColors.primary : EColors.divider,
-                      width: 0.5),
-                  padding: EdgeInsets.zero,
+      child: Obx(
+        () => ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: controller.categories.length,
+          separatorBuilder: (_, _) => const SizedBox(width: ESpacing.sm),
+          itemBuilder: (_, i) {
+            final cat = controller.categories[i];
+            final isActive = controller.selectedCategory.value == cat;
+            return GestureDetector(
+              onTap: () => controller.selectedCategory.value = cat,
+              child: Chip(
+                label: Text(
+                  cat,
+                  style: ETextStyles.labelSm.copyWith(
+                    color: isActive ? EColors.secondary : EColors.onSurface,
+                  ),
                 ),
-              );
-            },
-          )),
+                backgroundColor: isActive ? EColors.primary : EColors.surface,
+                side: BorderSide(
+                  color: isActive ? EColors.primary : EColors.divider,
+                  width: 0.5,
+                ),
+                padding: EdgeInsets.zero,
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -107,11 +115,15 @@ class _CategoryHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: ESpacing.lg, bottom: ESpacing.sm),
-      child: Row(children: [
-        Text(category.toUpperCase(), style: ETextStyles.overline),
-        const SizedBox(width: ESpacing.md),
-        Expanded(child: Divider(color: EColors.divider, thickness: 0.5, height: 1)),
-      ]),
+      child: Row(
+        children: [
+          Text(category.toUpperCase(), style: ETextStyles.overline),
+          const SizedBox(width: ESpacing.md),
+          Expanded(
+            child: Divider(color: EColors.divider, thickness: 0.5, height: 1),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -139,9 +151,11 @@ class _MenuItemTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: Image.network(
                   item.imageUrl!,
-                  width: 64, height: 64,
+                  width: 64,
+                  height: 64,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => const SizedBox(width: 64, height: 64),
+                  errorBuilder:
+                      (_, _, _) => const SizedBox(width: 64, height: 64),
                 ),
               ),
               const SizedBox(width: ESpacing.md),
@@ -150,22 +164,36 @@ class _MenuItemTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(children: [
-                    Expanded(child: Text(item.name, style: ETextStyles.h4)),
-                    Text(item.displayPrice,
-                        style: ETextStyles.bodySm.copyWith(color: EColors.primary)),
-                  ]),
+                  Row(
+                    children: [
+                      Expanded(child: Text(item.name, style: ETextStyles.h4)),
+                      Text(
+                        item.displayPrice,
+                        style: ETextStyles.bodySm.copyWith(
+                          color: EColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
                   if (item.description != null) ...[
                     const SizedBox(height: 4),
-                    Text(item.description!,
-                        style: ETextStyles.bodySm.copyWith(color: EColors.onSurfaceMuted),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis),
+                    Text(
+                      item.description!,
+                      style: ETextStyles.bodySm.copyWith(
+                        color: EColors.onSurfaceMuted,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                   if (!item.isAvailable) ...[
                     const SizedBox(height: 4),
-                    Text('Unavailable',
-                        style: ETextStyles.labelSm.copyWith(color: EColors.onSurfaceMuted)),
+                    Text(
+                      'Unavailable',
+                      style: ETextStyles.labelSm.copyWith(
+                        color: EColors.onSurfaceMuted,
+                      ),
+                    ),
                   ],
                 ],
               ),

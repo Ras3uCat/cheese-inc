@@ -5,11 +5,11 @@ import '../../../shared/services/supabase_service.dart';
 /// Calls the send-welcome Edge Function which handles DB insert + email.
 class NewsletterController extends GetxController {
   final email = ''.obs;
-  final name  = ''.obs;
+  final name = ''.obs;
 
   final isSubmitting = false.obs;
-  final isSuccess    = false.obs;
-  final error        = ''.obs;
+  final isSuccess = false.obs;
+  final error = ''.obs;
 
   bool get canSubmit {
     final e = email.value.trim();
@@ -19,13 +19,13 @@ class NewsletterController extends GetxController {
   Future<void> subscribe() async {
     if (!canSubmit) return;
     isSubmitting.value = true;
-    error.value        = '';
+    error.value = '';
     try {
       await SupabaseService.client.functions.invoke(
         'send-welcome',
         body: {
-          'email':  email.value.trim().toLowerCase(),
-          'name':   name.value.trim().isEmpty ? null : name.value.trim(),
+          'email': email.value.trim().toLowerCase(),
+          'name': name.value.trim().isEmpty ? null : name.value.trim(),
           'source': 'website',
         },
       );
@@ -38,9 +38,9 @@ class NewsletterController extends GetxController {
   }
 
   void reset() {
-    email.value     = '';
-    name.value      = '';
+    email.value = '';
+    name.value = '';
     isSuccess.value = false;
-    error.value     = '';
+    error.value = '';
   }
 }

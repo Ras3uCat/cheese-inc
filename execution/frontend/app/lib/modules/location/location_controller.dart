@@ -7,7 +7,7 @@ class LocationController extends GetxController {
 
   final locations = <LocationModel>[].obs;
   final isLoading = false.obs;
-  final error     = RxnString();
+  final error = RxnString();
 
   @override
   void onInit() {

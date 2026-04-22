@@ -14,19 +14,21 @@ class StepIndicator extends GetView<BookingController> {
   Widget build(BuildContext context) {
     final connectorW =
         MediaQuery.sizeOf(context).width < ESpacing.mobileBreak ? 24.0 : 48.0;
-    return Obx(() => Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(_labels.length * 2 - 1, (i) {
-            if (i.isOdd) {
-              return _connector(i ~/ 2, controller.currentStep.value, connectorW);
-            }
-            return _dot(i ~/ 2, controller.currentStep.value);
-          }),
-        ));
+    return Obx(
+      () => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(_labels.length * 2 - 1, (i) {
+          if (i.isOdd) {
+            return _connector(i ~/ 2, controller.currentStep.value, connectorW);
+          }
+          return _dot(i ~/ 2, controller.currentStep.value);
+        }),
+      ),
+    );
   }
 
   Widget _dot(int step, int current) {
-    final isDone   = step < current;
+    final isDone = step < current;
     final isActive = step == current;
 
     return AnimatedContainer(
@@ -34,9 +36,10 @@ class StepIndicator extends GetView<BookingController> {
       width: 28.0,
       height: 28.0,
       decoration: BoxDecoration(
-        color: isActive
-            ? EColors.primary
-            : isDone
+        color:
+            isActive
+                ? EColors.primary
+                : isDone
                 ? EColors.primaryMedium
                 : EColors.surfaceVariant,
         border: Border.all(
@@ -45,15 +48,17 @@ class StepIndicator extends GetView<BookingController> {
         ),
       ),
       child: Center(
-        child: isDone
-            ? Icon(Icons.check, color: EColors.primary, size: 14)
-            : Text(
-                '${step + 1}',
-                style: ETextStyles.labelSm.copyWith(
-                  color: isActive ? EColors.secondary : EColors.onSurfaceMuted,
-                  letterSpacing: 0,
+        child:
+            isDone
+                ? Icon(Icons.check, color: EColors.primary, size: 14)
+                : Text(
+                  '${step + 1}',
+                  style: ETextStyles.labelSm.copyWith(
+                    color:
+                        isActive ? EColors.secondary : EColors.onSurfaceMuted,
+                    letterSpacing: 0,
+                  ),
                 ),
-              ),
       ),
     );
   }

@@ -11,7 +11,7 @@ class LoginView extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
-    final emailCtrl    = TextEditingController();
+    final emailCtrl = TextEditingController();
     final passwordCtrl = TextEditingController();
 
     return Scaffold(
@@ -25,9 +25,17 @@ class LoginView extends GetView<AuthController> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(AppEnv.clientName, style: ETextStyles.h2, textAlign: TextAlign.center),
+                Text(
+                  AppEnv.clientName,
+                  style: ETextStyles.h2,
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: ESpacing.xs),
-                Text('Team Login', style: ETextStyles.bodyMuted, textAlign: TextAlign.center),
+                Text(
+                  'Team Login',
+                  style: ETextStyles.bodyMuted,
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: ESpacing.xxl),
 
                 TextField(
@@ -57,30 +65,45 @@ class LoginView extends GetView<AuthController> {
 
                 const SizedBox(height: ESpacing.lg),
 
-                Obx(() => ElevatedButton(
-                  onPressed: controller.isLoading
-                      ? null
-                      : () => controller.signIn(emailCtrl.text, passwordCtrl.text),
-                  child: controller.isLoading
-                      ? const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Sign In'),
-                )),
+                Obx(
+                  () => ElevatedButton(
+                    onPressed:
+                        controller.isLoading
+                            ? null
+                            : () => controller.signIn(
+                              emailCtrl.text,
+                              passwordCtrl.text,
+                            ),
+                    child:
+                        controller.isLoading
+                            ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                            : const Text('Sign In'),
+                  ),
+                ),
 
                 if (AppEnv.googleAuthEnabled || AppEnv.appleAuthEnabled) ...[
                   const SizedBox(height: ESpacing.lg),
-                  Row(children: [
-                    const Expanded(child: Divider()),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: ESpacing.md),
-                      child: Text('or', style: ETextStyles.bodySm.copyWith(
-                          color: EColors.onSurfaceMuted)),
-                    ),
-                    const Expanded(child: Divider()),
-                  ]),
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: ESpacing.md,
+                        ),
+                        child: Text(
+                          'or',
+                          style: ETextStyles.bodySm.copyWith(
+                            color: EColors.onSurfaceMuted,
+                          ),
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
                   const SizedBox(height: ESpacing.lg),
                   if (AppEnv.googleAuthEnabled)
                     OutlinedButton.icon(

@@ -33,13 +33,18 @@ class _StaffServicesViewState extends State<StaffServicesView> {
       if (uid == null) return;
 
       final results = await Future.wait([
-        _db.from('services').select().eq('is_active', true).order('category').order('name'),
+        _db
+            .from('services')
+            .select()
+            .eq('is_active', true)
+            .order('category')
+            .order('name'),
         _db.from('artist_services').select('service_id').eq('artist_id', uid),
       ]);
 
       final services = List<Map<String, dynamic>>.from(results[0] as List);
-      final myRows   = List<Map<String, dynamic>>.from(results[1] as List);
-      final myIds    = myRows.map((r) => r['service_id'] as String).toSet();
+      final myRows = List<Map<String, dynamic>>.from(results[1] as List);
+      final myIds = myRows.map((r) => r['service_id'] as String).toSet();
 
       if (mounted) {
         setState(() {
@@ -67,9 +72,16 @@ class _StaffServicesViewState extends State<StaffServicesView> {
 
     try {
       if (enabled) {
-        await _db.from('artist_services').insert({'artist_id': uid, 'service_id': serviceId});
+        await _db.from('artist_services').insert({
+          'artist_id': uid,
+          'service_id': serviceId,
+        });
       } else {
-        await _db.from('artist_services').delete().eq('artist_id', uid).eq('service_id', serviceId);
+        await _db
+            .from('artist_services')
+            .delete()
+            .eq('artist_id', uid)
+            .eq('service_id', serviceId);
       }
     } catch (_) {
       // Revert on failure
@@ -83,7 +95,10 @@ class _StaffServicesViewState extends State<StaffServicesView> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update service.', style: ETextStyles.bodySm),
+            content: Text(
+              'Failed to update service.',
+              style: ETextStyles.bodySm,
+            ),
             backgroundColor: EColors.error,
           ),
         );
@@ -102,52 +117,67 @@ class _StaffServicesViewState extends State<StaffServicesView> {
           Container(
             padding: const EdgeInsets.all(ESpacing.lg),
             decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: EColors.divider, width: 0.5)),
+              border: Border(
+                bottom: BorderSide(color: EColors.divider, width: 0.5),
+              ),
             ),
             child: Text('My Services', style: ETextStyles.h2),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: ESpacing.lg, vertical: ESpacing.sm),
+            padding: const EdgeInsets.symmetric(
+              horizontal: ESpacing.lg,
+              vertical: ESpacing.sm,
+            ),
             child: Text(
               'Toggle the services you offer. Clients can only book you for enabled services.',
               style: ETextStyles.bodySmMuted,
             ),
           ),
           Expanded(
-            child: _loading
-                ? const Center(child: CircularProgressIndicator())
-                : _services.isEmpty
-                    ? Center(child: Text('No services found.', style: ETextStyles.bodyMuted))
-                    : ListView.separated(
-                        padding: const EdgeInsets.all(ESpacing.lg),
-                        itemCount: _services.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: ESpacing.xs),
-                        itemBuilder: (_, i) {
-                          final svc      = _services[i];
-                          final id       = svc['id'] as String;
-                          final name     = svc['name'] as String? ?? '';
-                          final category = svc['category'] as String? ?? '';
-                          final price    = (svc['price'] as num?)?.toDouble() ?? 0.0;
-                          final enabled  = _myServiceIds.contains(id);
-
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: EColors.surfaceVariant,
-                              border: Border.all(color: EColors.divider, width: 0.5),
-                            ),
-                            child: SwitchListTile(
-                              value: enabled,
-                              activeTrackColor: EColors.primary,
-                              onChanged: (v) => _toggle(id, v),
-                              title: Text(name, style: ETextStyles.h4),
-                              subtitle: Text(
-                                '$category · \$${price.toStringAsFixed(0)}',
-                                style: ETextStyles.bodySmMuted,
-                              ),
-                            ),
-                          );
-                        },
+            child:
+                _loading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _services.isEmpty
+                    ? Center(
+                      child: Text(
+                        'No services found.',
+                        style: ETextStyles.bodyMuted,
                       ),
+                    )
+                    : ListView.separated(
+                      padding: const EdgeInsets.all(ESpacing.lg),
+                      itemCount: _services.length,
+                      separatorBuilder:
+                          (_, _) => const SizedBox(height: ESpacing.xs),
+                      itemBuilder: (_, i) {
+                        final svc = _services[i];
+                        final id = svc['id'] as String;
+                        final name = svc['name'] as String? ?? '';
+                        final category = svc['category'] as String? ?? '';
+                        final price = (svc['price'] as num?)?.toDouble() ?? 0.0;
+                        final enabled = _myServiceIds.contains(id);
+
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: EColors.surfaceVariant,
+                            border: Border.all(
+                              color: EColors.divider,
+                              width: 0.5,
+                            ),
+                          ),
+                          child: SwitchListTile(
+                            value: enabled,
+                            activeTrackColor: EColors.primary,
+                            onChanged: (v) => _toggle(id, v),
+                            title: Text(name, style: ETextStyles.h4),
+                            subtitle: Text(
+                              '$category · \$${price.toStringAsFixed(0)}',
+                              style: ETextStyles.bodySmMuted,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),

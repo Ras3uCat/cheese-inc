@@ -1,3 +1,8 @@
+# Secrets
+.env
+.env.*
+client.json
+
 # Miscellaneous
 *.class
 *.log

@@ -12,20 +12,22 @@ class EColors {
     return Color(value);
   }
 
-  static Color get primary    => _hex(AppEnv.colorPrimary);
-  static Color get secondary  => _hex(AppEnv.colorSecondary);
-  static Color get accent     => _hex(AppEnv.colorAccent);
-  static Color get surface    => _hex(AppEnv.colorSurface);
-  static Color get onSurface  => _hex(AppEnv.colorOnSurface);
-  static Color get error      => _hex(AppEnv.colorError);
+  static Color get primary => _hex(AppEnv.colorPrimary);
+  static Color get secondary => _hex(AppEnv.colorSecondary);
+  static Color get accent => _hex(AppEnv.colorAccent);
+  static Color get surface => _hex(AppEnv.colorSurface);
+  static Color get onSurface => _hex(AppEnv.colorOnSurface);
+  static Color get error => _hex(AppEnv.colorError);
 
   // Derived
-  static Color get primaryLight   => primary.withValues(alpha: 0.15);
-  static Color get primaryMedium  => primary.withValues(alpha: 0.5);
+  static Color get primaryLight => primary.withValues(alpha: 0.15);
+  static Color get primaryMedium => primary.withValues(alpha: 0.5);
   static Color get surfaceVariant => onSurface.withValues(alpha: 0.05);
-  static Color get divider        => onSurface.withValues(alpha: 0.12);
+  // Cream alternate background — used for alternating section backgrounds.
+  static Color get surfaceAlt => secondary;
+  static Color get divider => onSurface.withValues(alpha: 0.12);
   static Color get onSurfaceMuted => onSurface.withValues(alpha: 0.5);
-  static Color get transparent    => Colors.transparent;
-  static Color get white          => Colors.white;
-  static Color get black          => Colors.black;
+  static Color get transparent => Colors.transparent;
+  static Color get white => Colors.white;
+  static Color get black => Colors.black;
 }

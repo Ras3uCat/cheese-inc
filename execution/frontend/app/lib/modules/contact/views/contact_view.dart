@@ -13,13 +13,13 @@ class ContactView extends GetView<ContactController> {
 
   @override
   Widget build(BuildContext context) {
-    final nameCtrl    = TextEditingController();
-    final emailCtrl   = TextEditingController();
+    final nameCtrl = TextEditingController();
+    final emailCtrl = TextEditingController();
     final messageCtrl = TextEditingController();
 
     void syncControllers() {
-      controller.name.value    = nameCtrl.text;
-      controller.email.value   = emailCtrl.text;
+      controller.name.value = nameCtrl.text;
+      controller.email.value = emailCtrl.text;
       controller.message.value = messageCtrl.text;
     }
 
@@ -80,7 +80,10 @@ class _FormState extends GetView<ContactController> {
         ),
         const SizedBox(height: ESpacing.xxl),
 
-        TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Full Name')),
+        TextField(
+          controller: nameCtrl,
+          decoration: const InputDecoration(labelText: 'Full Name'),
+        ),
         const SizedBox(height: ESpacing.md),
 
         TextField(
@@ -100,27 +103,37 @@ class _FormState extends GetView<ContactController> {
           if (controller.error.value.isEmpty) return const SizedBox.shrink();
           return Padding(
             padding: const EdgeInsets.only(top: ESpacing.sm),
-            child: Text(controller.error.value,
-                style: ETextStyles.bodySm.copyWith(color: EColors.error)),
+            child: Text(
+              controller.error.value,
+              style: ETextStyles.bodySm.copyWith(color: EColors.error),
+            ),
           );
         }),
 
         const SizedBox(height: ESpacing.xl),
 
-        Obx(() => SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: controller.canSubmit && !controller.loading.value
-                ? controller.submit
-                : null,
-            child: controller.loading.value
-                ? const SizedBox(
-                    height: 18, width: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                  )
-                : const Text('Send Message'),
+        Obx(
+          () => SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed:
+                  controller.canSubmit && !controller.loading.value
+                      ? controller.submit
+                      : null,
+              child:
+                  controller.loading.value
+                      ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                      : const Text('Send Message'),
+            ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -134,7 +147,11 @@ class _SuccessState extends GetView<ContactController> {
       children: [
         Icon(Icons.check_circle_outline, size: 72, color: EColors.primary),
         const SizedBox(height: ESpacing.lg),
-        Text('Message Sent!', style: ETextStyles.h1, textAlign: TextAlign.center),
+        Text(
+          'Message Sent!',
+          style: ETextStyles.h1,
+          textAlign: TextAlign.center,
+        ),
         const SizedBox(height: ESpacing.md),
         Text(
           'Thank you for reaching out. We\'ll be in touch shortly.',
@@ -142,7 +159,10 @@ class _SuccessState extends GetView<ContactController> {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: ESpacing.xl),
-        OutlinedButton(onPressed: controller.reset, child: const Text('Send Another')),
+        OutlinedButton(
+          onPressed: controller.reset,
+          child: const Text('Send Another'),
+        ),
       ],
     );
   }

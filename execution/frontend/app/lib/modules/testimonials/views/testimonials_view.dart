@@ -13,9 +13,7 @@ class TestimonialsView extends StatelessWidget {
       title: 'Reviews',
       description: 'See what clients say about ${AppEnv.clientName}.',
       child: AppShell(
-        child: SingleChildScrollView(
-          child: const TestimonialsSection(),
-        ),
+        child: SingleChildScrollView(child: const TestimonialsSection()),
       ),
     );
   }

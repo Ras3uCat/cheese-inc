@@ -25,18 +25,24 @@ class ShopView extends GetView<ShopController> {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
-        return Column(children: [
-          _CategoryFilter(controller: controller),
-          Expanded(
-            child: controller.products.isEmpty
-                ? Center(
-                    child: Text('No products available',
-                        style: ETextStyles.bodyMd
-                            .copyWith(color: EColors.onSurfaceMuted)),
-                  )
-                : _ProductGrid(controller: controller),
-          ),
-        ]);
+        return Column(
+          children: [
+            _CategoryFilter(controller: controller),
+            Expanded(
+              child:
+                  controller.products.isEmpty
+                      ? Center(
+                        child: Text(
+                          'No products available',
+                          style: ETextStyles.bodyMd.copyWith(
+                            color: EColors.onSurfaceMuted,
+                          ),
+                        ),
+                      )
+                      : _ProductGrid(controller: controller),
+            ),
+          ],
+        );
       }),
     );
   }
@@ -50,28 +56,30 @@ class CartBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Stack(
-          clipBehavior: Clip.none,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.shopping_cart_outlined),
-              onPressed: () => Get.toNamed(ERoutes.shopCart),
-            ),
-            if (controller.cartCount > 0)
-              Positioned(
-                right: 6,
-                top: 6,
-                child: CircleAvatar(
-                  radius: 9,
-                  backgroundColor: EColors.primary,
-                  child: Text(
-                    '${controller.cartCount}',
-                    style: const TextStyle(color: Colors.white, fontSize: 11),
-                  ),
+    return Obx(
+      () => Stack(
+        clipBehavior: Clip.none,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart_outlined),
+            onPressed: () => Get.toNamed(ERoutes.shopCart),
+          ),
+          if (controller.cartCount > 0)
+            Positioned(
+              right: 6,
+              top: 6,
+              child: CircleAvatar(
+                radius: 9,
+                backgroundColor: EColors.primary,
+                child: Text(
+                  '${controller.cartCount}',
+                  style: const TextStyle(color: Colors.white, fontSize: 11),
                 ),
               ),
-          ],
-        ));
+            ),
+        ],
+      ),
+    );
   }
 }
 
@@ -89,18 +97,26 @@ class _CategoryFilter extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(
-            horizontal: ESpacing.md, vertical: ESpacing.xs),
+          horizontal: ESpacing.md,
+          vertical: ESpacing.xs,
+        ),
         children: [
-          Obx(() => _Chip(
-                label: 'All',
-                selected: controller.selectedCategory.value == null,
-                onTap: () => controller.setCategory(null),
-              )),
-          ...controller.categories.map((c) => Obx(() => _Chip(
+          Obx(
+            () => _Chip(
+              label: 'All',
+              selected: controller.selectedCategory.value == null,
+              onTap: () => controller.setCategory(null),
+            ),
+          ),
+          ...controller.categories.map(
+            (c) => Obx(
+              () => _Chip(
                 label: c['name'] as String,
                 selected: controller.selectedCategory.value == c['id'],
                 onTap: () => controller.setCategory(c['id'] as String),
-              ))),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -108,8 +124,11 @@ class _CategoryFilter extends StatelessWidget {
 }
 
 class _Chip extends StatelessWidget {
-  const _Chip(
-      {required this.label, required this.selected, required this.onTap});
+  const _Chip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -140,7 +159,8 @@ class _ProductGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cols = MediaQuery.sizeOf(context).width > ESpacing.mobileBreak ? 3 : 2;
+    final cols =
+        MediaQuery.sizeOf(context).width > ESpacing.mobileBreak ? 3 : 2;
     return GridView.builder(
       padding: const EdgeInsets.all(ESpacing.md),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -150,8 +170,11 @@ class _ProductGrid extends StatelessWidget {
         childAspectRatio: 0.7,
       ),
       itemCount: controller.products.length,
-      itemBuilder: (_, i) =>
-          _ProductCard(product: controller.products[i], controller: controller),
+      itemBuilder:
+          (_, i) => _ProductCard(
+            product: controller.products[i],
+            controller: controller,
+          ),
     );
   }
 }
@@ -164,8 +187,7 @@ class _ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () =>
-          Get.toNamed(ERoutes.shopProduct, arguments: product),
+      onTap: () => Get.toNamed(ERoutes.shopProduct, arguments: product),
       child: Container(
         decoration: BoxDecoration(
           color: EColors.surfaceVariant,
@@ -176,16 +198,18 @@ class _ProductCard extends StatelessWidget {
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
-                child: product.thumbnailUrl != null
-                    ? CachedNetworkImage(
-                        imageUrl: product.thumbnailUrl!,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorWidget: (_, _, _) => _placeholder(),
-                      )
-                    : _placeholder(),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
+                ),
+                child:
+                    product.thumbnailUrl != null
+                        ? CachedNetworkImage(
+                          imageUrl: product.thumbnailUrl!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorWidget: (_, _, _) => _placeholder(),
+                        )
+                        : _placeholder(),
               ),
             ),
             Padding(
@@ -193,31 +217,42 @@ class _ProductCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(product.name,
-                      style: ETextStyles.bodyMd,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis),
+                  Text(
+                    product.name,
+                    style: ETextStyles.bodyMd,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   const SizedBox(height: 2),
-                  Row(children: [
-                    Text(product.formattedPrice,
-                        style: ETextStyles.price
-                            .copyWith(color: EColors.primary)),
-                    if (product.formattedCompareAt != null) ...[
-                      const SizedBox(width: ESpacing.xs),
+                  Row(
+                    children: [
                       Text(
-                        product.formattedCompareAt!,
-                        style: ETextStyles.bodyMd.copyWith(
-                          fontSize: 12,
-                          decoration: TextDecoration.lineThrough,
-                          color: EColors.onSurfaceMuted,
+                        product.formattedPrice,
+                        style: ETextStyles.price.copyWith(
+                          color: EColors.primary,
                         ),
                       ),
+                      if (product.formattedCompareAt != null) ...[
+                        const SizedBox(width: ESpacing.xs),
+                        Text(
+                          product.formattedCompareAt!,
+                          style: ETextStyles.bodyMd.copyWith(
+                            fontSize: 12,
+                            decoration: TextDecoration.lineThrough,
+                            color: EColors.onSurfaceMuted,
+                          ),
+                        ),
+                      ],
                     ],
-                  ]),
+                  ),
                   if (!product.inStock)
-                    Text('Out of stock',
-                        style: ETextStyles.bodyMd
-                            .copyWith(fontSize: 11, color: Colors.red)),
+                    Text(
+                      'Out of stock',
+                      style: ETextStyles.bodyMd.copyWith(
+                        fontSize: 11,
+                        color: Colors.red,
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -228,8 +263,7 @@ class _ProductCard extends StatelessWidget {
   }
 
   Widget _placeholder() => Container(
-        color: EColors.surfaceVariant,
-        child: Icon(Icons.image_outlined,
-            color: EColors.onSurfaceMuted, size: 48),
-      );
+    color: EColors.surfaceVariant,
+    child: Icon(Icons.image_outlined, color: EColors.onSurfaceMuted, size: 48),
+  );
 }

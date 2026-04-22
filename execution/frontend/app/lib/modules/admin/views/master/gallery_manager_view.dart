@@ -44,18 +44,18 @@ class GalleryManagerView extends GetView<MasterController> {
                   );
                 }
                 return GridView.builder(
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     crossAxisSpacing: ESpacing.sm,
                     mainAxisSpacing: ESpacing.sm,
                   ),
                   itemCount: photos.length,
-                  itemBuilder: (_, i) => _PhotoTile(
-                    photo: photos[i],
-                    onEdit: () => _showEditDialog(context, photos[i]),
-                    onDelete: () => _confirmDelete(context, photos[i]),
-                  ),
+                  itemBuilder:
+                      (_, i) => _PhotoTile(
+                        photo: photos[i],
+                        onEdit: () => _showEditDialog(context, photos[i]),
+                        onDelete: () => _confirmDelete(context, photos[i]),
+                      ),
                 );
               }),
             ),
@@ -66,60 +66,65 @@ class GalleryManagerView extends GetView<MasterController> {
   }
 
   void _showAddDialog(BuildContext context) {
-    final pathCtrl    = TextEditingController();
+    final pathCtrl = TextEditingController();
     final captionCtrl = TextEditingController();
     showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Add Photo'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Upload the image to the Supabase Storage "gallery" bucket first,\n'
-              'then enter the file path below.',
-              style: ETextStyles.bodyMd
-                  .copyWith(color: EColors.onSurfaceMuted, fontSize: 12),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Add Photo'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Upload the image to the Supabase Storage "gallery" bucket first,\n'
+                  'then enter the file path below.',
+                  style: ETextStyles.bodyMd.copyWith(
+                    color: EColors.onSurfaceMuted,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: ESpacing.md),
+                TextField(
+                  controller: pathCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Storage path *',
+                    hintText: 'e.g. studio-interior.jpg',
+                  ),
+                ),
+                const SizedBox(height: ESpacing.sm),
+                TextField(
+                  controller: captionCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Caption (optional)',
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: ESpacing.md),
-            TextField(
-              controller: pathCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Storage path *',
-                hintText: 'e.g. studio-interior.jpg',
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel'),
               ),
-            ),
-            const SizedBox(height: ESpacing.sm),
-            TextField(
-              controller: captionCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Caption (optional)',
+              ElevatedButton(
+                onPressed: () {
+                  final path = pathCtrl.text.trim();
+                  if (path.isEmpty) return;
+                  Navigator.pop(ctx);
+                  controller.addGalleryPhoto(
+                    storagePath: path,
+                    caption:
+                        captionCtrl.text.trim().isEmpty
+                            ? null
+                            : captionCtrl.text.trim(),
+                    displayOrder: controller.galleryPhotos.length,
+                  );
+                },
+                child: const Text('Add'),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              final path = pathCtrl.text.trim();
-              if (path.isEmpty) return;
-              Navigator.pop(ctx);
-              controller.addGalleryPhoto(
-                storagePath: path,
-                caption: captionCtrl.text.trim().isEmpty
-                    ? null
-                    : captionCtrl.text.trim(),
-                displayOrder: controller.galleryPhotos.length,
-              );
-            },
-            child: const Text('Add'),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -128,69 +133,78 @@ class GalleryManagerView extends GetView<MasterController> {
     bool isActive = photo.isActive;
     showDialog<void>(
       context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setState) => AlertDialog(
-          title: const Text('Edit Photo'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: captionCtrl,
-                decoration: const InputDecoration(labelText: 'Caption'),
-              ),
-              const SizedBox(height: ESpacing.md),
-              SwitchListTile(
-                title: const Text('Visible on site'),
-                value: isActive,
-                activeTrackColor: EColors.primary,
-                onChanged: (v) => setState(() => isActive = v),
-              ),
-            ],
+      builder:
+          (ctx) => StatefulBuilder(
+            builder:
+                (ctx, setState) => AlertDialog(
+                  title: const Text('Edit Photo'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: captionCtrl,
+                        decoration: const InputDecoration(labelText: 'Caption'),
+                      ),
+                      const SizedBox(height: ESpacing.md),
+                      SwitchListTile(
+                        title: const Text('Visible on site'),
+                        value: isActive,
+                        activeTrackColor: EColors.primary,
+                        onChanged: (v) => setState(() => isActive = v),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        controller.updateGalleryPhoto(photo.id, {
+                          'caption':
+                              captionCtrl.text.trim().isEmpty
+                                  ? null
+                                  : captionCtrl.text.trim(),
+                          'is_active': isActive,
+                        });
+                      },
+                      child: const Text('Save'),
+                    ),
+                  ],
+                ),
           ),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                controller.updateGalleryPhoto(photo.id, {
-                  'caption': captionCtrl.text.trim().isEmpty
-                      ? null
-                      : captionCtrl.text.trim(),
-                  'is_active': isActive,
-                });
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
   void _confirmDelete(BuildContext context, GalleryPhotoModel photo) {
     showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete Photo?'),
-        content: const Text(
-            'This removes the DB record. The file in Storage is also deleted.'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {
-              Navigator.pop(ctx);
-              controller.deleteGalleryPhoto(photo.id, photo.storagePath);
-            },
-            child: const Text('Delete',
-                style: TextStyle(color: Colors.white)),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Delete Photo?'),
+            content: const Text(
+              'This removes the DB record. The file in Storage is also deleted.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  controller.deleteGalleryPhoto(photo.id, photo.storagePath);
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }
@@ -237,12 +251,12 @@ class _PhotoTile extends StatelessWidget {
           child: CachedNetworkImage(
             imageUrl: photo.publicUrl,
             fit: BoxFit.cover,
-            placeholder: (_, _) =>
-                Container(color: EColors.surfaceVariant),
-            errorWidget: (_, _, _) => Container(
-              color: EColors.surfaceVariant,
-              child: const Icon(Icons.broken_image, color: Colors.grey),
-            ),
+            placeholder: (_, _) => Container(color: EColors.surfaceVariant),
+            errorWidget:
+                (_, _, _) => Container(
+                  color: EColors.surfaceVariant,
+                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                ),
           ),
         ),
         if (!photo.isActive)
@@ -251,9 +265,10 @@ class _PhotoTile extends StatelessWidget {
             child: Container(
               color: Colors.black45,
               child: const Center(
-                child: Text('Hidden',
-                    style:
-                        TextStyle(color: Colors.white70, fontSize: 12)),
+                child: Text(
+                  'Hidden',
+                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                ),
               ),
             ),
           ),
@@ -266,9 +281,10 @@ class _PhotoTile extends StatelessWidget {
               _ActionBtn(icon: Icons.edit_outlined, onTap: onEdit),
               const SizedBox(width: 4),
               _ActionBtn(
-                  icon: Icons.delete_outline,
-                  onTap: onDelete,
-                  color: Colors.redAccent),
+                icon: Icons.delete_outline,
+                onTap: onDelete,
+                color: Colors.redAccent,
+              ),
             ],
           ),
         ),

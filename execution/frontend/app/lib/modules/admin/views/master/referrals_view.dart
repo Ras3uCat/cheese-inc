@@ -41,47 +41,57 @@ class _ReferralsViewState extends State<ReferralsView> {
 
   Future<void> _markRewarded(String id) async {
     final referrerCtrl = TextEditingController();
-    final referredCtrl  = TextEditingController();
+    final referredCtrl = TextEditingController();
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Mark as Rewarded', style: ETextStyles.h4),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: referrerCtrl,
-              decoration: const InputDecoration(labelText: 'Referrer promo code'),
+      builder:
+          (ctx) => AlertDialog(
+            title: Text('Mark as Rewarded', style: ETextStyles.h4),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: referrerCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Referrer promo code',
+                  ),
+                ),
+                const SizedBox(height: ESpacing.sm),
+                TextField(
+                  controller: referredCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Referred promo code',
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: ESpacing.sm),
-            TextField(
-              controller: referredCtrl,
-              decoration: const InputDecoration(labelText: 'Referred promo code'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Save'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Save'),
-          ),
-        ],
-      ),
     );
     if (confirmed != true) return;
-    await _db.from('referrals').update({
-      'rewarded_at':         DateTime.now().toUtc().toIso8601String(),
-      'referrer_promo_code': referrerCtrl.text.trim().isEmpty
-          ? null
-          : referrerCtrl.text.trim(),
-      'referred_promo_code': referredCtrl.text.trim().isEmpty
-          ? null
-          : referredCtrl.text.trim(),
-    }).eq('id', id);
+    await _db
+        .from('referrals')
+        .update({
+          'rewarded_at': DateTime.now().toUtc().toIso8601String(),
+          'referrer_promo_code':
+              referrerCtrl.text.trim().isEmpty
+                  ? null
+                  : referrerCtrl.text.trim(),
+          'referred_promo_code':
+              referredCtrl.text.trim().isEmpty
+                  ? null
+                  : referredCtrl.text.trim(),
+        })
+        .eq('id', id);
     _load();
   }
 
@@ -97,51 +107,61 @@ class _ReferralsViewState extends State<ReferralsView> {
           elevation: 0,
           title: Text('Referrals', style: ETextStyles.h3),
           actions: [
-            Row(children: [
-              Text('Unrewarded only', style: ETextStyles.bodySm),
-              Switch(
-                value: _unrewardedOnly,
-                onChanged: (v) {
-                  setState(() => _unrewardedOnly = v);
-                  _load();
-                },
-                activeTrackColor: EColors.primary,
-              ),
-              const SizedBox(width: ESpacing.sm),
-            ]),
+            Row(
+              children: [
+                Text('Unrewarded only', style: ETextStyles.bodySm),
+                Switch(
+                  value: _unrewardedOnly,
+                  onChanged: (v) {
+                    setState(() => _unrewardedOnly = v);
+                    _load();
+                  },
+                  activeTrackColor: EColors.primary,
+                ),
+                const SizedBox(width: ESpacing.sm),
+              ],
+            ),
           ],
         ),
-        body: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : _rows.isEmpty
+        body:
+            _loading
+                ? const Center(child: CircularProgressIndicator())
+                : _rows.isEmpty
                 ? Center(
-                    child: Text('No referrals found.',
-                        style: ETextStyles.bodyMuted))
-                : ListView.separated(
-                    padding: const EdgeInsets.all(ESpacing.lg),
-                    itemCount: _rows.length,
-                    separatorBuilder: (_, _) =>
-                        Divider(color: EColors.divider, height: 1),
-                    itemBuilder: (_, i) => _buildRow(_rows[i]),
+                  child: Text(
+                    'No referrals found.',
+                    style: ETextStyles.bodyMuted,
                   ),
+                )
+                : ListView.separated(
+                  padding: const EdgeInsets.all(ESpacing.lg),
+                  itemCount: _rows.length,
+                  separatorBuilder:
+                      (_, _) => Divider(color: EColors.divider, height: 1),
+                  itemBuilder: (_, i) => _buildRow(_rows[i]),
+                ),
       ),
     );
   }
 
   Widget _buildRow(Map<String, dynamic> r) {
-    final rewarded   = r['rewarded_at'] != null;
-    final refCode    = r['referral_code'] as String? ?? '—';
-    final email      = r['referred_email'] as String? ?? '—';
-    final created    = r['created_at'] != null
-        ? DateFormat('MMM d, yyyy')
-            .format(DateTime.parse(r['created_at'] as String).toLocal())
-        : '—';
-    final refPromo   = r['referrer_promo_code'] as String?;
-    final redPromo   = r['referred_promo_code'] as String?;
+    final rewarded = r['rewarded_at'] != null;
+    final refCode = r['referral_code'] as String? ?? '—';
+    final email = r['referred_email'] as String? ?? '—';
+    final created =
+        r['created_at'] != null
+            ? DateFormat(
+              'MMM d, yyyy',
+            ).format(DateTime.parse(r['created_at'] as String).toLocal())
+            : '—';
+    final refPromo = r['referrer_promo_code'] as String?;
+    final redPromo = r['referred_promo_code'] as String?;
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
-          horizontal: ESpacing.md, vertical: ESpacing.xs),
+        horizontal: ESpacing.md,
+        vertical: ESpacing.xs,
+      ),
       title: Text(email, style: ETextStyles.label),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,27 +174,32 @@ class _ReferralsViewState extends State<ReferralsView> {
             ),
         ],
       ),
-      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-          padding: const EdgeInsets.symmetric(
-              horizontal: ESpacing.xs, vertical: 2),
-          color: (rewarded ? Colors.green : EColors.onSurfaceMuted)
-              .withValues(alpha: 0.12),
-          child: Text(
-            rewarded ? 'REWARDED' : 'PENDING',
-            style: ETextStyles.labelSm.copyWith(
-              color: rewarded ? Colors.green : EColors.onSurfaceMuted,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: ESpacing.xs,
+              vertical: 2,
+            ),
+            color: (rewarded ? Colors.green : EColors.onSurfaceMuted)
+                .withValues(alpha: 0.12),
+            child: Text(
+              rewarded ? 'REWARDED' : 'PENDING',
+              style: ETextStyles.labelSm.copyWith(
+                color: rewarded ? Colors.green : EColors.onSurfaceMuted,
+              ),
             ),
           ),
-        ),
-        if (!rewarded) ...[
-          const SizedBox(width: ESpacing.xs),
-          TextButton(
-            onPressed: () => _markRewarded(r['id'] as String),
-            child: const Text('Mark Rewarded'),
-          ),
+          if (!rewarded) ...[
+            const SizedBox(width: ESpacing.xs),
+            TextButton(
+              onPressed: () => _markRewarded(r['id'] as String),
+              child: const Text('Mark Rewarded'),
+            ),
+          ],
         ],
-      ]),
+      ),
     );
   }
 }

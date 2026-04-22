@@ -12,15 +12,17 @@ class Step1ArtistSelection extends GetView<BookingController> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile =
-        MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
+    final isMobile = MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
     final hPad = isMobile ? ESpacing.md : ESpacing.xxl;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: hPad, vertical: ESpacing.lg),
+          padding: EdgeInsets.symmetric(
+            horizontal: hPad,
+            vertical: ESpacing.lg,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -40,7 +42,8 @@ class Step1ArtistSelection extends GetView<BookingController> {
         Obx(() {
           if (controller.isLoading.value) {
             return const Expanded(
-                child: Center(child: CircularProgressIndicator()));
+              child: Center(child: CircularProgressIndicator()),
+            );
           }
           return Expanded(
             child: _ArtistGrid(
@@ -54,10 +57,12 @@ class Step1ArtistSelection extends GetView<BookingController> {
             ),
           );
         }),
-        Obx(() => _BottomBar(
-              canContinue: controller.canProceedStep1,
-              onContinue: controller.proceedFromStep1,
-            )),
+        Obx(
+          () => _BottomBar(
+            canContinue: controller.canProceedStep1,
+            onContinue: controller.proceedFromStep1,
+          ),
+        ),
       ],
     );
   }
@@ -86,11 +91,13 @@ class _ArtistGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final cards = [
       AnyArtistCard(isSelected: isAnyArtist, onTap: onSelectAny),
-      ...artists.asMap().entries.map((e) => ArtistCard(
-            artist: e.value,
-            isSelected: selectedArtistId == e.value.id,
-            onTap: () => onSelectArtist(e.value),
-          )),
+      ...artists.asMap().entries.map(
+        (e) => ArtistCard(
+          artist: e.value,
+          isSelected: selectedArtistId == e.value.id,
+          onTap: () => onSelectArtist(e.value),
+        ),
+      ),
     ];
 
     if (isMobile) {
@@ -123,11 +130,12 @@ class _BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: ESpacing.lg, vertical: ESpacing.md),
+        horizontal: ESpacing.lg,
+        vertical: ESpacing.md,
+      ),
       decoration: BoxDecoration(
         color: EColors.surfaceVariant,
-        border: Border(
-            top: BorderSide(color: EColors.divider, width: 0.5)),
+        border: Border(top: BorderSide(color: EColors.divider, width: 0.5)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -142,7 +150,9 @@ class _BottomBar extends StatelessWidget {
                 foregroundColor: EColors.secondary,
                 shape: const RoundedRectangleBorder(),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: ESpacing.xl, vertical: ESpacing.md),
+                  horizontal: ESpacing.xl,
+                  vertical: ESpacing.md,
+                ),
               ),
               child: Text('CONTINUE', style: ETextStyles.button),
             ),

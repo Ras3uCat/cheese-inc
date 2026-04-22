@@ -27,8 +27,10 @@ class SupabaseShopRepository implements ShopRepository {
 
   @override
   Future<int> validateDiscountCode(String code) async {
-    final result = await _client
-        .rpc('validate_shop_discount', params: {'p_code': code});
+    final result = await _client.rpc(
+      'validate_shop_discount',
+      params: {'p_code': code},
+    );
     return (result as int?) ?? 0;
   }
 
@@ -42,9 +44,9 @@ class SupabaseShopRepository implements ShopRepository {
     final response = await _client.functions.invoke(
       'create-shop-checkout',
       body: {
-        'items':        items,
+        'items': items,
         'client_email': clientEmail,
-        'client_name':  clientName,
+        'client_name': clientName,
         if (discountCode != null && discountCode.isNotEmpty)
           'discount_code': discountCode,
       },
@@ -55,11 +57,12 @@ class SupabaseShopRepository implements ShopRepository {
 
   @override
   Future<ShopOrderModel?> getOrder(String orderId) async {
-    final row = await _client
-        .from('shop_orders')
-        .select('*, shop_order_items(*)')
-        .eq('id', orderId)
-        .single();
+    final row =
+        await _client
+            .from('shop_orders')
+            .select('*, shop_order_items(*)')
+            .eq('id', orderId)
+            .single();
     return ShopOrderModel.fromJson(row);
   }
 
@@ -67,10 +70,7 @@ class SupabaseShopRepository implements ShopRepository {
 
   @override
   Future<List<ProductModel>> getAllProducts() async {
-    final rows = await _client
-        .from('products')
-        .select()
-        .order('display_order');
+    final rows = await _client.from('products').select().order('display_order');
     return rows.map((r) => ProductModel.fromJson(r)).toList();
   }
 
@@ -91,9 +91,7 @@ class SupabaseShopRepository implements ShopRepository {
 
   @override
   Future<List<ShopOrderModel>> getAllOrders({String? status}) async {
-    var query = _client
-        .from('shop_orders')
-        .select('*, shop_order_items(*)');
+    var query = _client.from('shop_orders').select('*, shop_order_items(*)');
     if (status != null) query = query.eq('status', status);
     final rows = await query.order('created_at', ascending: false).limit(200);
     return rows.map((r) => ShopOrderModel.fromJson(r)).toList();
@@ -103,7 +101,10 @@ class SupabaseShopRepository implements ShopRepository {
   Future<void> updateOrderStatus(String orderId, String status) async {
     await _client
         .from('shop_orders')
-        .update({'status': status, 'updated_at': DateTime.now().toIso8601String()})
+        .update({
+          'status': status,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
         .eq('id', orderId);
   }
 
@@ -124,7 +125,10 @@ class SupabaseShopRepository implements ShopRepository {
 
   @override
   Future<void> toggleDiscountCode(String id, bool active) async {
-    await _client.from('shop_discount_codes').update({'is_active': active}).eq('id', id);
+    await _client
+        .from('shop_discount_codes')
+        .update({'is_active': active})
+        .eq('id', id);
   }
 
   @override

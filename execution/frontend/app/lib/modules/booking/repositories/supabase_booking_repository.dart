@@ -30,8 +30,9 @@ class SupabaseBookingRepository implements BookingRepository {
 
     final serviceMap = <String, List<String>>{};
     for (final link in serviceLinks as List) {
-      (serviceMap[link['artist_id'] as String] ??= [])
-          .add(link['service_id'] as String);
+      (serviceMap[link['artist_id'] as String] ??= []).add(
+        link['service_id'] as String,
+      );
     }
 
     return rows.map<ArtistModel>((r) {
@@ -49,7 +50,9 @@ class SupabaseBookingRepository implements BookingRepository {
         .eq('is_active', true)
         .order('category')
         .order('name');
-    return (rows as List).map((r) => ServiceModel.fromMap(r as Map<String, dynamic>)).toList();
+    return (rows as List)
+        .map((r) => ServiceModel.fromMap(r as Map<String, dynamic>))
+        .toList();
   }
 
   @override
@@ -67,17 +70,24 @@ class SupabaseBookingRepository implements BookingRepository {
         .select()
         .inFilter('id', ids)
         .eq('is_active', true);
-    return (rows as List).map((r) => ServiceModel.fromMap(r as Map<String, dynamic>)).toList();
+    return (rows as List)
+        .map((r) => ServiceModel.fromMap(r as Map<String, dynamic>))
+        .toList();
   }
 
   @override
-  Future<List<ArtistModel>> getArtistsForServices(List<String> serviceIds) async {
+  Future<List<ArtistModel>> getArtistsForServices(
+    List<String> serviceIds,
+  ) async {
     if (serviceIds.isEmpty) return getArtists();
 
     // Server-side: use Postgres function that returns artists offering ALL ids
-    final rows = await _db.rpc('get_artists_for_services', params: {
-      'p_service_ids': serviceIds,
-    }) as List;
+    final rows =
+        await _db.rpc(
+              'get_artists_for_services',
+              params: {'p_service_ids': serviceIds},
+            )
+            as List;
 
     final profileIds = rows.map((r) => r['id'] as String).toList();
     if (profileIds.isEmpty) return [];
@@ -89,8 +99,9 @@ class SupabaseBookingRepository implements BookingRepository {
 
     final serviceMap = <String, List<String>>{};
     for (final link in serviceLinks as List) {
-      (serviceMap[link['artist_id'] as String] ??= [])
-          .add(link['service_id'] as String);
+      (serviceMap[link['artist_id'] as String] ??= []).add(
+        link['service_id'] as String,
+      );
     }
 
     return rows.map<ArtistModel>((r) {
@@ -106,17 +117,24 @@ class SupabaseBookingRepository implements BookingRepository {
     required int requiredDurationMinutes,
     int daysAhead = 14,
   }) async {
-    final now  = DateTime.now().toUtc();
-    final end  = now.add(Duration(days: daysAhead));
+    final now = DateTime.now().toUtc();
+    final end = now.add(Duration(days: daysAhead));
 
-    final rows = await _db.rpc('get_available_slots', params: {
-      'p_artist_id':              artistId,
-      'p_date_from':              now.toIso8601String(),
-      'p_date_to':                end.toIso8601String(),
-      'p_duration_minutes':       requiredDurationMinutes,
-    }) as List;
+    final rows =
+        await _db.rpc(
+              'get_available_slots',
+              params: {
+                'p_artist_id': artistId,
+                'p_date_from': now.toIso8601String(),
+                'p_date_to': end.toIso8601String(),
+                'p_duration_minutes': requiredDurationMinutes,
+              },
+            )
+            as List;
 
-    return rows.map((r) => TimeSlotModel.fromMap(r as Map<String, dynamic>)).toList();
+    return rows
+        .map((r) => TimeSlotModel.fromMap(r as Map<String, dynamic>))
+        .toList();
   }
 
   @override
@@ -135,24 +153,28 @@ class SupabaseBookingRepository implements BookingRepository {
     String? locationId,
     String initialStatus = 'confirmed',
   }) async {
-    final result = await _db.rpc('book_appointment', params: {
-      'p_artist_id':      artistId,
-      'p_service_ids':    serviceIds,
-      'p_service_names':  serviceNames,
-      'p_start_time':     startTime.toUtc().toIso8601String(),
-      'p_total_duration': totalDurationMinutes,
-      'p_total_price':    totalPrice,
-      'p_client_name':    clientName,
-      'p_client_email':   clientEmail,
-      'p_promo_code_id':  promoCodeId,
-      'p_client_notes':   clientNotes,
-      'p_client_phone':   clientPhone,
-      'p_initial_status': initialStatus,
-    });
+    final result = await _db.rpc(
+      'book_appointment',
+      params: {
+        'p_artist_id': artistId,
+        'p_service_ids': serviceIds,
+        'p_service_names': serviceNames,
+        'p_start_time': startTime.toUtc().toIso8601String(),
+        'p_total_duration': totalDurationMinutes,
+        'p_total_price': totalPrice,
+        'p_client_name': clientName,
+        'p_client_email': clientEmail,
+        'p_promo_code_id': promoCodeId,
+        'p_client_notes': clientNotes,
+        'p_client_phone': clientPhone,
+        'p_initial_status': initialStatus,
+      },
+    );
     final booking = BookingModel.fromMap(result as Map<String, dynamic>);
     // Store location on the booking row (secondary update — location_id is not in the RPC).
     if (locationId != null) {
-      await _db.from('bookings')
+      await _db
+          .from('bookings')
           .update({'location_id': locationId})
           .eq('id', booking.id);
     }
@@ -170,10 +192,14 @@ class SupabaseBookingRepository implements BookingRepository {
     int tipAmountCents = 0,
   }) async {
     final body = <String, dynamic>{
-      'booking_id': bookingId, 'success_url': successUrl, 'cancel_url': cancelUrl,
+      'booking_id': bookingId,
+      'success_url': successUrl,
+      'cancel_url': cancelUrl,
     };
-    if (giftVoucherCode != null && giftVoucherCode.isNotEmpty) body['gift_voucher_code'] = giftVoucherCode;
-    if (loyaltyPointsRedeem > 0) body['loyalty_points_redeem'] = loyaltyPointsRedeem;
+    if (giftVoucherCode != null && giftVoucherCode.isNotEmpty)
+      body['gift_voucher_code'] = giftVoucherCode;
+    if (loyaltyPointsRedeem > 0)
+      body['loyalty_points_redeem'] = loyaltyPointsRedeem;
     if (tipAmountCents > 0) body['tip_amount_cents'] = tipAmountCents;
     final response = await _db.functions.invoke('create-checkout', body: body);
     return response.data['url'] as String;
@@ -211,11 +237,12 @@ class SupabaseBookingRepository implements BookingRepository {
 
   @override
   Future<Map<String, dynamic>> getBookingConfig() async {
-    final row = await _db
-        .from('business_config')
-        .select('deposit_pct, loyalty_cents_per_point, loyalty_min_redeem')
-        .limit(1)
-        .single();
+    final row =
+        await _db
+            .from('business_config')
+            .select('deposit_pct, loyalty_cents_per_point, loyalty_min_redeem')
+            .limit(1)
+            .single();
     return row;
   }
 
@@ -241,10 +268,11 @@ class SupabaseBookingRepository implements BookingRepository {
     await _db.functions.invoke(
       'apply-gift-voucher',
       body: {
-        'booking_id':         bookingId,
+        'booking_id': bookingId,
         // ignore: use_null_aware_elements
         if (giftVoucherCode != null) 'gift_voucher_code': giftVoucherCode,
-        if (loyaltyPointsRedeem > 0) 'loyalty_points_redeem': loyaltyPointsRedeem,
+        if (loyaltyPointsRedeem > 0)
+          'loyalty_points_redeem': loyaltyPointsRedeem,
       },
     );
   }
@@ -258,8 +286,10 @@ class SupabaseBookingRepository implements BookingRepository {
     DateTime? preferredDate,
   }) async {
     await _db.from('waitlist').insert({
-      'artist_id': artistId, 'service_ids': serviceIds,
-      'client_name': clientName, 'client_email': clientEmail,
+      'artist_id': artistId,
+      'service_ids': serviceIds,
+      'client_name': clientName,
+      'client_email': clientEmail,
       if (preferredDate != null)
         'preferred_date': preferredDate.toIso8601String().substring(0, 10),
     });
@@ -283,10 +313,13 @@ class SupabaseBookingRepository implements BookingRepository {
         .from('loyalty_ledger')
         .select('points')
         .eq('client_email', email.toLowerCase());
-    final total = (rows as List).fold<int>(0,
-        (sum, r) => sum + ((r['points'] as num).toInt()));
+    final total = (rows as List).fold<int>(
+      0,
+      (sum, r) => sum + ((r['points'] as num).toInt()),
+    );
     return total < 0 ? 0 : total;
   }
+
   @override
   Future<Map<String, dynamic>> createRecurringSeries({
     required String templateBookingId,
@@ -294,12 +327,15 @@ class SupabaseBookingRepository implements BookingRepository {
     required DateTime endDate,
     bool confirmed = true,
   }) async {
-    final result = await _db.rpc('create_recurring_series', params: {
-      'p_template_booking_id': templateBookingId,
-      'p_interval_days':       intervalDays,
-      'p_end_date':            endDate.toIso8601String().substring(0, 10),
-      'p_confirmed':           confirmed,
-    });
+    final result = await _db.rpc(
+      'create_recurring_series',
+      params: {
+        'p_template_booking_id': templateBookingId,
+        'p_interval_days': intervalDays,
+        'p_end_date': endDate.toIso8601String().substring(0, 10),
+        'p_confirmed': confirmed,
+      },
+    );
     return Map<String, dynamic>.from(result as Map);
   }
 
@@ -313,10 +349,13 @@ class SupabaseBookingRepository implements BookingRepository {
     required String referredEmail,
     required String bookingId,
   }) async {
-    await _db.rpc('record_referral', params: {
-      'p_referral_code':  referralCode,
-      'p_referred_email': referredEmail,
-      'p_booking_id':     bookingId,
-    });
+    await _db.rpc(
+      'record_referral',
+      params: {
+        'p_referral_code': referralCode,
+        'p_referred_email': referredEmail,
+        'p_booking_id': bookingId,
+      },
+    );
   }
 }

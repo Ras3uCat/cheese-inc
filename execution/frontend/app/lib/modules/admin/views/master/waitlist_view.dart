@@ -28,15 +28,17 @@ class _WaitlistViewState extends State<WaitlistView> {
   }
 
   Future<void> _load() async {
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       final rows = await _db
           .from('waitlist')
           .select('*, profiles!artist_id(display_name)')
           .order('created_at', ascending: false)
           .limit(200);
-      setState(() =>
-          _entries = List<Map<String, dynamic>>.from(rows as List));
+      setState(() => _entries = List<Map<String, dynamic>>.from(rows as List));
     } catch (_) {
       setState(() => _error = 'Failed to load waitlist.');
     } finally {
@@ -63,16 +65,19 @@ class _WaitlistViewState extends State<WaitlistView> {
             padding: const EdgeInsets.all(ESpacing.lg),
             decoration: BoxDecoration(
               border: Border(
-                  bottom: BorderSide(color: EColors.divider, width: 0.5)),
-            ),
-            child: Row(children: [
-              Text('Waitlist', style: ETextStyles.h2),
-              const Spacer(),
-              IconButton(
-                icon: Icon(Icons.refresh, color: EColors.onSurfaceMuted),
-                onPressed: _load,
+                bottom: BorderSide(color: EColors.divider, width: 0.5),
               ),
-            ]),
+            ),
+            child: Row(
+              children: [
+                Text('Waitlist', style: ETextStyles.h2),
+                const Spacer(),
+                IconButton(
+                  icon: Icon(Icons.refresh, color: EColors.onSurfaceMuted),
+                  onPressed: _load,
+                ),
+              ],
+            ),
           ),
           Expanded(child: _buildBody()),
         ],
@@ -87,24 +92,29 @@ class _WaitlistViewState extends State<WaitlistView> {
     }
     if (_entries.isEmpty) {
       return Center(
-          child: Text('No one on the waitlist.', style: ETextStyles.bodyMuted));
+        child: Text('No one on the waitlist.', style: ETextStyles.bodyMuted),
+      );
     }
     return ListView.separated(
       padding: const EdgeInsets.all(ESpacing.lg),
       itemCount: _entries.length,
       separatorBuilder: (_, _) => const SizedBox(height: ESpacing.sm),
       itemBuilder: (_, i) {
-        final e          = _entries[i];
-        final id         = e['id'] as String;
-        final name       = e['client_name'] as String? ?? '—';
-        final email      = e['client_email'] as String? ?? '—';
-        final artistName = (e['profiles'] as Map?)?['display_name'] as String? ?? '—';
-        final prefDate   = e['preferred_date'] as String?;
-        final notified   = e['notified_at'] != null;
-        final created    = e['created_at'] as String?;
-        final createdFmt = created != null
-            ? DateFormat('MMM d, yyyy').format(DateTime.parse(created).toLocal())
-            : '—';
+        final e = _entries[i];
+        final id = e['id'] as String;
+        final name = e['client_name'] as String? ?? '—';
+        final email = e['client_email'] as String? ?? '—';
+        final artistName =
+            (e['profiles'] as Map?)?['display_name'] as String? ?? '—';
+        final prefDate = e['preferred_date'] as String?;
+        final notified = e['notified_at'] != null;
+        final created = e['created_at'] as String?;
+        final createdFmt =
+            created != null
+                ? DateFormat(
+                  'MMM d, yyyy',
+                ).format(DateTime.parse(created).toLocal())
+                : '—';
 
         return Dismissible(
           key: Key(id),
@@ -133,15 +143,22 @@ class _WaitlistViewState extends State<WaitlistView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(name, style: ETextStyles.h4),
-                      Text(email,
-                          style: ETextStyles.bodySm
-                              .copyWith(color: EColors.onSurfaceMuted)),
+                      Text(
+                        email,
+                        style: ETextStyles.bodySm.copyWith(
+                          color: EColors.onSurfaceMuted,
+                        ),
+                      ),
                       const SizedBox(height: ESpacing.xs),
-                      Text('Artist: $artistName',
-                          style: ETextStyles.bodySmMuted),
+                      Text(
+                        'Artist: $artistName',
+                        style: ETextStyles.bodySmMuted,
+                      ),
                       if (prefDate != null)
-                        Text('Preferred: $prefDate',
-                            style: ETextStyles.bodySmMuted),
+                        Text(
+                          'Preferred: $prefDate',
+                          style: ETextStyles.bodySmMuted,
+                        ),
                     ],
                   ),
                 ),
@@ -150,24 +167,31 @@ class _WaitlistViewState extends State<WaitlistView> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: ESpacing.sm, vertical: 3),
-                      color: notified
-                          ? EColors.onSurfaceMuted.withValues(alpha: 0.15)
-                          : EColors.primary.withValues(alpha: 0.12),
+                        horizontal: ESpacing.sm,
+                        vertical: 3,
+                      ),
+                      color:
+                          notified
+                              ? EColors.onSurfaceMuted.withValues(alpha: 0.15)
+                              : EColors.primary.withValues(alpha: 0.12),
                       child: Text(
                         notified ? 'NOTIFIED' : 'WAITING',
                         style: ETextStyles.labelSm.copyWith(
-                          color: notified
-                              ? EColors.onSurfaceMuted
-                              : EColors.primary,
+                          color:
+                              notified
+                                  ? EColors.onSurfaceMuted
+                                  : EColors.primary,
                           fontSize: 10,
                         ),
                       ),
                     ),
                     const SizedBox(height: ESpacing.xs),
-                    Text(createdFmt,
-                        style: ETextStyles.labelSm
-                            .copyWith(color: EColors.onSurfaceMuted)),
+                    Text(
+                      createdFmt,
+                      style: ETextStyles.labelSm.copyWith(
+                        color: EColors.onSurfaceMuted,
+                      ),
+                    ),
                   ],
                 ),
               ],

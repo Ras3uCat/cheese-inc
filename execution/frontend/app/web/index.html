@@ -6,28 +6,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
 
-  <!-- SEO: replace all CLIENT_* tokens before the production build -->
-  <title>CLIENT_TITLE</title>
-  <meta name="description" content="CLIENT_DESCRIPTION">
+  <!-- SEO: tokens replaced automatically by prepare.sh before each build -->
+  <title>Cheese is the word</title>
+  <meta name="description" content="Cheese is dropping off your lip.">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="CLIENT_TITLE">
-  <meta property="og:description" content="CLIENT_DESCRIPTION">
-  <meta property="og:image" content="CLIENT_OG_IMAGE">
-  <meta property="og:url" content="CLIENT_URL">
+  <meta property="og:title" content="Cheese is the word">
+  <meta property="og:description" content="Cheese is dropping off your lip.">
+  <meta property="og:image" content="https://gegwqywgbgzahnftppda.supabase.co/storage/v1/object/public/admin-assets/portal/og/a4fd4c21-ae57-41fb-8d8a-098c1df6b64a/3085.png">
+  <meta property="og:url" content="ras3ucat.qzz.io">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="CLIENT_TITLE">
-  <meta name="twitter:description" content="CLIENT_DESCRIPTION">
-  <meta name="twitter:image" content="CLIENT_OG_IMAGE">
+  <meta name="twitter:title" content="Cheese is the word">
+  <meta name="twitter:description" content="Cheese is dropping off your lip.">
+  <meta name="twitter:image" content="https://gegwqywgbgzahnftppda.supabase.co/storage/v1/object/public/admin-assets/portal/og/a4fd4c21-ae57-41fb-8d8a-098c1df6b64a/3085.png">
 
   <!-- PWA -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="CLIENT_NAME">
+  <meta name="apple-mobile-web-app-title" content="Cheese inc.">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="manifest" href="manifest.json">
@@ -37,36 +37,35 @@
   {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "name": "CLIENT_NAME",
-    "description": "CLIENT_DESCRIPTION",
-    "url": "CLIENT_URL",
-    "telephone": "CLIENT_PHONE",
+    "name": "Cheese inc.",
+    "description": "Cheese is dropping off your lip.",
+    "url": "ras3ucat.qzz.io",
+    "telephone": "123 456 7890",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "CLIENT_STREET",
-      "addressLocality": "CLIENT_CITY",
-      "addressRegion": "CLIENT_STATE",
-      "postalCode": "CLIENT_ZIP",
-      "addressCountry": "CLIENT_COUNTRY"
+      "streetAddress": "South 48th Street",
+      "addressLocality": "Tacoma",
+      "addressRegion": "Washington",
+      "postalCode": "98409",
+      "addressCountry": "United States"
     },
-    "openingHoursSpecification": CLIENT_HOURS_JSON,
-    "image": "CLIENT_OG_IMAGE"
+    "openingHoursSpecification": {"friday": {"open": "8:00 AM", "close": "6:00 PM", "closed": false}, "monday": {"open": "9:00 AM", "close": "5:00 PM", "closed": false}, "sunday": {"open": "9:00 AM", "close": "5:00 PM", "closed": true}, "tuesday": {"open": "9:00 AM", "close": "5:00 PM", "closed": false}, "saturday": {"open": "9:00 AM", "close": "5:00 PM", "closed": true}, "thursday": {"open": "9:00 AM", "close": "5:00 PM", "closed": false}, "wednesday": {"open": "9:00 AM", "close": "5:00 PM", "closed": false}},
+    "image": "https://gegwqywgbgzahnftppda.supabase.co/storage/v1/object/public/admin-assets/portal/og/a4fd4c21-ae57-41fb-8d8a-098c1df6b64a/3085.png"
   }
   </script>
 
-  <!-- Loading screen — shown until Flutter renders its first frame.
-       CLIENT_COLOR_SURFACE: replace with 6-char hex (e.g. 0D0D0D) — no # needed here.
-       CLIENT_COLOR_PRIMARY:  replace with 6-char hex (e.g. C9A96E) — no # needed here. -->
+  <!-- Loading screen — shown until Flutter first frame.
+       Tokens 0D0907 / FF4500 replaced by prepare.sh. -->
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #CLIENT_COLOR_SURFACE;
+      background-color: #0D0907;
     }
     #flutter-loader {
       position: fixed;
       inset: 0;
-      background-color: #CLIENT_COLOR_SURFACE;
+      background-color: #0D0907;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -81,7 +80,7 @@
       width: 44px;
       height: 44px;
       border: 2px solid rgba(255, 255, 255, 0.08);
-      border-top-color: #CLIENT_COLOR_PRIMARY;
+      border-top-color: #FF4500;
       border-radius: 50%;
       animation: loader-spin 0.8s linear infinite;
     }
@@ -92,48 +91,11 @@
 </head>
 <body>
 
-  <!-- Loading screen: hidden on flutter-first-frame event -->
   <div id="flutter-loader">
     <div class="loader-ring"></div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════════════════════
-       ANALYTICS — GDPR-gated.
-       When GDPR is disabled: paste your analytics snippet directly here and
-         it will fire for all visitors.
-       When GDPR is enabled: paste your snippet inside window.enableAnalytics()
-         below. It will only fire after the user clicks "Accept" in the cookie
-         banner. The Flutter GdprController calls window.enableAnalytics() on
-         consent.
-
-       Example GA4 snippet (inside enableAnalytics body):
-         var s = document.createElement('script');
-         s.src = 'https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX';
-         s.async = true;
-         document.head.appendChild(s);
-         window.dataLayer = window.dataLayer || [];
-         function gtag(){dataLayer.push(arguments);}
-         window.gtag = gtag;
-         gtag('js', new Date());
-         gtag('config', 'G-XXXXXXXXXX');
-       ═══════════════════════════════════════════════════════════════════════ -->
   <script>
-    window._analyticsEnabled = false;
-    window.enableAnalytics = function () {
-      if (window._analyticsEnabled) return;
-      window._analyticsEnabled = true;
-      // ── Paste GDPR-gated analytics snippet here ──────────────────────────
-
-      // ─────────────────────────────────────────────────────────────────────
-    };
-  </script>
-
-  <script>
-    // Force HTML renderer for SEO-indexable DOM output (ADR-008)
-    window.flutterConfiguration = { renderer: "html" };
-
-    // Dismiss the loading screen once Flutter renders its first frame.
-    // flutter-first-frame is fired by the Flutter engine on web after initial paint.
     window.addEventListener('flutter-first-frame', function () {
       var loader = document.getElementById('flutter-loader');
       if (loader) {
@@ -141,6 +103,37 @@
         setTimeout(function () { loader.remove(); }, 400);
       }
     });
+  </script>
+  <script>
+    // Service worker registration — required for Web Push (PUSH_ENABLED feature).
+    // Always registered so the SW is ready; Flutter gates the permission prompt via AppEnv.pushEnabled.
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+
+    // Push subscription helper — called from Flutter via dart:js_interop.
+    // Returns a JSON string with { endpoint, p256dh, auth, userAgent } or null on failure/denial.
+    window._pushSubscribe = async function(vapidKey) {
+      try {
+        var perm = await Notification.requestPermission();
+        if (perm !== 'granted') return null;
+        var reg = await navigator.serviceWorker.ready;
+        var sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: vapidKey,
+        });
+        var toB64url = function(buf) {
+          return btoa(String.fromCharCode.apply(null, new Uint8Array(buf)))
+            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        };
+        return JSON.stringify({
+          endpoint:  sub.endpoint,
+          p256dh:    toB64url(sub.getKey('p256dh')),
+          auth:      toB64url(sub.getKey('auth')),
+          userAgent: navigator.userAgent,
+        });
+      } catch(_) { return null; }
+    };
   </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>

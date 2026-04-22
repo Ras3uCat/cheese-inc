@@ -6,7 +6,11 @@ import '../../../core/theme/e_text_styles.dart';
 import '../controllers/booking_addons_controller.dart';
 
 class TipSelector extends StatefulWidget {
-  const TipSelector({super.key, required this.addons, required this.totalPrice});
+  const TipSelector({
+    super.key,
+    required this.addons,
+    required this.totalPrice,
+  });
   final BookingAddonsController addons;
   final double totalPrice;
 
@@ -61,19 +65,22 @@ class _TipSelectorState extends State<TipSelector> {
               ),
               _TipChip(
                 label: '10%',
-                selected: !_showCustom &&
+                selected:
+                    !_showCustom &&
                     tipCents == (widget.totalPrice * 0.10 * 100).round(),
                 onTap: () => _selectPct(0.10),
               ),
               _TipChip(
                 label: '15%',
-                selected: !_showCustom &&
+                selected:
+                    !_showCustom &&
                     tipCents == (widget.totalPrice * 0.15 * 100).round(),
                 onTap: () => _selectPct(0.15),
               ),
               _TipChip(
                 label: '20%',
-                selected: !_showCustom &&
+                selected:
+                    !_showCustom &&
                     tipCents == (widget.totalPrice * 0.20 * 100).round(),
                 onTap: () => _selectPct(0.20),
               ),
@@ -89,7 +96,9 @@ class _TipSelectorState extends State<TipSelector> {
             TextFormField(
               controller: _customController,
               style: ETextStyles.inputText,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: InputDecoration(
                 labelText: 'CUSTOM TIP AMOUNT (\$)',
                 labelStyle: ETextStyles.inputLabel,
@@ -108,7 +117,11 @@ class _TipSelectorState extends State<TipSelector> {
 }
 
 class _TipChip extends StatelessWidget {
-  const _TipChip({required this.label, required this.selected, required this.onTap});
+  const _TipChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -119,7 +132,9 @@ class _TipChip extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: ESpacing.md, vertical: ESpacing.xs),
+          horizontal: ESpacing.md,
+          vertical: ESpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: selected ? EColors.primary : Colors.transparent,
           border: Border.all(

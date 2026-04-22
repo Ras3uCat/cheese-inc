@@ -214,9 +214,10 @@ class _MainContentGrid extends StatelessWidget {
                     ...controller.sections.map(
                       (section) => _SectionItem(
                         section: section,
-                        lessons: controller.lessons
-                            .where((l) => l.sectionId == section.id)
-                            .toList(),
+                        lessons:
+                            controller.lessons
+                                .where((l) => l.sectionId == section.id)
+                                .toList(),
                         controller: controller,
                       ),
                     ),
@@ -277,12 +278,13 @@ class _SectionItem extends StatelessWidget {
                 color: isLocked ? EColors.onSurfaceMuted : EColors.onSurface,
               ),
             ),
-            trailing: lesson.durationSeconds != null
-                ? Text(
-                    '${lesson.durationSeconds! ~/ 60}:${(lesson.durationSeconds! % 60).toString().padLeft(2, '0')}',
-                    style: ETextStyles.bodySmMuted,
-                  )
-                : null,
+            trailing:
+                lesson.durationSeconds != null
+                    ? Text(
+                      '${lesson.durationSeconds! ~/ 60}:${(lesson.durationSeconds! % 60).toString().padLeft(2, '0')}',
+                      style: ETextStyles.bodySmMuted,
+                    )
+                    : null,
             onTap: () async {
               if (isLocked) {
                 Get.snackbar(
@@ -357,21 +359,25 @@ class _EnrollmentCard extends StatelessWidget {
               ),
               const SizedBox(height: ESpacing.lg),
               ElevatedButton(
-                onPressed: controller.isLoading.value
-                    ? null
-                    : () => controller.enroll(),
+                onPressed:
+                    controller.isLoading.value
+                        ? null
+                        : () => controller.enroll(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: EColors.primary,
                   foregroundColor: Colors.white,
                 ),
-                child: controller.isLoading.value
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Text('Enroll Now'),
+                child:
+                    controller.isLoading.value
+                        ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                        : const Text('Enroll Now'),
               ),
             ],
           ],

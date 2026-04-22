@@ -22,7 +22,6 @@ flutter pub get
 
 flutter build web \
   --dart-define-from-file="$CLIENT_JSON" \
-  --web-renderer html \
   --release
 
 echo ""

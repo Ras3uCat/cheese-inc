@@ -41,27 +41,38 @@ class LocationManagerView extends StatelessWidget {
               ),
               const Divider(height: 1),
               Expanded(
-                child: ctrl.locations.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No locations yet. Add your first location.',
-                          style: ETextStyles.bodyMd
-                              .copyWith(color: EColors.onSurfaceMuted),
+                child:
+                    ctrl.locations.isEmpty
+                        ? Center(
+                          child: Text(
+                            'No locations yet. Add your first location.',
+                            style: ETextStyles.bodyMd.copyWith(
+                              color: EColors.onSurfaceMuted,
+                            ),
+                          ),
+                        )
+                        : ListView.separated(
+                          padding: const EdgeInsets.all(ESpacing.lg),
+                          itemCount: ctrl.locations.length,
+                          separatorBuilder:
+                              (_, i) => const SizedBox(height: ESpacing.sm),
+                          itemBuilder:
+                              (_, i) => _LocationTile(
+                                location: ctrl.locations[i],
+                                onEdit:
+                                    () => _showDialog(
+                                      context,
+                                      ctrl,
+                                      existing: ctrl.locations[i],
+                                    ),
+                                onDelete:
+                                    () => _confirmDelete(
+                                      context,
+                                      ctrl,
+                                      ctrl.locations[i],
+                                    ),
+                              ),
                         ),
-                      )
-                    : ListView.separated(
-                        padding: const EdgeInsets.all(ESpacing.lg),
-                        itemCount: ctrl.locations.length,
-                        separatorBuilder: (_, i) =>
-                            const SizedBox(height: ESpacing.sm),
-                        itemBuilder: (_, i) => _LocationTile(
-                          location: ctrl.locations[i],
-                          onEdit: () =>
-                              _showDialog(context, ctrl, existing: ctrl.locations[i]),
-                          onDelete: () =>
-                              _confirmDelete(context, ctrl, ctrl.locations[i]),
-                        ),
-                      ),
               ),
             ],
           );
@@ -88,26 +99,26 @@ class LocationManagerView extends StatelessWidget {
   ) {
     showDialog(
       context: ctx,
-      builder: (_) => AlertDialog(
-        title: const Text('Delete Location?'),
-        content: Text(
-          'Deleting "${loc.name}" will unlink all associated staff and bookings. This cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('CANCEL'),
+      builder:
+          (_) => AlertDialog(
+            title: const Text('Delete Location?'),
+            content: Text(
+              'Deleting "${loc.name}" will unlink all associated staff and bookings. This cannot be undone.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('CANCEL'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(ctx);
+                  await ctrl.deleteLocation(loc.id);
+                },
+                child: Text('DELETE', style: TextStyle(color: EColors.error)),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(ctx);
-              await ctrl.deleteLocation(loc.id);
-            },
-            child:
-                Text('DELETE', style: TextStyle(color: EColors.error)),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -180,10 +191,10 @@ class _LocationDialogState extends State<_LocationDialog> {
   void initState() {
     super.initState();
     final e = widget.existing;
-    _name     = TextEditingController(text: e?.name ?? '');
-    _address  = TextEditingController(text: e?.address ?? '');
-    _city     = TextEditingController(text: e?.city ?? '');
-    _phone    = TextEditingController(text: e?.phone ?? '');
+    _name = TextEditingController(text: e?.name ?? '');
+    _address = TextEditingController(text: e?.address ?? '');
+    _city = TextEditingController(text: e?.city ?? '');
+    _phone = TextEditingController(text: e?.phone ?? '');
     _timezone = TextEditingController(text: e?.timezone ?? 'UTC');
     _isActive = e?.isActive ?? true;
   }
@@ -201,22 +212,23 @@ class _LocationDialogState extends State<_LocationDialog> {
   Future<void> _save() async {
     if (_name.text.trim().isEmpty) return;
     final ctrl = widget.ctrl;
-    final id   = widget.existing?.id;
+    final id = widget.existing?.id;
     if (id == null) {
       await ctrl.createLocation(
-        name:      _name.text.trim(),
-        address:   _address.text.trim(),
-        city:      _city.text.trim(),
-        phone:     _phone.text.trim(),
-        timezone:  _timezone.text.trim().isEmpty ? 'UTC' : _timezone.text.trim(),
+        name: _name.text.trim(),
+        address: _address.text.trim(),
+        city: _city.text.trim(),
+        phone: _phone.text.trim(),
+        timezone: _timezone.text.trim().isEmpty ? 'UTC' : _timezone.text.trim(),
       );
     } else {
       await ctrl.updateLocation(id, {
-        'name':      _name.text.trim(),
-        'address':   _address.text.trim(),
-        'city':      _city.text.trim(),
-        'phone':     _phone.text.trim(),
-        'timezone':  _timezone.text.trim().isEmpty ? 'UTC' : _timezone.text.trim(),
+        'name': _name.text.trim(),
+        'address': _address.text.trim(),
+        'city': _city.text.trim(),
+        'phone': _phone.text.trim(),
+        'timezone':
+            _timezone.text.trim().isEmpty ? 'UTC' : _timezone.text.trim(),
         'is_active': _isActive,
       });
     }
@@ -264,12 +276,13 @@ class _LocationDialogState extends State<_LocationDialog> {
               if (isEdit) ...[
                 const SizedBox(height: ESpacing.sm),
                 StatefulBuilder(
-                  builder: (_, setState) => SwitchListTile(
-                    title: const Text('Active'),
-                    value: _isActive,
-                    onChanged: (v) => setState(() => _isActive = v),
-                    activeTrackColor: EColors.primary,
-                  ),
+                  builder:
+                      (_, setState) => SwitchListTile(
+                        title: const Text('Active'),
+                        value: _isActive,
+                        onChanged: (v) => setState(() => _isActive = v),
+                        activeTrackColor: EColors.primary,
+                      ),
                 ),
               ],
             ],
@@ -281,10 +294,7 @@ class _LocationDialogState extends State<_LocationDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('CANCEL'),
         ),
-        FilledButton(
-          onPressed: _save,
-          child: Text(isEdit ? 'SAVE' : 'ADD'),
-        ),
+        FilledButton(onPressed: _save, child: Text(isEdit ? 'SAVE' : 'ADD')),
       ],
     );
   }

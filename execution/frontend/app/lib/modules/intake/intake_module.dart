@@ -14,30 +14,32 @@ class IntakeModule implements AppModule {
   NavItem? get navItem => null;
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.intake,
-          page: () => const IntakeFormView(),
-          binding: IntakeBinding(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.intake,
+      page: () => const IntakeFormView(),
+      binding: IntakeBinding(),
+      transition: Transition.fadeIn,
+    ),
+  ];
   @override
   Bindings? get binding => null;
 }
 
 class IntakeBinding extends Bindings {
   @override
-  void dependencies() { Get.put(IntakeController()); }
+  void dependencies() {
+    Get.put(IntakeController());
+  }
 }
 
 class IntakeController extends GetxController {
-  final bookingId    = ''.obs;
-  final questions    = <Map<String, dynamic>>[].obs;
-  final answers      = <String, dynamic>{}.obs;
-  final isLoading    = false.obs;
+  final bookingId = ''.obs;
+  final questions = <Map<String, dynamic>>[].obs;
+  final answers = <String, dynamic>{}.obs;
+  final isLoading = false.obs;
   final isSubmitting = false.obs;
-  final submitted    = false.obs;
-  final error        = RxnString();
+  final submitted = false.obs;
+  final error = RxnString();
 
   SupabaseClient get _db => Supabase.instance.client;
 
@@ -76,7 +78,7 @@ class IntakeController extends GetxController {
     try {
       await _db.from('intake_responses').insert({
         'booking_id': bookingId.value,
-        'answers':    Map<String, dynamic>.from(answers),
+        'answers': Map<String, dynamic>.from(answers),
       });
       submitted.value = true;
     } catch (_) {
@@ -106,15 +108,20 @@ class IntakeFormView extends GetView<IntakeController> {
         if (controller.submitted.value) return _SubmittedView();
         if (controller.questions.isEmpty) {
           return Center(
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Text('No questions available.', style: ETextStyles.bodyMuted),
-              const SizedBox(height: ESpacing.lg),
-              TextButton(
-                onPressed: () => Get.offAllNamed(ERoutes.home),
-                child: Text('Continue',
-                    style: ETextStyles.button.copyWith(color: EColors.primary)),
-              ),
-            ]),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('No questions available.', style: ETextStyles.bodyMuted),
+                const SizedBox(height: ESpacing.lg),
+                TextButton(
+                  onPressed: () => Get.offAllNamed(ERoutes.home),
+                  child: Text(
+                    'Continue',
+                    style: ETextStyles.button.copyWith(color: EColors.primary),
+                  ),
+                ),
+              ],
+            ),
           );
         }
         return Center(
@@ -123,43 +130,62 @@ class IntakeFormView extends GetView<IntakeController> {
             child: ListView(
               padding: const EdgeInsets.all(ESpacing.xl),
               children: [
-                Text('A few quick questions before your appointment.',
-                    style: ETextStyles.bodyMuted),
+                Text(
+                  'A few quick questions before your appointment.',
+                  style: ETextStyles.bodyMuted,
+                ),
                 const SizedBox(height: ESpacing.xl),
                 ...controller.questions.map((q) => _QuestionItem(question: q)),
                 if (controller.error.value != null) ...[
                   const SizedBox(height: ESpacing.md),
-                  Text(controller.error.value!,
-                      style: ETextStyles.bodySm.copyWith(color: EColors.error)),
+                  Text(
+                    controller.error.value!,
+                    style: ETextStyles.bodySm.copyWith(color: EColors.error),
+                  ),
                 ],
                 const SizedBox(height: ESpacing.xl),
-                Row(children: [
-                  TextButton(
-                    onPressed: () => Get.offAllNamed(ERoutes.home),
-                    child: Text('Skip',
-                        style: ETextStyles.button
-                            .copyWith(color: EColors.onSurfaceMuted)),
-                  ),
-                  const Spacer(),
-                  Obx(() => ElevatedButton(
-                        onPressed: controller.isSubmitting.value
-                            ? null
-                            : controller.submit,
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () => Get.offAllNamed(ERoutes.home),
+                      child: Text(
+                        'Skip',
+                        style: ETextStyles.button.copyWith(
+                          color: EColors.onSurfaceMuted,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Obx(
+                      () => ElevatedButton(
+                        onPressed:
+                            controller.isSubmitting.value
+                                ? null
+                                : controller.submit,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: EColors.primary,
                           foregroundColor: EColors.secondary,
                           shape: const RoundedRectangleBorder(),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: ESpacing.xl, vertical: ESpacing.md),
+                            horizontal: ESpacing.xl,
+                            vertical: ESpacing.md,
+                          ),
                         ),
-                        child: controller.isSubmitting.value
-                            ? const SizedBox(
-                                width: 18, height: 18,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: Colors.white))
-                            : Text('Submit', style: ETextStyles.button),
-                      )),
-                ]),
+                        child:
+                            controller.isSubmitting.value
+                                ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                                : Text('Submit', style: ETextStyles.button),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -175,67 +201,88 @@ class _QuestionItem extends GetView<IntakeController> {
 
   @override
   Widget build(BuildContext context) {
-    final id        = question['id'] as String;
-    final label     = question['label'] as String? ?? '';
+    final id = question['id'] as String;
+    final label = question['label'] as String? ?? '';
     final fieldType = question['field_type'] as String? ?? 'text';
-    final required  = question['is_required'] as bool? ?? false;
-    final options   = (question['options'] as List?)
-            ?.map((e) => e.toString()).toList() ?? [];
+    final required = question['is_required'] as bool? ?? false;
+    final options =
+        (question['options'] as List?)?.map((e) => e.toString()).toList() ?? [];
 
     return Padding(
       padding: const EdgeInsets.only(bottom: ESpacing.lg),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Expanded(child: Text(label, style: ETextStyles.label)),
-          if (required)
-            Text(' *',
-                style: ETextStyles.labelSm.copyWith(color: EColors.error)),
-        ]),
-        const SizedBox(height: ESpacing.sm),
-        if (fieldType == 'yesno')
-          Obx(() {
-            final cur = controller.answers[id];
-            return Row(children: [
-              _ToggleBtn(label: 'Yes', selected: cur == true,
-                  onTap: () => controller.setAnswer(id, true)),
-              const SizedBox(width: ESpacing.sm),
-              _ToggleBtn(label: 'No', selected: cur == false,
-                  onTap: () => controller.setAnswer(id, false)),
-            ]);
-          })
-        else if (fieldType == 'select')
-          Obx(() {
-            final cur = controller.answers[id] as String?;
-            return DropdownButton<String>(
-              value: options.contains(cur) ? cur : null,
-              hint: Text('Select an option', style: ETextStyles.bodySmMuted),
-              isExpanded: true,
-              underline: Container(height: 1, color: EColors.divider),
-              style: ETextStyles.inputText,
-              items: options
-                  .map((o) => DropdownMenuItem(value: o, child: Text(o)))
-                  .toList(),
-              onChanged: (v) { if (v != null) controller.setAnswer(id, v); },
-            );
-          })
-        else
-          TextField(
-            maxLines: fieldType == 'textarea' ? 4 : 1,
-            style: ETextStyles.inputText,
-            decoration: InputDecoration(
-              hintText: 'Your answer...',
-              hintStyle: ETextStyles.bodySmMuted,
-            ),
-            onChanged: (v) => controller.setAnswer(id, v),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(child: Text(label, style: ETextStyles.label)),
+              if (required)
+                Text(
+                  ' *',
+                  style: ETextStyles.labelSm.copyWith(color: EColors.error),
+                ),
+            ],
           ),
-      ]),
+          const SizedBox(height: ESpacing.sm),
+          if (fieldType == 'yesno')
+            Obx(() {
+              final cur = controller.answers[id];
+              return Row(
+                children: [
+                  _ToggleBtn(
+                    label: 'Yes',
+                    selected: cur == true,
+                    onTap: () => controller.setAnswer(id, true),
+                  ),
+                  const SizedBox(width: ESpacing.sm),
+                  _ToggleBtn(
+                    label: 'No',
+                    selected: cur == false,
+                    onTap: () => controller.setAnswer(id, false),
+                  ),
+                ],
+              );
+            })
+          else if (fieldType == 'select')
+            Obx(() {
+              final cur = controller.answers[id] as String?;
+              return DropdownButton<String>(
+                value: options.contains(cur) ? cur : null,
+                hint: Text('Select an option', style: ETextStyles.bodySmMuted),
+                isExpanded: true,
+                underline: Container(height: 1, color: EColors.divider),
+                style: ETextStyles.inputText,
+                items:
+                    options
+                        .map((o) => DropdownMenuItem(value: o, child: Text(o)))
+                        .toList(),
+                onChanged: (v) {
+                  if (v != null) controller.setAnswer(id, v);
+                },
+              );
+            })
+          else
+            TextField(
+              maxLines: fieldType == 'textarea' ? 4 : 1,
+              style: ETextStyles.inputText,
+              decoration: InputDecoration(
+                hintText: 'Your answer...',
+                hintStyle: ETextStyles.bodySmMuted,
+              ),
+              onChanged: (v) => controller.setAnswer(id, v),
+            ),
+        ],
+      ),
     );
   }
 }
 
 class _ToggleBtn extends StatelessWidget {
-  const _ToggleBtn(
-      {required this.label, required this.selected, required this.onTap});
+  const _ToggleBtn({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -246,15 +293,22 @@ class _ToggleBtn extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: ESpacing.lg, vertical: ESpacing.sm),
+          horizontal: ESpacing.lg,
+          vertical: ESpacing.sm,
+        ),
         decoration: BoxDecoration(
           color: selected ? EColors.primary : EColors.surfaceVariant,
           border: Border.all(
-              color: selected ? EColors.primary : EColors.divider, width: 0.5),
+            color: selected ? EColors.primary : EColors.divider,
+            width: 0.5,
+          ),
         ),
-        child: Text(label,
-            style: ETextStyles.label.copyWith(
-                color: selected ? EColors.secondary : EColors.onSurface)),
+        child: Text(
+          label,
+          style: ETextStyles.label.copyWith(
+            color: selected ? EColors.secondary : EColors.onSurface,
+          ),
+        ),
       ),
     );
   }
@@ -266,29 +320,34 @@ class _SubmittedView extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(ESpacing.xl),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.check_circle_outline, size: 64, color: EColors.primary),
-          const SizedBox(height: ESpacing.lg),
-          Text('All done!', style: ETextStyles.h2),
-          const SizedBox(height: ESpacing.sm),
-          Text(
-            'Your responses have been saved. See you at your appointment.',
-            style: ETextStyles.bodyMuted,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: ESpacing.xl),
-          ElevatedButton(
-            onPressed: () => Get.offAllNamed(ERoutes.home),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: EColors.primary,
-              foregroundColor: EColors.secondary,
-              shape: const RoundedRectangleBorder(),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: ESpacing.xl, vertical: ESpacing.md),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.check_circle_outline, size: 64, color: EColors.primary),
+            const SizedBox(height: ESpacing.lg),
+            Text('All done!', style: ETextStyles.h2),
+            const SizedBox(height: ESpacing.sm),
+            Text(
+              'Your responses have been saved. See you at your appointment.',
+              style: ETextStyles.bodyMuted,
+              textAlign: TextAlign.center,
             ),
-            child: Text('Back to home', style: ETextStyles.button),
-          ),
-        ]),
+            const SizedBox(height: ESpacing.xl),
+            ElevatedButton(
+              onPressed: () => Get.offAllNamed(ERoutes.home),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: EColors.primary,
+                foregroundColor: EColors.secondary,
+                shape: const RoundedRectangleBorder(),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: ESpacing.xl,
+                  vertical: ESpacing.md,
+                ),
+              ),
+              child: Text('Back to home', style: ETextStyles.button),
+            ),
+          ],
+        ),
       ),
     );
   }

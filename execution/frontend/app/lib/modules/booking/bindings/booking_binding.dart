@@ -7,14 +7,8 @@ import '../repositories/supabase_booking_repository.dart';
 class BookingBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<BookingRepository>(
-      () => SupabaseBookingRepository(),
-    );
-    Get.lazyPut<BookingAddonsController>(
-      () => BookingAddonsController(),
-    );
-    Get.lazyPut<BookingController>(
-      () => BookingController(),
-    );
+    Get.lazyPut<BookingRepository>(() => SupabaseBookingRepository());
+    Get.lazyPut<BookingAddonsController>(() => BookingAddonsController());
+    Get.lazyPut<BookingController>(() => BookingController());
   }
 }

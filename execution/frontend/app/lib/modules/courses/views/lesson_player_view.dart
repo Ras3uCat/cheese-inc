@@ -33,24 +33,15 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
 
         if (isMobile) {
           return Column(
-            children: [
-              _buildVideoPlayer(),
-              Expanded(child: _buildSidebar()),
-            ],
+            children: [_buildVideoPlayer(), Expanded(child: _buildSidebar())],
           );
         } else {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: 3,
-                child: _buildVideoPlayer(),
-              ),
+              Expanded(flex: 3, child: _buildVideoPlayer()),
               const VerticalDivider(width: 1),
-              Expanded(
-                flex: 1,
-                child: _buildSidebar(),
-              ),
+              Expanded(flex: 1, child: _buildSidebar()),
             ],
           );
         }
@@ -63,13 +54,18 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
       builder: (_) {
         if (controller.chewieController != null &&
             controller
-                .chewieController!.videoPlayerController.value.isInitialized) {
+                .chewieController!
+                .videoPlayerController
+                .value
+                .isInitialized) {
           return AspectRatio(
-            aspectRatio: controller
-                .chewieController!.videoPlayerController.value.aspectRatio,
-            child: Chewie(
-              controller: controller.chewieController!,
-            ),
+            aspectRatio:
+                controller
+                    .chewieController!
+                    .videoPlayerController
+                    .value
+                    .aspectRatio,
+            child: Chewie(controller: controller.chewieController!),
           );
         } else {
           return const AspectRatio(
@@ -86,10 +82,9 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
       itemCount: controller.sections.length,
       itemBuilder: (context, index) {
         final section = controller.sections[index];
-        final sectionLessons = controller.lessons
-            .where((l) => l.sectionId == section.id)
-            .toList()
-          ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+        final sectionLessons =
+            controller.lessons.where((l) => l.sectionId == section.id).toList()
+              ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
 
         return ExpansionTile(
           title: Text(
@@ -97,27 +92,33 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           initiallyExpanded: true,
-          children: sectionLessons.map((lesson) {
-            final isCurrent = controller.currentLesson.value?.id == lesson.id;
-            final isCompleted = controller.isLessonCompleted(lesson.id);
+          children:
+              sectionLessons.map((lesson) {
+                final isCurrent =
+                    controller.currentLesson.value?.id == lesson.id;
+                final isCompleted = controller.isLessonCompleted(lesson.id);
 
-            return ListTile(
-              leading: Icon(
-                isCompleted ? Icons.check_circle : Icons.play_circle_outline,
-                color: isCompleted
-                    ? Colors.green
-                    : (isCurrent ? Colors.blue : Colors.grey),
-              ),
-              title: Text(
-                lesson.title,
-                style: TextStyle(
-                  fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-              selected: isCurrent,
-              onTap: () => controller.playLesson(lesson),
-            );
-          }).toList(),
+                return ListTile(
+                  leading: Icon(
+                    isCompleted
+                        ? Icons.check_circle
+                        : Icons.play_circle_outline,
+                    color:
+                        isCompleted
+                            ? Colors.green
+                            : (isCurrent ? Colors.blue : Colors.grey),
+                  ),
+                  title: Text(
+                    lesson.title,
+                    style: TextStyle(
+                      fontWeight:
+                          isCurrent ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  selected: isCurrent,
+                  onTap: () => controller.playLesson(lesson),
+                );
+              }).toList(),
         );
       },
     );

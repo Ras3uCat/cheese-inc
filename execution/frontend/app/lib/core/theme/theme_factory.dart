@@ -15,26 +15,25 @@ class ThemeFactory {
 
     final colorScheme = ColorScheme(
       brightness: _brightness(),
-      primary:          EColors.primary,
-      onPrimary:        _contrastFor(EColors.primary),
-      secondary:        EColors.secondary,
-      onSecondary:      _contrastFor(EColors.secondary),
-      tertiary:         EColors.accent,
-      onTertiary:       _contrastFor(EColors.accent),
-      surface:          EColors.surface,
-      onSurface:        EColors.onSurface,
-      error:            EColors.error,
-      onError:          Colors.white,
+      primary: EColors.primary,
+      onPrimary: _contrastFor(EColors.primary),
+      secondary: EColors.secondary,
+      onSecondary: _contrastFor(EColors.secondary),
+      tertiary: EColors.accent,
+      onTertiary: _contrastFor(EColors.accent),
+      surface: EColors.surface,
+      onSurface: EColors.onSurface,
+      error: EColors.error,
+      onError: Colors.white,
       surfaceContainerHighest: EColors.surfaceVariant,
-      outline:          EColors.divider,
+      outline: EColors.divider,
     );
 
     TextTheme textTheme;
     try {
-      textTheme = GoogleFonts.getTextTheme(AppEnv.fontSecondary).apply(
-        bodyColor: EColors.onSurface,
-        displayColor: EColors.onSurface,
-      );
+      textTheme = GoogleFonts.getTextTheme(
+        AppEnv.fontPrimary,
+      ).apply(bodyColor: EColors.onSurface, displayColor: EColors.onSurface);
     } catch (_) {
       textTheme = ThemeData.light().textTheme;
     }
@@ -50,13 +49,12 @@ class ThemeFactory {
         elevation: pt.cardStyle == CardStyleToken.softShadow ? 4 : 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(pt.cardRadius),
-          side: pt.cardStyle == CardStyleToken.bordered
-              ? BorderSide(color: EColors.divider)
-              : BorderSide.none,
+          side:
+              pt.cardStyle == CardStyleToken.bordered
+                  ? BorderSide(color: EColors.divider)
+                  : BorderSide.none,
         ),
-        color: pt.cardStyle == CardStyleToken.flatFill
-            ? EColors.surfaceVariant
-            : EColors.surface,
+        color: pt.cardStyle == CardStyleToken.flatFill ? EColors.surfaceVariant : EColors.surface,
         clipBehavior: Clip.antiAlias,
       ),
 
@@ -65,9 +63,7 @@ class ThemeFactory {
         style: ElevatedButton.styleFrom(
           backgroundColor: EColors.primary,
           foregroundColor: _contrastFor(EColors.primary),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(pt.buttonRadius),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(pt.buttonRadius)),
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
           elevation: 0,
         ),
@@ -78,9 +74,7 @@ class ThemeFactory {
         style: OutlinedButton.styleFrom(
           foregroundColor: EColors.primary,
           side: BorderSide(color: EColors.primary),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(pt.buttonRadius),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(pt.buttonRadius)),
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
         ),
       ),
@@ -89,9 +83,7 @@ class ThemeFactory {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: EColors.primary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(pt.buttonRadius),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(pt.buttonRadius)),
         ),
       ),
 
@@ -131,18 +123,14 @@ class ThemeFactory {
       ),
 
       // Dividers
-      dividerTheme: DividerThemeData(
-        color: EColors.divider,
-        thickness: 1,
-        space: 0,
-      ),
+      dividerTheme: DividerThemeData(color: EColors.divider, thickness: 1, space: 0),
 
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
           TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-          TargetPlatform.iOS:     CupertinoPageTransitionsBuilder(),
-          TargetPlatform.linux:   FadeUpwardsPageTransitionsBuilder(),
-          TargetPlatform.macOS:   FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(),
           TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
         },
       ),

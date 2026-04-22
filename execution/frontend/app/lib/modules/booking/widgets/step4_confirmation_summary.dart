@@ -12,15 +12,17 @@ class Step4ConfirmationSummary extends GetView<BookingController> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile =
-        MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
+    final isMobile = MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
     final hPad = isMobile ? ESpacing.md : ESpacing.xxl;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: hPad, vertical: ESpacing.lg),
+          padding: EdgeInsets.symmetric(
+            horizontal: hPad,
+            vertical: ESpacing.lg,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -34,28 +36,36 @@ class Step4ConfirmationSummary extends GetView<BookingController> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: hPad, vertical: ESpacing.md),
-            child: isMobile
-                ? Column(children: [
-                    const BookingSummaryCard(),
-                    const SizedBox(height: ESpacing.xl),
-                    const ClientForm(),
-                  ])
-                : Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Expanded(child: BookingSummaryCard()),
-                      const SizedBox(width: ESpacing.xl),
-                      const Expanded(child: ClientForm()),
-                    ],
-                  ),
+            padding: EdgeInsets.symmetric(
+              horizontal: hPad,
+              vertical: ESpacing.md,
+            ),
+            child:
+                isMobile
+                    ? Column(
+                      children: [
+                        const BookingSummaryCard(),
+                        const SizedBox(height: ESpacing.xl),
+                        const ClientForm(),
+                      ],
+                    )
+                    : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Expanded(child: BookingSummaryCard()),
+                        const SizedBox(width: ESpacing.xl),
+                        const Expanded(child: ClientForm()),
+                      ],
+                    ),
           ),
         ),
         Obx(() {
           if (controller.error.value != null) {
             return Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: ESpacing.lg, vertical: ESpacing.sm),
+                horizontal: ESpacing.lg,
+                vertical: ESpacing.sm,
+              ),
               child: Text(
                 controller.error.value!,
                 style: ETextStyles.bodySm.copyWith(color: EColors.error),
@@ -77,41 +87,47 @@ class _ConfirmBar extends GetView<BookingController> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: ESpacing.lg, vertical: ESpacing.md),
+        horizontal: ESpacing.lg,
+        vertical: ESpacing.md,
+      ),
       decoration: BoxDecoration(
         color: EColors.surfaceVariant,
-        border: Border(
-            top: BorderSide(color: EColors.divider, width: 0.5)),
+        border: Border(top: BorderSide(color: EColors.divider, width: 0.5)),
       ),
-      child: Obx(() => Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              if (controller.isConfirming.value)
-                const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              else
-                AnimatedOpacity(
-                  opacity: controller.canConfirm ? 1.0 : 0.4,
-                  duration: const Duration(milliseconds: 250),
-                  child: ElevatedButton(
-                    onPressed: controller.canConfirm
-                        ? () => controller.confirmBooking()
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: EColors.primary,
-                      foregroundColor: EColors.secondary,
-                      shape: const RoundedRectangleBorder(),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: ESpacing.xl, vertical: ESpacing.md),
+      child: Obx(
+        () => Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (controller.isConfirming.value)
+              const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else
+              AnimatedOpacity(
+                opacity: controller.canConfirm ? 1.0 : 0.4,
+                duration: const Duration(milliseconds: 250),
+                child: ElevatedButton(
+                  onPressed:
+                      controller.canConfirm
+                          ? () => controller.confirmBooking()
+                          : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: EColors.primary,
+                    foregroundColor: EColors.secondary,
+                    shape: const RoundedRectangleBorder(),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: ESpacing.xl,
+                      vertical: ESpacing.md,
                     ),
-                    child: Text('CONFIRM BOOKING', style: ETextStyles.button),
                   ),
+                  child: Text('CONFIRM BOOKING', style: ETextStyles.button),
                 ),
-            ],
-          )),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

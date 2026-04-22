@@ -28,7 +28,10 @@ class _GiftVouchersViewState extends State<GiftVouchersView> {
   }
 
   Future<void> _load() async {
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       final rows = await _db
           .from('gift_vouchers')
@@ -45,7 +48,8 @@ class _GiftVouchersViewState extends State<GiftVouchersView> {
   String _status(Map<String, dynamic> v) {
     if (v['redeemed_at'] != null) return 'Redeemed';
     final exp = v['expires_at'] as String?;
-    if (exp != null && DateTime.tryParse(exp)?.isBefore(DateTime.now()) == true) {
+    if (exp != null &&
+        DateTime.tryParse(exp)?.isBefore(DateTime.now()) == true) {
       return 'Expired';
     }
     return 'Active';
@@ -53,9 +57,12 @@ class _GiftVouchersViewState extends State<GiftVouchersView> {
 
   Color _statusColor(String status) {
     switch (status) {
-      case 'Redeemed': return const Color(0xFF6B7280);
-      case 'Expired':  return EColors.error;
-      default:         return const Color(0xFF10B981);
+      case 'Redeemed':
+        return const Color(0xFF6B7280);
+      case 'Expired':
+        return EColors.error;
+      default:
+        return const Color(0xFF10B981);
     }
   }
 
@@ -66,10 +73,7 @@ class _GiftVouchersViewState extends State<GiftVouchersView> {
       isMaster: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _Header(onRefresh: _load),
-          Expanded(child: _buildBody()),
-        ],
+        children: [_Header(onRefresh: _load), Expanded(child: _buildBody())],
       ),
     );
   }
@@ -81,7 +85,8 @@ class _GiftVouchersViewState extends State<GiftVouchersView> {
     }
     if (_vouchers.isEmpty) {
       return Center(
-          child: Text('No gift vouchers yet.', style: ETextStyles.bodyMuted));
+        child: Text('No gift vouchers yet.', style: ETextStyles.bodyMuted),
+      );
     }
 
     return ListView.separated(
@@ -89,13 +94,16 @@ class _GiftVouchersViewState extends State<GiftVouchersView> {
       itemCount: _vouchers.length,
       separatorBuilder: (_, _) => const SizedBox(height: ESpacing.sm),
       itemBuilder: (_, i) {
-        final v      = _vouchers[i];
+        final v = _vouchers[i];
         final status = _status(v);
         final amount = ((v['amount_cents'] as num?)?.toInt() ?? 0) / 100;
-        final date   = v['created_at'] as String?;
-        final fmt    = date != null
-            ? DateFormat('MMM d, yyyy').format(DateTime.parse(date).toLocal())
-            : '—';
+        final date = v['created_at'] as String?;
+        final fmt =
+            date != null
+                ? DateFormat(
+                  'MMM d, yyyy',
+                ).format(DateTime.parse(date).toLocal())
+                : '—';
 
         return Container(
           padding: const EdgeInsets.all(ESpacing.md),
@@ -109,37 +117,43 @@ class _GiftVouchersViewState extends State<GiftVouchersView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(v['code'] as String? ?? '—',
-                        style: ETextStyles.h4),
+                    Text(v['code'] as String? ?? '—', style: ETextStyles.h4),
                     Text(
                       '${v['purchased_by_email'] ?? '—'} → ${v['recipient_email'] ?? '—'}',
-                      style: ETextStyles.bodySm
-                          .copyWith(color: EColors.onSurfaceMuted),
+                      style: ETextStyles.bodySm.copyWith(
+                        color: EColors.onSurfaceMuted,
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: ESpacing.md),
-              Text('£${amount.toStringAsFixed(0)}',
-                  style: ETextStyles.h4),
+              Text('£${amount.toStringAsFixed(0)}', style: ETextStyles.h4),
               const SizedBox(width: ESpacing.lg),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: ESpacing.sm, vertical: 3),
+                      horizontal: ESpacing.sm,
+                      vertical: 3,
+                    ),
                     color: _statusColor(status).withValues(alpha: 0.15),
                     child: Text(
                       status.toUpperCase(),
                       style: ETextStyles.labelSm.copyWith(
-                          color: _statusColor(status), fontSize: 10),
+                        color: _statusColor(status),
+                        fontSize: 10,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Text(fmt,
-                      style: ETextStyles.labelSm
-                          .copyWith(color: EColors.onSurfaceMuted)),
+                  Text(
+                    fmt,
+                    style: ETextStyles.labelSm.copyWith(
+                      color: EColors.onSurfaceMuted,
+                    ),
+                  ),
                 ],
               ),
             ],

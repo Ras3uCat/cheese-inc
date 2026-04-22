@@ -1,5 +1,5 @@
-name: raspucat_client
-description: "Raspucat modular client delivery template."
+name: cheese_inc
+description: "Cheese inc. Flutter app."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -28,6 +28,8 @@ dependencies:
   # Images
   cached_network_image: ^3.4.1
   flutter_svg: ^2.0.17
+  shimmer: ^3.0.0
+  visibility_detector: ^0.4.0
 
   # Video
   video_player: ^2.9.5

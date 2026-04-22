@@ -22,6 +22,20 @@ CREATE TABLE IF NOT EXISTS artist_services (
   PRIMARY KEY (artist_id, service_id)
 );
 
+-- ─── Promo codes ──────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS promo_codes (
+  id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  code           text NOT NULL UNIQUE,
+  artist_id      uuid REFERENCES profiles(id) ON DELETE CASCADE, -- NULL = global
+  discount_type  text NOT NULL CHECK (discount_type IN ('percent','fixed')),
+  discount_value numeric(10,2) NOT NULL CHECK (discount_value > 0),
+  max_uses       int,
+  uses_count     int NOT NULL DEFAULT 0,
+  expires_at     timestamptz,
+  is_active      boolean NOT NULL DEFAULT true,
+  created_at     timestamptz NOT NULL DEFAULT now()
+);
+
 -- ─── Bookings ─────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS bookings (
   id                       uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -43,20 +57,6 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 CREATE INDEX IF NOT EXISTS bookings_artist_time_idx ON bookings(artist_id, start_time);
 CREATE INDEX IF NOT EXISTS bookings_status_idx      ON bookings(status);
-
--- ─── Promo codes ──────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS promo_codes (
-  id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  code           text NOT NULL UNIQUE,
-  artist_id      uuid REFERENCES profiles(id) ON DELETE CASCADE, -- NULL = global
-  discount_type  text NOT NULL CHECK (discount_type IN ('percent','fixed')),
-  discount_value numeric(10,2) NOT NULL CHECK (discount_value > 0),
-  max_uses       int,
-  uses_count     int NOT NULL DEFAULT 0,
-  expires_at     timestamptz,
-  is_active      boolean NOT NULL DEFAULT true,
-  created_at     timestamptz NOT NULL DEFAULT now()
-);
 
 -- ─── Artist time-off ──────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS time_off (

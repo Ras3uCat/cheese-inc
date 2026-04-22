@@ -21,19 +21,19 @@ Future<void> requestAndSavePush(String clientEmail) async {
     final raw = resultJs.toDart;
     final data = json.decode(raw) as Map<String, dynamic>;
 
-    final endpoint  = data['endpoint']  as String?;
-    final p256dh    = data['p256dh']    as String?;
-    final auth      = data['auth']      as String?;
+    final endpoint = data['endpoint'] as String?;
+    final p256dh = data['p256dh'] as String?;
+    final auth = data['auth'] as String?;
     final userAgent = data['userAgent'] as String?;
     if (endpoint == null || p256dh == null || auth == null) return;
 
     await SupabaseService.client.functions.invoke(
       'save-push-subscription',
       body: {
-        'endpoint':     endpoint,
-        'p256dh':       p256dh,
-        'auth_key':     auth,
-        'user_agent':   userAgent,
+        'endpoint': endpoint,
+        'p256dh': p256dh,
+        'auth_key': auth,
+        'user_agent': userAgent,
         'client_email': clientEmail,
       },
     );

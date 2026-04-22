@@ -21,7 +21,9 @@ import 'modules/contact/contact_module.dart';
 import 'modules/faq/faq_module.dart';
 import 'modules/gallery/gallery_module.dart';
 import 'modules/chatbot/chatbot_bubble.dart';
+import 'modules/chatbot/chatbot_controller.dart';
 import 'modules/gdpr/controllers/gdpr_controller.dart';
+import 'core/widgets/cursor_overlay.dart';
 import 'modules/gdpr/widgets/gdpr_banner.dart';
 import 'modules/gift/gift_module.dart';
 import 'modules/home/home_module.dart';
@@ -85,8 +87,7 @@ void main() async {
     if (AppEnv.moduleEnabled('menu')) MenuModule(),
     if (AppEnv.moduleEnabled('shop')) ShopModule(),
     if (AppEnv.moduleEnabled('events')) EventsModule(),
-    if (AppEnv.coursesEnabled || AppEnv.moduleEnabled('courses'))
-      CoursesModule(),
+    if (AppEnv.coursesEnabled || AppEnv.moduleEnabled('courses')) CoursesModule(),
   ]);
 
   runApp(const RaspucatApp());
@@ -137,24 +138,22 @@ class RaspucatApp extends StatelessWidget {
       initialBinding: InitialBinding(),
       initialRoute: ERoutes.home,
       getPages: AppRouter.buildRoutes(),
-      unknownRoute: GetPage(
-        name: ERoutes.notFound,
-        page: () => const _NotFoundView(),
-      ),
+      unknownRoute: GetPage(name: ERoutes.notFound, page: () => const _NotFoundView()),
       // Native uses OS-native page transition; web uses fade.
-      defaultTransition: EPlatform.isNative
-          ? Transition.native
-          : Transition.fadeIn,
+      defaultTransition: EPlatform.isNative ? Transition.native : Transition.fade,
       // Clamps to 240ms on native (>260ms feels sluggish on mobile).
-      transitionDuration: EPlatform.nativeAnim(
-        const Duration(milliseconds: 300),
-      ),
-      // SelectionArea makes all Text selectable on web. GDPR + chatbot composited on both.
+      transitionDuration: EPlatform.nativeAnim(const Duration(milliseconds: 300)),
+      routingCallback: (routing) {
+        if (Get.isRegistered<ChatbotController>()) {
+          Get.find<ChatbotController>().currentRoute.value = routing?.current ?? '';
+        }
+      },
+      // GDPR + chatbot composited over every route on both platforms.
       builder: (_, child) {
         Widget content = child!;
-        if (AppEnv.gdprEnabled)    content = Stack(children: [content, const GdprBanner()]);
+        if (AppEnv.gdprEnabled) content = Stack(children: [content, const GdprBanner()]);
         if (AppEnv.chatbotEnabled) content = Stack(children: [content, const ChatbotBubble()]);
-        return kIsWeb ? SelectionArea(child: content) : content;
+        return CursorOverlay(child: content);
       },
     );
   }
@@ -170,12 +169,7 @@ class _NotFoundView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '404',
-              style: ETextStyles.displayXL.copyWith(
-                fontWeight: FontWeight.w300,
-              ),
-            ),
+            Text('404', style: ETextStyles.displayXL.copyWith(fontWeight: FontWeight.w300)),
             const SizedBox(height: 16),
             Text('Page not found', style: ETextStyles.body),
             const SizedBox(height: 32),

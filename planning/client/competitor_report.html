@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competitive Intelligence Report — Cheese Inc.</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0D1B2A;
+    --bg-card: #142130;
+    --bg-card-alt: #0F1E2D;
+    --border: rgba(255,255,255,0.08);
+    --text: #F0E6D0;
+    --text-muted: rgba(240,230,208,0.55);
+    --accent: #FF4500;
+    --accent-dim: rgba(255,69,0,0.15);
+    --green: #3A9668;
+    --amber: #D4A853;
+    --red: #CC3322;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ─── LAYOUT ─── */
+  .page { max-width: 960px; margin: 0 auto; padding: 60px 40px; }
+
+  /* ─── COVER ─── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 80px;
+  }
+  .cover-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .cover-title {
+    font-size: clamp(42px, 7vw, 72px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 48px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .cover-meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .cover-meta-item span:first-child { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+  .cover-meta-item span:last-child { font-size: 15px; font-weight: 600; }
+
+  /* ─── SECTIONS ─── */
+  .section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .section-intro {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 640px;
+    margin-bottom: 48px;
+  }
+
+  /* ─── MARKET OVERVIEW ─── */
+  .overview-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  /* ─── COMPETITOR CARDS ─── */
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 640px) { .competitor-grid { grid-template-columns: 1fr; } }
+
+  .competitor-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .competitor-card.featured {
+    grid-column: span 2;
+    background: var(--bg-card-alt);
+    border-color: rgba(255,69,0,0.25);
+  }
+  @media (max-width: 640px) { .competitor-card.featured { grid-column: span 1; } }
+
+  .comp-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .comp-rank {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--accent); background: var(--accent-dim);
+    padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+  }
+  .comp-name { font-size: 20px; font-weight: 700; }
+  .comp-tagline { font-size: 13px; color: var(--text-muted); margin-top: 2px; font-style: italic; }
+  .comp-url { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  .comp-colors { display: flex; align-items: center; gap: 10px; }
+  .swatch {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+  }
+  .swatch-label { font-size: 12px; color: var(--text-muted); }
+
+  .comp-section-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 12px; font-weight: 500;
+    padding: 4px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .tag.keyword { border-color: rgba(212,168,83,0.3); background: rgba(212,168,83,0.08); color: var(--amber); }
+  .tag.trust { border-color: rgba(58,150,104,0.3); background: rgba(58,150,104,0.08); color: var(--green); }
+
+  .comp-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 6px 14px; border-radius: 6px;
+    border: 1px solid rgba(255,69,0,0.2);
+    align-self: flex-start;
+  }
+
+  /* ─── BLUEPRINT TABLE ─── */
+  .blueprint-grid { display: flex; flex-direction: column; gap: 2px; }
+  .blueprint-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 0;
+    background: var(--bg-card);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .blueprint-label {
+    padding: 16px 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.03);
+    border-right: 1px solid var(--border);
+    display: flex; align-items: center;
+  }
+  .blueprint-value {
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* ─── KEYWORD TABLE ─── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px;
+  }
+  .badge-yes { background: rgba(58,150,104,0.15); color: var(--green); }
+  .badge-no { background: rgba(204,51,34,0.15); color: var(--red); }
+  .badge-partial { background: rgba(212,168,83,0.15); color: var(--amber); }
+
+  /* ─── RECOMMENDATIONS ─── */
+  .rec-list { display: flex; flex-direction: column; gap: 16px; }
+  .rec-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .rec-number {
+    font-size: 28px; font-weight: 800; color: var(--accent);
+    line-height: 1;
+  }
+  .rec-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .rec-body { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+  .rec-source { font-size: 12px; color: var(--accent); margin-top: 8px; font-style: italic; }
+
+  /* ─── APPENDIX ─── */
+  .appendix-list { display: flex; flex-direction: column; gap: 8px; }
+  .appendix-row {
+    display: flex; gap: 20px; align-items: center;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .appendix-rank { color: var(--accent); font-weight: 700; width: 24px; }
+  .appendix-name { font-weight: 600; width: 200px; }
+  .appendix-url { color: var(--text-muted); }
+  .appendix-date { color: var(--text-muted); margin-left: auto; white-space: nowrap; }
+
+  /* ─── PRINT ─── */
+  @media print {
+    .no-print { display: none; }
+    body { background: white; color: #111; }
+    .cover, .section { page-break-before: always; }
+    .cover { page-break-before: avoid; }
+    .competitor-card, .blueprint-row, .rec-item, .appendix-row { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-label">Competitive Intelligence Report</div>
+    <h1 class="cover-title">Cheese Inc.<br>Market Analysis</h1>
+    <p class="cover-subtitle">Artisan Cheese Shop · Tacoma, Washington</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <span>Prepared by</span>
+        <span>Raspucat</span>
+      </div>
+      <div class="cover-meta-item">
+        <span>Date</span>
+        <span>April 20, 2026</span>
+      </div>
+      <div class="cover-meta-item">
+        <span>Competitors Analyzed</span>
+        <span>5 Regional Leaders</span>
+      </div>
+      <div class="cover-meta-item">
+        <span>Market</span>
+        <span>Pacific Northwest Artisan Cheese</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKET OVERVIEW -->
+  <div class="section">
+    <div class="section-label">Section 01</div>
+    <h2 class="section-title">Market Overview</h2>
+    <p class="section-intro">The competitive landscape for artisan cheese in the Pacific Northwest.</p>
+    <div class="overview-card">
+      The Pacific Northwest artisan cheese market is dominated by heritage-driven brands that lead with origin story, craft process, and regional identity. The strongest performers — Beecher's, Rogue Creamery, Cascadia Creamery — share a consistent playbook: warm earthy visual identities, prominent awards and certifications, and a "discover" or "visit us" primary conversion path that prioritizes in-person experience and brand trust over transactional urgency. Seattle and the broader Washington / Oregon region is highly receptive to farm-to-table narratives, and all five competitors use geographic anchoring ("Seattle's Favorite," "Washington's Most Flavorful," "Oregon since 1933") as a primary trust signal. The market is not price-competitive — it is identity-competitive. Cheese Inc. has an immediate opportunity to own the Tacoma positioning, which none of the top five explicitly target, while matching the editorial craft aesthetic that the category demands.
+    </div>
+  </div>
+
+  <!-- COMPETITOR PROFILES -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-label">Section 02</div>
+    <h2 class="section-title">Competitor Profiles</h2>
+    <p class="section-intro">The five highest-scoring regional competitors by composite ranking.</p>
+
+    <div class="competitor-grid">
+
+      <!-- #1 -->
+      <div class="competitor-card featured">
+        <div class="comp-header">
+          <div>
+            <div class="comp-name">Beecher's Handmade Cheese</div>
+            <div class="comp-tagline">"Pure Food Made Whole"</div>
+            <div class="comp-url">beechershandmadecheese.com</div>
+          </div>
+          <div class="comp-rank">#1 · Score 6</div>
+        </div>
+        <div>
+          <div class="comp-section-title">Color Identity</div>
+          <div class="comp-colors">
+            <div class="swatch" style="background:#8B2635;"></div>
+            <div class="swatch" style="background:#F5EDD8;"></div>
+            <div class="swatch-label">Deep red + warm cream — heritage craft</div>
+          </div>
+        </div>
+        <div>
+          <div class="comp-section-title">Typography</div>
+          <div class="tags"><span class="tag">Georgia / Serif</span><span class="tag">System sans-serif UI</span></div>
+        </div>
+        <div>
+          <div class="comp-section-title">Primary CTA</div>
+          <div class="comp-cta">Where to Buy →</div>
+        </div>
+        <div>
+          <div class="comp-section-title">Trust Signals</div>
+          <div class="tags">
+            <span class="tag trust">Value pillars (No GMOs, No antibiotics)</span>
+            <span class="tag trust">Community / philanthropy story</span>
+            <span class="tag trust">Pike Place Market origin</span>
+          </div>
+        </div>
+        <div>
+          <div class="comp-section-title">Top Keywords</div>
+          <div class="tags">
+            <span class="tag keyword">handmade cheese seattle</span>
+            <span class="tag keyword">pure food cheese</span>
+            <span class="tag keyword">artisan cheese shop</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- #2 -->
+      <div class="competitor-card">
+        <div class="comp-header">
+          <div>
+            <div class="comp-name">The Cheese Box</div>
+            <div class="comp-tagline">"Seattle's Favorite Independent Dedicated Cheese Shop"</div>
+            <div class="comp-url">thecheesebox.market</div>
+          </div>
+          <div class="comp-rank">#2 · Score 5</div>
+        </div>
+        <div>
+          <div class="comp-section-title">Color Identity</div>
+          <div class="comp-colors">
+            <div class="swatch" style="background:#5C3D2E;"></div>
+            <div class="swatch" style="background:#E8D5B0;"></div>
+            <div class="swatch-label">Warm brown + parchment</div>
+          </div>
+        </div>
+        <div>
+          <div class="comp-section-title">Primary CTA</div>
+          <div class="comp-cta">Visit Us →</div>
+        </div>
+        <div>
+          <div class="comp-section-title">Trust Signals</div>
+          <div class="tags">
+            <span class="tag trust">Pike Place Market location</span>
+            <span class="tag trust">Seattle institution framing</span>
+          </div>
+        </div>
+        <div>
+          <div class="comp-section-title">Top Keywords</div>
+          <div class="tags">
+            <span class="tag keyword">cheese shop seattle</span>
+            <span class="tag keyword">independent cheese shop</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- #3 -->
+      <div class="competitor-card">
+        <div class="comp-header">
+          <div>
+            <div class="comp-name">Rogue Creamery</div>
+            <div class="comp-tagline">"Artisan Blue Cheese Crafted with Tradition"</div>
+            <div class="comp-url">roguecreamery.com</div>
+          </div>
+          <div class="comp-rank">#3 · Score 5</div>
+        </div>
+        <div>
+          <div class="comp-section-title">Color Identity</div>
+          <div class="comp-colors">
+            <div class="swatch" style="background:#2C5234;"></div>
+            <div class="swatch" style="background:#D4C4A0;"></div>
+            <div class="swatch-label">Forest green + aged parchment</div>
+          </div>
+        </div>
+        <div>
+          <div class="comp-section-title">Primary CTA</div>
+          <div class="comp-cta">Discover →</div>
+        </div>
+        <div>
+          <div class="comp-section-title">Trust Signals</div>
+          <div class="tags">
+            <span class="tag trust">Founded 1933</span>
+            <span class="tag trust">Hero video</span>
+            <span class="tag trust">Cheese Club subscription</span>
+            <span class="tag trust">Customer testimonials</span>
+          </div>
+        </div>
+        <div>
+          <div class="comp-section-title">Top Keywords</div>
+          <div class="tags">
+            <span class="tag keyword">artisan blue cheese oregon</span>
+            <span class="tag keyword">cheese club subscription</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- #4 -->
+      <div class="competitor-card">
+        <div class="comp-header">
+          <div>
+            <div class="comp-name">Cascadia Creamery</div>
+            <div class="comp-tagline">"Exceptional Hand Crafted Organic Cheese"</div>
+            <div class="comp-url">cascadiacreamery.com</div>
+          </div>
+          <div class="comp-rank">#4 · Score 4</div>
+        </div>
+        <div>
+          <div class="comp-section-title">Color Identity</div>
+          <div class="comp-colors">
+            <div class="swatch" style="background:#4A3728;"></div>
+            <div class="swatch" style="background:#C8B89A;"></div>
+            <div class="swatch-label">Dark earth + warm tan</div>
+          </div>
+        </div>
+        <div>
+          <div class="comp-section-title">Primary CTA</div>
+          <div class="comp-cta">Where To Buy →</div>
+        </div>
+        <div>
+          <div class="comp-section-title">Trust Signals</div>
+          <div class="tags">
+            <span class="tag trust">4th-generation dairy</span>
+            <span class="tag trust">Organic certification</span>
+            <span class="tag trust">Cave-aged unique positioning</span>
+          </div>
+        </div>
+        <div>
+          <div class="comp-section-title">Top Keywords</div>
+          <div class="tags">
+            <span class="tag keyword">organic artisan cheese washington</span>
+            <span class="tag keyword">cave-aged cheese</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- #5 -->
+      <div class="competitor-card">
+        <div class="comp-header">
+          <div>
+            <div class="comp-name">Daniel's Artisan</div>
+            <div class="comp-tagline">"Discover Washington's Most Flavorful Artisan Cheese"</div>
+            <div class="comp-url">danielsartisan.com</div>
+          </div>
+          <div class="comp-rank">#5 · Score 4</div>
+        </div>
+        <div>
+          <div class="comp-section-title">Color Identity</div>
+          <div class="comp-colors">
+            <div class="swatch" style="background:#1A3A2A;"></div>
+            <div class="swatch" style="background:#E8D0A8;"></div>
+            <div class="swatch-label">Deep green + golden cream</div>
+          </div>
+        </div>
+        <div>
+          <div class="comp-section-title">Primary CTA</div>
+          <div class="comp-cta">Shop Now →</div>
+        </div>
+        <div>
+          <div class="comp-section-title">Trust Signals</div>
+          <div class="tags">
+            <span class="tag trust">Good Food Award 2022</span>
+            <span class="tag trust">American Cheese Society</span>
+            <span class="tag trust">Sticky nav</span>
+          </div>
+        </div>
+        <div>
+          <div class="comp-section-title">Top Keywords</div>
+          <div class="tags">
+            <span class="tag keyword">artisan cheese washington</span>
+            <span class="tag keyword">award-winning cheese shop</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /competitor-grid -->
+  </div>
+
+  <!-- THE BLUEPRINT -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-label">Section 03</div>
+    <h2 class="section-title">The Blueprint</h2>
+    <p class="section-intro">What every winning artisan cheese brand in this market shares.</p>
+
+    <div class="blueprint-grid">
+      <div class="blueprint-row">
+        <div class="blueprint-label">Visual</div>
+        <div class="blueprint-value">Warm, earthy palette — deep reds, greens, and browns. Never white or cool-toned. Serif typography signals heritage. Full-bleed artisan product photography in every hero. Spacious editorial layouts with generous whitespace.</div>
+      </div>
+      <div class="blueprint-row">
+        <div class="blueprint-label">Trust</div>
+        <div class="blueprint-value">Origin story present in all 5. Awards / certifications (ACS, Good Food Award) in 3/5. Geographic identity ("Tacoma", "Pacific Northwest", "Washington") used as a primary credibility anchor — not just a location marker.</div>
+      </div>
+      <div class="blueprint-row">
+        <div class="blueprint-label">CTA</div>
+        <div class="blueprint-value">Primary verbs: Discover · Visit Us · Where to Buy · Shop Now. Always a single hero CTA — never competing links at the top. Conversion path leads to product discovery or physical visit, not a contact form.</div>
+      </div>
+      <div class="blueprint-row">
+        <div class="blueprint-label">Content</div>
+        <div class="blueprint-value">Craft process and origin story are universal homepage features. Seasonal / limited-release language appears in 3/5 to drive urgency. Tone is warm and aspirational — never clinical or transactional. Awards displayed as visual badges, not text lists.</div>
+      </div>
+      <div class="blueprint-row">
+        <div class="blueprint-label">SEO Pattern</div>
+        <div class="blueprint-value">"artisan cheese [city/region]" + "[attribute] cheese washington" patterns dominate. All top performers index their product pages individually for long-tail coverage. Local structured data (LocalBusiness + Product schema) inferred from metadata.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEYWORD GAP ANALYSIS -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-label">Section 04</div>
+    <h2 class="section-title">Keyword Gap Analysis</h2>
+    <p class="section-intro">Keywords competitors rank for — and whether Cheese Inc. currently has content to match.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Keyword</th>
+          <th>Competitors Using</th>
+          <th>Cheese Inc. Has Content</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>artisan cheese shop tacoma</td>
+          <td>0 of 5 (direct opportunity)</td>
+          <td><span class="badge badge-no">No</span></td>
+        </tr>
+        <tr>
+          <td>cheese shop pacific northwest</td>
+          <td>3 of 5</td>
+          <td><span class="badge badge-no">No</span></td>
+        </tr>
+        <tr>
+          <td>handmade cheese washington state</td>
+          <td>4 of 5</td>
+          <td><span class="badge badge-no">No</span></td>
+        </tr>
+        <tr>
+          <td>award-winning artisan cheese</td>
+          <td>3 of 5</td>
+          <td><span class="badge badge-no">No</span></td>
+        </tr>
+        <tr>
+          <td>cheese tasting experience washington</td>
+          <td>2 of 5</td>
+          <td><span class="badge badge-partial">Partial — booking module active</span></td>
+        </tr>
+        <tr>
+          <td>cheese gift shop tacoma</td>
+          <td>2 of 5</td>
+          <td><span class="badge badge-partial">Partial — shop module active</span></td>
+        </tr>
+        <tr>
+          <td>cheese club subscription northwest</td>
+          <td>1 of 5 (Rogue Creamery)</td>
+          <td><span class="badge badge-no">No — subscriptions disabled</span></td>
+        </tr>
+        <tr>
+          <td>organic artisan cheese washington</td>
+          <td>2 of 5</td>
+          <td><span class="badge badge-no">No</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- STRATEGIC RECOMMENDATIONS -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-label">Section 05</div>
+    <h2 class="section-title">Strategic Recommendations</h2>
+    <p class="section-intro">Five actions backed by competitor data that would close the gap and establish a defensible position.</p>
+
+    <div class="rec-list">
+      <div class="rec-item">
+        <div class="rec-number">01</div>
+        <div>
+          <div class="rec-title">Own the Tacoma keyword — no competitor does</div>
+          <div class="rec-body">All five top competitors focus on Seattle, Oregon, or generic Washington terms. "Artisan cheese shop Tacoma" is an open goal. Update SEO_TITLE, SEO_DESCRIPTION, and the hero headline to lead with Tacoma + Pacific Northwest identity. This is the single fastest SEO win available.</div>
+          <div class="rec-source">Data: 0 of 5 competitors target Tacoma directly.</div>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-number">02</div>
+        <div>
+          <div class="rec-title">Add an origin story section to the homepage</div>
+          <div class="rec-body">Every top competitor uses a founding story as a primary trust anchor. The current HOME_SECTIONS has no "about" or "story" section. A single full-bleed "Our Story" section — 3–4 sentences + atmospheric photo — would match the competitive baseline and significantly increase time-on-page.</div>
+          <div class="rec-source">Data: 5 of 5 competitors use an origin story above the fold or in the homepage scroll.</div>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-number">03</div>
+        <div>
+          <div class="rec-title">Display awards prominently as visual badges</div>
+          <div class="rec-body">Three of five competitors display certifications and awards (American Cheese Society, Good Food Award) as visual badge elements. Text mentions don't carry the same trust weight. If Cheese Inc. has any awards, certifications, or press features, they should be displayed as badge-style elements in the hero or just below it — not buried in body copy.</div>
+          <div class="rec-source">Data: 3 of 5 competitors (Daniel's Artisan, Rogue Creamery, Cascadia Creamery) use award badges prominently.</div>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-number">04</div>
+        <div>
+          <div class="rec-title">Consider a cheese subscription / club product</div>
+          <div class="rec-body">Rogue Creamery's "Cheese Club" is their highest-trust conversion driver and a major SEO term ("cheese club subscription northwest"). The subscriptions module is available in the platform but currently disabled. Even a lightweight "Monthly Board Box" offering would open the subscription keyword category and create recurring revenue.</div>
+          <div class="rec-source">Data: Rogue Creamery's subscription product is their most-linked feature page.</div>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-number">05</div>
+        <div>
+          <div class="rec-title">Match the editorial visual standard — dark, warm, full-bleed</div>
+          <div class="rec-body">All five competitors use warm earthy palettes (deep reds, greens, dark browns) with full-bleed artisan photography. Cheese Inc.'s current COLOR_SURFACE is white (#FFFFFF) — the single biggest mismatch from both the competition and the brand's own inspiration sites. The Brand Alignment Report recommends switching to a warm near-black (#0D0907). This change alone would bring the visual identity into competitive range without touching content.</div>
+          <div class="rec-source">Data: 5 of 5 competitors use dark or warm earthy backgrounds. 0 use pure white.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPENDIX -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-label">Appendix</div>
+    <h2 class="section-title">Competitor URLs</h2>
+    <p class="section-intro">All sites accessed April 20, 2026.</p>
+
+    <div class="appendix-list">
+      <div class="appendix-row">
+        <div class="appendix-rank">#1</div>
+        <div class="appendix-name">Beecher's Handmade Cheese</div>
+        <div class="appendix-url"><a href="https://www.beechershandmadecheese.com" target="_blank">beechershandmadecheese.com</a></div>
+        <div class="appendix-date">Apr 20, 2026</div>
+      </div>
+      <div class="appendix-row">
+        <div class="appendix-rank">#2</div>
+        <div class="appendix-name">The Cheese Box</div>
+        <div class="appendix-url"><a href="https://www.thecheesebox.market" target="_blank">thecheesebox.market</a></div>
+        <div class="appendix-date">Apr 20, 2026</div>
+      </div>
+      <div class="appendix-row">
+        <div class="appendix-rank">#3</div>
+        <div class="appendix-name">Rogue Creamery</div>
+        <div class="appendix-url"><a href="https://www.roguecreamery.com" target="_blank">roguecreamery.com</a></div>
+        <div class="appendix-date">Apr 20, 2026</div>
+      </div>
+      <div class="appendix-row">
+        <div class="appendix-rank">#4</div>
+        <div class="appendix-name">Cascadia Creamery</div>
+        <div class="appendix-url"><a href="https://www.cascadiacreamery.com" target="_blank">cascadiacreamery.com</a></div>
+        <div class="appendix-date">Apr 20, 2026</div>
+      </div>
+      <div class="appendix-row">
+        <div class="appendix-rank">#5</div>
+        <div class="appendix-name">Daniel's Artisan</div>
+        <div class="appendix-url"><a href="https://www.danielsartisan.com" target="_blank">danielsartisan.com</a></div>
+        <div class="appendix-date">Apr 20, 2026</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

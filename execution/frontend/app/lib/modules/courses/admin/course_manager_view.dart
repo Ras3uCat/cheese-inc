@@ -145,10 +145,13 @@ class _CourseManagerViewState extends State<CourseManagerView> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextButton(
-                          onPressed: () => Get.toNamed(
-                            ERoutes.adminCourseEnrollments
-                                .replaceFirst(':id', course.id),
-                          ),
+                          onPressed:
+                              () => Get.toNamed(
+                                ERoutes.adminCourseEnrollments.replaceFirst(
+                                  ':id',
+                                  course.id,
+                                ),
+                              ),
                           child: const Text('Enrollments'),
                         ),
                         const Icon(Icons.arrow_forward_ios, size: 16),

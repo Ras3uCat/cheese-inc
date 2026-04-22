@@ -24,6 +24,9 @@ BACKEND_DIR="$(cd "$SCRIPT_DIR/../../backend/supabase" && pwd)"
 SUPABASE_PARENT="$(cd "$BACKEND_DIR/.." && pwd)"  # dir containing supabase/
 FUNCTIONS_DIR="$BACKEND_DIR/functions"
 
+# Load .env if present (provides SUPABASE_ACCESS_TOKEN and other local secrets)
+[[ -f "$SCRIPT_DIR/.env" ]] && set -a && source "$SCRIPT_DIR/.env" && set +a || true
+
 # ─── Flags ────────────────────────────────────────────────────────────────────
 SKIP_DB=false
 SKIP_FUNCTIONS=false
@@ -176,7 +179,14 @@ report_step() {
 get_access_token() {
   # 1. Explicit env var
   if [[ -n "${SUPABASE_ACCESS_TOKEN:-}" ]]; then echo "$SUPABASE_ACCESS_TOKEN"; return 0; fi
-  # 2. Supabase CLI config files (written by `supabase login`)
+  # 2. .env file in the script directory (SUPABASE_ACCESS_TOKEN=<token>)
+  local env_file="$SCRIPT_DIR/.env"
+  if [[ -f "$env_file" ]]; then
+    local _tok
+    _tok=$(grep -m1 '^SUPABASE_ACCESS_TOKEN=' "$env_file" | cut -d'=' -f2- | tr -d '[:space:]')
+    if [[ -n "$_tok" ]]; then export SUPABASE_ACCESS_TOKEN="$_tok"; echo "$_tok"; return 0; fi
+  fi
+  # 3. Supabase CLI config files (written by `supabase login`)
   for f in \
     "$HOME/.config/supabase/access-token" \
     "$HOME/.supabase/access-token"; do
@@ -352,8 +362,8 @@ fi
 FIELD_ERRORS=0
 for field in CLIENT_NAME CLIENT_SLUG SUPABASE_URL SUPABASE_ANON_KEY; do
   val=$(json_get "$field")
-  if [[ -z "$val" ]]; then
-    red "Missing required field: $field"
+  if [[ -z "$val" || "$val" == "FILL_IN" ]]; then
+    red "Required field not configured: $field — run ./reconfigure.sh to set credentials"
     FIELD_ERRORS=$((FIELD_ERRORS + 1))
   fi
 done

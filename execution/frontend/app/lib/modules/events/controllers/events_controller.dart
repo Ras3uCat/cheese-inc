@@ -10,19 +10,19 @@ class EventsController extends GetxController {
   EventsController(this._repo);
   final EventsRepository _repo;
 
-  final events       = <EventModel>[].obs;
+  final events = <EventModel>[].obs;
   final selectedEvent = Rxn<EventModel>();
-  final ticketTypes  = <EventTicketTypeModel>[].obs;
+  final ticketTypes = <EventTicketTypeModel>[].obs;
   final availability = <String, int>{}.obs;
 
   final selectedTypeId = RxnString();
-  final quantity       = 1.obs;
-  final buyerName      = ''.obs;
-  final buyerEmail     = ''.obs;
+  final quantity = 1.obs;
+  final buyerName = ''.obs;
+  final buyerEmail = ''.obs;
 
-  final isLoading    = false.obs;
+  final isLoading = false.obs;
   final isPurchasing = false.obs;
-  final error        = RxnString();
+  final error = RxnString();
 
   @override
   void onInit() {
@@ -44,7 +44,7 @@ class EventsController extends GetxController {
 
   Future<void> loadEventDetail(String slug) async {
     isLoading.value = true;
-    error.value     = null;
+    error.value = null;
     try {
       final ev = await _repo.getEventBySlug(slug);
       selectedEvent.value = ev;
@@ -85,7 +85,7 @@ class EventsController extends GetxController {
   int get remainingForSelected => availability[selectedTypeId.value] ?? 0;
 
   Future<void> purchase() async {
-    final ev   = selectedEvent.value;
+    final ev = selectedEvent.value;
     final type = selectedType;
     if (ev == null || type == null) return;
     if (buyerName.value.trim().isEmpty || buyerEmail.value.trim().isEmpty) {
@@ -94,37 +94,40 @@ class EventsController extends GetxController {
     }
 
     isPurchasing.value = true;
-    error.value        = null;
+    error.value = null;
 
     try {
       final result = await _repo.checkout(
-        eventId:       ev.id,
-        ticketTypeId:  type.id,
-        quantity:      quantity.value,
-        buyerEmail:    buyerEmail.value.trim(),
-        buyerName:     buyerName.value.trim(),
+        eventId: ev.id,
+        ticketTypeId: type.id,
+        quantity: quantity.value,
+        buyerEmail: buyerEmail.value.trim(),
+        buyerName: buyerName.value.trim(),
       );
 
       if (result['confirmed'] == true) {
         // Free event — confirmed immediately
-        final ticketId   = result['ticket_id']   as String;
-        final ticketCode = result['ticket_code']  as String;
+        final ticketId = result['ticket_id'] as String;
+        final ticketCode = result['ticket_code'] as String;
         final ticket = EventTicketModel(
-          id:           ticketId,
-          eventId:      ev.id,
+          id: ticketId,
+          eventId: ev.id,
           ticketTypeId: type.id,
-          buyerName:    buyerName.value.trim(),
-          buyerEmail:   buyerEmail.value.trim(),
-          quantity:     quantity.value,
-          totalCents:   0,
-          ticketCode:   ticketCode,
-          status:       'confirmed',
-          createdAt:    DateTime.now(),
+          buyerName: buyerName.value.trim(),
+          buyerEmail: buyerEmail.value.trim(),
+          quantity: quantity.value,
+          totalCents: 0,
+          ticketCode: ticketCode,
+          status: 'confirmed',
+          createdAt: DateTime.now(),
         );
         Get.toNamed(ERoutes.eventsConfirmation, arguments: ticket);
       } else if (result['url'] != null) {
         // Paid event — redirect to Stripe
-        await launchUrl(Uri.parse(result['url'] as String), mode: LaunchMode.platformDefault);
+        await launchUrl(
+          Uri.parse(result['url'] as String),
+          mode: LaunchMode.platformDefault,
+        );
       }
     } catch (e) {
       error.value = e.toString().replaceFirst('Exception: ', '');

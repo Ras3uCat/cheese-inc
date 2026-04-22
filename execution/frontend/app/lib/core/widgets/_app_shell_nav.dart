@@ -35,14 +35,15 @@ class _NavBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: ESpacing.lg),
-            Obx(
-              () =>
-                  auth.isSignedIn
-                      ? TextButton(onPressed: auth.signOut, child: const Text('Sign Out'))
-                      : TextButton(
-                        onPressed: () => Get.toNamed(ERoutes.login),
-                        child: const Text('Login'),
-                      ),
+            GetX<AuthController>(
+              builder:
+                  (auth) =>
+                      auth.isSignedIn
+                          ? TextButton(onPressed: auth.signOut, child: const Text('Sign Out'))
+                          : TextButton(
+                            onPressed: () => Get.toNamed(ERoutes.login),
+                            child: const Text('Login'),
+                          ),
             ),
           ],
         ),
@@ -56,7 +57,6 @@ class _NavDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navItems = ModuleRegistry.navItems;
-    final auth = Get.find<AuthController>();
 
     return Drawer(
       backgroundColor: EColors.surface,
@@ -80,21 +80,22 @@ class _NavDrawer extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            Obx(
-              () => ListTile(
-                leading: Icon(
-                  auth.isSignedIn ? Icons.logout : Icons.login,
-                  color: EColors.onSurface,
-                ),
-                title: Text(
-                  auth.isSignedIn ? 'Sign Out' : 'Team Login',
-                  style: ETextStyles.navItem,
-                ),
-                onTap: () {
-                  Get.back();
-                  auth.isSignedIn ? auth.signOut() : Get.toNamed(ERoutes.login);
-                },
-              ),
+            GetX<AuthController>(
+              builder:
+                  (auth) => ListTile(
+                    leading: Icon(
+                      auth.isSignedIn ? Icons.logout : Icons.login,
+                      color: EColors.onSurface,
+                    ),
+                    title: Text(
+                      auth.isSignedIn ? 'Sign Out' : 'Team Login',
+                      style: ETextStyles.navItem,
+                    ),
+                    onTap: () {
+                      Get.back();
+                      auth.isSignedIn ? auth.signOut() : Get.toNamed(ERoutes.login);
+                    },
+                  ),
             ),
           ],
         ),

@@ -18,7 +18,7 @@ class RecurringDialog extends StatefulWidget {
 
 class _RecurringDialogState extends State<RecurringDialog> {
   static const _intervals = [14, 21, 28, 42, 56];
-  static const _labels    = ['2 wks', '3 wks', '4 wks', '6 wks', '8 wks'];
+  static const _labels = ['2 wks', '3 wks', '4 wks', '6 wks', '8 wks'];
 
   int _intervalDays = 28;
   DateTime? _endDate;
@@ -43,7 +43,9 @@ class _RecurringDialogState extends State<RecurringDialog> {
 
   Future<void> _pickEndDate() async {
     final min = widget.booking.startTime.add(Duration(days: _intervalDays + 1));
-    final initial = _endDate ?? widget.booking.startTime.add(Duration(days: _intervalDays * 3));
+    final initial =
+        _endDate ??
+        widget.booking.startTime.add(Duration(days: _intervalDays * 3));
     final picked = await showDatePicker(
       context: context,
       initialDate: initial.isBefore(min) ? min : initial,
@@ -55,19 +57,24 @@ class _RecurringDialogState extends State<RecurringDialog> {
 
   Future<void> _confirm() async {
     if (_endDate == null) return;
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       final repo = Get.find<BookingRepository>();
       final result = await repo.createRecurringSeries(
         templateBookingId: widget.booking.id,
-        intervalDays:      _intervalDays,
-        endDate:           _endDate!,
-        confirmed:         !_useStripe,
+        intervalDays: _intervalDays,
+        endDate: _endDate!,
+        confirmed: !_useStripe,
       );
       if (mounted) setState(() => _result = result);
     } catch (_) {
       if (mounted) {
-        setState(() => _error = 'Could not create recurring series. Please try again.');
+        setState(
+          () => _error = 'Could not create recurring series. Please try again.',
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -89,17 +96,19 @@ class _RecurringDialogState extends State<RecurringDialog> {
   }
 
   Widget _buildResult() {
-    final created   = (_result!['created'] as num).toInt();
+    final created = (_result!['created'] as num).toInt();
     final conflicts = (_result!['conflicts'] as List).cast<String>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(children: [
-          Icon(Icons.repeat, color: EColors.primary, size: 24),
-          const SizedBox(width: ESpacing.sm),
-          Text('Series created', style: ETextStyles.h4),
-        ]),
+        Row(
+          children: [
+            Icon(Icons.repeat, color: EColors.primary, size: 24),
+            const SizedBox(width: ESpacing.sm),
+            Text('Series created', style: ETextStyles.h4),
+          ],
+        ),
         const SizedBox(height: ESpacing.md),
         Container(
           width: double.infinity,
@@ -117,10 +126,12 @@ class _RecurringDialogState extends State<RecurringDialog> {
             style: ETextStyles.bodySm.copyWith(color: EColors.error),
           ),
           const SizedBox(height: ESpacing.xs),
-          ...conflicts.map((d) => Padding(
-            padding: const EdgeInsets.only(bottom: 2),
-            child: Text('· $d', style: ETextStyles.bodySmMuted),
-          )),
+          ...conflicts.map(
+            (d) => Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Text('· $d', style: ETextStyles.bodySmMuted),
+            ),
+          ),
         ],
         const SizedBox(height: ESpacing.lg),
         SizedBox(
@@ -140,16 +151,18 @@ class _RecurringDialogState extends State<RecurringDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(children: [
-          Icon(Icons.repeat, color: EColors.primary, size: 24),
-          const SizedBox(width: ESpacing.sm),
-          Text('Set up recurring', style: ETextStyles.h4),
-          const Spacer(),
-          IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.close, color: EColors.onSurfaceMuted),
-          ),
-        ]),
+        Row(
+          children: [
+            Icon(Icons.repeat, color: EColors.primary, size: 24),
+            const SizedBox(width: ESpacing.sm),
+            Text('Set up recurring', style: ETextStyles.h4),
+            const Spacer(),
+            IconButton(
+              onPressed: () => Navigator.of(context).pop(),
+              icon: Icon(Icons.close, color: EColors.onSurfaceMuted),
+            ),
+          ],
+        ),
         const SizedBox(height: ESpacing.lg),
         Text('Repeat every', style: ETextStyles.label),
         const SizedBox(height: ESpacing.sm),
@@ -160,14 +173,17 @@ class _RecurringDialogState extends State<RecurringDialog> {
             return ChoiceChip(
               label: Text(_labels[i]),
               selected: selected,
-              onSelected: (_) => setState(() {
-                _intervalDays = _intervals[i];
-                // Reset end date if it's now before the new minimum
-                if (_endDate != null) {
-                  final min = widget.booking.startTime.add(Duration(days: _intervalDays + 1));
-                  if (_endDate!.isBefore(min)) _endDate = null;
-                }
-              }),
+              onSelected:
+                  (_) => setState(() {
+                    _intervalDays = _intervals[i];
+                    // Reset end date if it's now before the new minimum
+                    if (_endDate != null) {
+                      final min = widget.booking.startTime.add(
+                        Duration(days: _intervalDays + 1),
+                      );
+                      if (_endDate!.isBefore(min)) _endDate = null;
+                    }
+                  }),
               selectedColor: EColors.primary.withValues(alpha: 0.15),
               labelStyle: ETextStyles.bodySm.copyWith(
                 color: selected ? EColors.primary : EColors.onSurface,
@@ -180,8 +196,11 @@ class _RecurringDialogState extends State<RecurringDialog> {
         const SizedBox(height: ESpacing.xs),
         TextButton.icon(
           onPressed: _pickEndDate,
-          icon: Icon(Icons.calendar_today_outlined, size: 16,
-              color: EColors.primary),
+          icon: Icon(
+            Icons.calendar_today_outlined,
+            size: 16,
+            color: EColors.primary,
+          ),
           label: Text(
             _endDate != null
                 ? DateFormat('MMM d, yyyy').format(_endDate!)
@@ -194,19 +213,24 @@ class _RecurringDialogState extends State<RecurringDialog> {
           const SizedBox(height: ESpacing.lg),
           Text('Upcoming dates (preview)', style: ETextStyles.label),
           const SizedBox(height: ESpacing.xs),
-          ...preview.map((d) => Padding(
-            padding: const EdgeInsets.only(bottom: 2),
-            child: Text(
-              DateFormat('EEE, MMM d, yyyy').format(d),
-              style: ETextStyles.bodySmMuted,
+          ...preview.map(
+            (d) => Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Text(
+                DateFormat('EEE, MMM d, yyyy').format(d),
+                style: ETextStyles.bodySmMuted,
+              ),
             ),
-          )),
+          ),
           if (_previewDates.length == 12)
             Text('(showing first 12)', style: ETextStyles.bodySmMuted),
         ],
         if (_error != null) ...[
           const SizedBox(height: ESpacing.md),
-          Text(_error!, style: ETextStyles.bodySm.copyWith(color: EColors.error)),
+          Text(
+            _error!,
+            style: ETextStyles.bodySm.copyWith(color: EColors.error),
+          ),
         ],
         const SizedBox(height: ESpacing.xl),
         if (_useStripe)
@@ -227,13 +251,14 @@ class _RecurringDialogState extends State<RecurringDialog> {
               shape: const RoundedRectangleBorder(),
               padding: const EdgeInsets.symmetric(vertical: ESpacing.md),
             ),
-            child: _loading
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text('CONFIRM', style: ETextStyles.button),
+            child:
+                _loading
+                    ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                    : Text('CONFIRM', style: ETextStyles.button),
           ),
         ),
       ],

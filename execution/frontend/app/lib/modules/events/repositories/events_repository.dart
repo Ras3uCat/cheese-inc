@@ -16,7 +16,7 @@ abstract class EventsRepository {
   Future<Map<String, dynamic>> checkout({
     required String eventId,
     required String ticketTypeId,
-    required int    quantity,
+    required int quantity,
     required String buyerEmail,
     required String buyerName,
   });

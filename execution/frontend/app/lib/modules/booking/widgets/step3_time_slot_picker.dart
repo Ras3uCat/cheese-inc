@@ -12,15 +12,17 @@ class Step3TimeSlotPicker extends GetView<BookingController> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile =
-        MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
+    final isMobile = MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
     final hPad = isMobile ? ESpacing.md : ESpacing.xxl;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: hPad, vertical: ESpacing.lg),
+          padding: EdgeInsets.symmetric(
+            horizontal: hPad,
+            vertical: ESpacing.lg,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -30,17 +32,20 @@ class Step3TimeSlotPicker extends GetView<BookingController> {
               const SizedBox(height: ESpacing.md),
               Text('PICK A TIME', style: ETextStyles.h2),
               const SizedBox(height: ESpacing.sm),
-              Obx(() => Text(
-                    'Session length: ${controller.formattedTotalDuration}',
-                    style: ETextStyles.body.copyWith(color: EColors.primary),
-                  )),
+              Obx(
+                () => Text(
+                  'Session length: ${controller.formattedTotalDuration}',
+                  style: ETextStyles.body.copyWith(color: EColors.primary),
+                ),
+              ),
             ],
           ),
         ),
         Obx(() {
           if (controller.slotsLoading.value) {
             return const Expanded(
-                child: Center(child: CircularProgressIndicator()));
+              child: Center(child: CircularProgressIndicator()),
+            );
           }
           return Column(
             children: [
@@ -70,10 +75,12 @@ class Step3TimeSlotPicker extends GetView<BookingController> {
             );
           }),
         ),
-        Obx(() => _BottomBar(
-              canContinue: controller.canProceedStep3,
-              onContinue: controller.proceedFromStep3,
-            )),
+        Obx(
+          () => _BottomBar(
+            canContinue: controller.canProceedStep3,
+            onContinue: controller.proceedFromStep3,
+          ),
+        ),
       ],
     );
   }
@@ -98,8 +105,7 @@ class _DateTabs extends StatelessWidget {
       height: 64,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding:
-            const EdgeInsets.symmetric(horizontal: ESpacing.lg),
+        padding: const EdgeInsets.symmetric(horizontal: ESpacing.lg),
         itemCount: dates.length,
         separatorBuilder: (_, _) => const SizedBox(width: ESpacing.sm),
         itemBuilder: (_, i) {
@@ -123,9 +129,10 @@ class _DateTabs extends StatelessWidget {
                   Text(
                     _dayNames[date.weekday - 1],
                     style: ETextStyles.labelSm.copyWith(
-                      color: isSelected
-                          ? EColors.secondary
-                          : EColors.onSurfaceMuted,
+                      color:
+                          isSelected
+                              ? EColors.secondary
+                              : EColors.onSurfaceMuted,
                       fontSize: 9,
                     ),
                   ),
@@ -170,11 +177,14 @@ class _SlotGrid extends StatelessWidget {
         childAspectRatio: 2.2,
       ),
       itemCount: slots.length,
-      itemBuilder: (_, i) => Obx(() => TimeSlotChip(
-            slot: slots[i],
-            isSelected: controller.selectedSlot.value?.id == slots[i].id,
-            onTap: () => controller.selectSlot(slots[i]),
-          )),
+      itemBuilder:
+          (_, i) => Obx(
+            () => TimeSlotChip(
+              slot: slots[i],
+              isSelected: controller.selectedSlot.value?.id == slots[i].id,
+              onTap: () => controller.selectSlot(slots[i]),
+            ),
+          ),
     );
   }
 }
@@ -193,11 +203,9 @@ class _EmptyDay extends StatelessWidget {
         children: [
           Icon(Icons.event_busy_outlined, color: EColors.divider, size: 48),
           const SizedBox(height: ESpacing.md),
-          Text('No slots available on this day.',
-              style: ETextStyles.bodyMuted),
+          Text('No slots available on this day.', style: ETextStyles.bodyMuted),
           const SizedBox(height: ESpacing.sm),
-          Text('Try another date above.',
-              style: ETextStyles.bodySmMuted),
+          Text('Try another date above.', style: ETextStyles.bodySmMuted),
         ],
       ),
     );
@@ -219,8 +227,11 @@ class _NoAvailability extends StatelessWidget {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.check_circle_outline,
-                  size: 56, color: EColors.primary),
+              Icon(
+                Icons.check_circle_outline,
+                size: 56,
+                color: EColors.primary,
+              ),
               const SizedBox(height: ESpacing.md),
               Text("You're on the list!", style: ETextStyles.h3),
               const SizedBox(height: ESpacing.sm),
@@ -237,22 +248,31 @@ class _NoAvailability extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Icon(Icons.event_busy_outlined,
-                  color: EColors.divider, size: 36),
-              const SizedBox(width: ESpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('No availability in the next 14 days.',
-                        style: ETextStyles.body),
-                    Text('Try reducing services or picking another artist.',
-                        style: ETextStyles.bodySmMuted),
-                  ],
+            Row(
+              children: [
+                Icon(
+                  Icons.event_busy_outlined,
+                  color: EColors.divider,
+                  size: 36,
                 ),
-              ),
-            ]),
+                const SizedBox(width: ESpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'No availability in the next 14 days.',
+                        style: ETextStyles.body,
+                      ),
+                      Text(
+                        'Try reducing services or picking another artist.',
+                        style: ETextStyles.bodySmMuted,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             if (AppEnv.waitlistEnabled) ...[
               const SizedBox(height: ESpacing.xl),
               Divider(color: EColors.divider, thickness: 0.5, height: 1),
@@ -282,7 +302,7 @@ class _WaitlistForm extends StatefulWidget {
 }
 
 class _WaitlistFormState extends State<_WaitlistForm> {
-  final _nameCtrl  = TextEditingController();
+  final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
 
   @override
@@ -320,36 +340,45 @@ class _WaitlistFormState extends State<_WaitlistForm> {
           if (widget.controller.waitlistError.value != null) {
             return Padding(
               padding: const EdgeInsets.only(bottom: ESpacing.sm),
-              child: Text(widget.controller.waitlistError.value!,
-                  style: ETextStyles.bodySm.copyWith(color: EColors.error)),
+              child: Text(
+                widget.controller.waitlistError.value!,
+                style: ETextStyles.bodySm.copyWith(color: EColors.error),
+              ),
             );
           }
           return const SizedBox.shrink();
         }),
-        Obx(() => SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: widget.controller.isJoiningWaitlist.value
-                    ? null
-                    : () => widget.controller.joinWaitlist(
-                          name:  _nameCtrl.text,
-                          email: _emailCtrl.text,
-                        ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: EColors.primary,
-                  foregroundColor: EColors.secondary,
-                  shape: const RoundedRectangleBorder(),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: ESpacing.md),
-                ),
-                child: widget.controller.isJoiningWaitlist.value
-                    ? const SizedBox(
-                        width: 18, height: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white))
-                    : Text('NOTIFY ME', style: ETextStyles.button),
+        Obx(
+          () => SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed:
+                  widget.controller.isJoiningWaitlist.value
+                      ? null
+                      : () => widget.controller.joinWaitlist(
+                        name: _nameCtrl.text,
+                        email: _emailCtrl.text,
+                      ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: EColors.primary,
+                foregroundColor: EColors.secondary,
+                shape: const RoundedRectangleBorder(),
+                padding: const EdgeInsets.symmetric(vertical: ESpacing.md),
               ),
-            )),
+              child:
+                  widget.controller.isJoiningWaitlist.value
+                      ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                      : Text('NOTIFY ME', style: ETextStyles.button),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -364,11 +393,12 @@ class _BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: ESpacing.lg, vertical: ESpacing.md),
+        horizontal: ESpacing.lg,
+        vertical: ESpacing.md,
+      ),
       decoration: BoxDecoration(
         color: EColors.surfaceVariant,
-        border: Border(
-            top: BorderSide(color: EColors.divider, width: 0.5)),
+        border: Border(top: BorderSide(color: EColors.divider, width: 0.5)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -383,7 +413,9 @@ class _BottomBar extends StatelessWidget {
                 foregroundColor: EColors.secondary,
                 shape: const RoundedRectangleBorder(),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: ESpacing.xl, vertical: ESpacing.md),
+                  horizontal: ESpacing.xl,
+                  vertical: ESpacing.md,
+                ),
               ),
               child: Text('CONTINUE', style: ETextStyles.button),
             ),

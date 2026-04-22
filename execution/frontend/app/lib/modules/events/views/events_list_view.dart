@@ -23,7 +23,9 @@ class EventsListView extends GetView<EventsController> {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator(color: EColors.primary));
+          return Center(
+            child: CircularProgressIndicator(color: EColors.primary),
+          );
         }
         if (controller.events.isEmpty) {
           return Center(
@@ -38,9 +40,10 @@ class EventsListView extends GetView<EventsController> {
             final event = controller.events[i];
             return _EventCard(
               event: event,
-              onTap: () => Get.toNamed(
-                ERoutes.eventsDetail.replaceFirst(':slug', event.slug),
-              ),
+              onTap:
+                  () => Get.toNamed(
+                    ERoutes.eventsDetail.replaceFirst(':slug', event.slug),
+                  ),
             );
           },
         );
@@ -51,7 +54,7 @@ class EventsListView extends GetView<EventsController> {
 
 class _EventCard extends StatelessWidget {
   const _EventCard({required this.event, required this.onTap});
-  final EventModel   event;
+  final EventModel event;
   final VoidCallback onTap;
 
   @override
@@ -60,7 +63,7 @@ class _EventCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color:  EColors.surfaceVariant,
+          color: EColors.surfaceVariant,
           border: Border.all(color: EColors.divider),
         ),
         child: Column(
@@ -110,8 +113,8 @@ class _TicketPriceLabel extends StatefulWidget {
 
 class _TicketPriceLabelState extends State<_TicketPriceLabel> {
   List<EventTicketTypeModel> _types = [];
-  Map<String, int>           _avail = {};
-  bool                       _loaded = false;
+  Map<String, int> _avail = {};
+  bool _loaded = false;
 
   @override
   void initState() {
@@ -121,10 +124,15 @@ class _TicketPriceLabelState extends State<_TicketPriceLabel> {
 
   Future<void> _load() async {
     try {
-      final repo  = Get.find<EventsRepository>();
+      final repo = Get.find<EventsRepository>();
       final types = await repo.getTicketTypes(widget.eventId);
       final avail = await repo.getTicketAvailability(widget.eventId);
-      if (mounted) setState(() { _types = types; _avail = avail; _loaded = true; });
+      if (mounted)
+        setState(() {
+          _types = types;
+          _avail = avail;
+          _loaded = true;
+        });
     } catch (_) {
       if (mounted) setState(() => _loaded = true);
     }
@@ -134,25 +142,29 @@ class _TicketPriceLabelState extends State<_TicketPriceLabel> {
   Widget build(BuildContext context) {
     if (!_loaded) return const SizedBox.shrink();
 
-    final allSoldOut = _types.isNotEmpty &&
-        _types.every((t) => (_avail[t.id] ?? 0) == 0);
+    final allSoldOut =
+        _types.isNotEmpty && _types.every((t) => (_avail[t.id] ?? 0) == 0);
 
     if (allSoldOut) {
       return Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: ESpacing.sm, vertical: ESpacing.xxs),
+          horizontal: ESpacing.sm,
+          vertical: ESpacing.xxs,
+        ),
         color: EColors.error.withValues(alpha: 0.15),
-        child: Text('SOLD OUT',
-            style: ETextStyles.labelSm.copyWith(color: EColors.error)),
+        child: Text(
+          'SOLD OUT',
+          style: ETextStyles.labelSm.copyWith(color: EColors.error),
+        ),
       );
     }
 
     final cheapest = _types
         .where((t) => (_avail[t.id] ?? 0) > 0)
         .fold<EventTicketTypeModel?>(
-            null,
-            (min, t) =>
-                min == null || t.priceCents < min.priceCents ? t : min);
+          null,
+          (min, t) => min == null || t.priceCents < min.priceCents ? t : min,
+        );
 
     if (cheapest == null) return const SizedBox.shrink();
 

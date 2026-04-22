@@ -13,7 +13,7 @@ class BookingTile extends StatelessWidget {
   final BookingModel booking;
 
   static const _statusColors = {
-    'pending':   Color(0xFFF59E0B),
+    'pending': Color(0xFFF59E0B),
     'confirmed': Color(0xFF10B981),
     'cancelled': Color(0xFFEF4444),
     'completed': Color(0xFF6B7280),
@@ -21,7 +21,7 @@ class BookingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl        = Get.find<MasterController>();
+    final ctrl = Get.find<MasterController>();
     final statusColor = _statusColors[booking.status] ?? EColors.onSurfaceMuted;
 
     return Container(
@@ -36,13 +36,16 @@ class BookingTile extends StatelessWidget {
           Container(
             width: 52,
             alignment: Alignment.center,
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Text(
-                DateFormat('MMM').format(booking.startTime).toUpperCase(),
-                style: ETextStyles.labelSm.copyWith(color: EColors.primary),
-              ),
-              Text('${booking.startTime.day}', style: ETextStyles.h2),
-            ]),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  DateFormat('MMM').format(booking.startTime).toUpperCase(),
+                  style: ETextStyles.labelSm.copyWith(color: EColors.primary),
+                ),
+                Text('${booking.startTime.day}', style: ETextStyles.h2),
+              ],
+            ),
           ),
           const SizedBox(width: ESpacing.md),
           // Details
@@ -51,9 +54,12 @@ class BookingTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(booking.clientName, style: ETextStyles.h4),
-                Text(booking.clientEmail,
-                    style: ETextStyles.bodySm
-                        .copyWith(color: EColors.onSurfaceMuted)),
+                Text(
+                  booking.clientEmail,
+                  style: ETextStyles.bodySm.copyWith(
+                    color: EColors.onSurfaceMuted,
+                  ),
+                ),
                 const SizedBox(height: ESpacing.xs),
                 Text(
                   '${booking.formattedTime} · ${booking.artistName} · ${booking.formattedPrice}',
@@ -69,8 +75,9 @@ class BookingTile extends StatelessWidget {
                   Text(
                     'Note: ${booking.clientNotes}',
                     style: ETextStyles.bodySm.copyWith(
-                        color: EColors.onSurfaceMuted,
-                        fontStyle: FontStyle.italic),
+                      color: EColors.onSurfaceMuted,
+                      fontStyle: FontStyle.italic,
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
               ],
@@ -83,61 +90,77 @@ class BookingTile extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: ESpacing.sm, vertical: 3),
+                  horizontal: ESpacing.sm,
+                  vertical: 3,
+                ),
                 color: statusColor.withValues(alpha: 0.15),
                 child: Text(
                   booking.status.toUpperCase(),
-                  style: ETextStyles.labelSm
-                      .copyWith(color: statusColor, fontSize: 10),
+                  style: ETextStyles.labelSm.copyWith(
+                    color: statusColor,
+                    fontSize: 10,
+                  ),
                 ),
               ),
               const SizedBox(height: ESpacing.xs),
               if (booking.status == 'pending')
                 TextButton(
-                  onPressed: () =>
-                      ctrl.updateBookingStatus(booking.id, 'confirmed'),
+                  onPressed:
+                      () => ctrl.updateBookingStatus(booking.id, 'confirmed'),
                   style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero, minimumSize: Size.zero),
-                  child: Text('CONFIRM',
-                      style: ETextStyles.labelSm
-                          .copyWith(color: EColors.primary)),
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                  ),
+                  child: Text(
+                    'CONFIRM',
+                    style: ETextStyles.labelSm.copyWith(color: EColors.primary),
+                  ),
                 ),
               if (booking.status != 'cancelled' &&
                   booking.status != 'completed')
                 TextButton(
-                  onPressed: () =>
-                      ctrl.updateBookingStatus(booking.id, 'cancelled'),
+                  onPressed:
+                      () => ctrl.updateBookingStatus(booking.id, 'cancelled'),
                   style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero, minimumSize: Size.zero),
-                  child: Text('CANCEL',
-                      style:
-                          ETextStyles.labelSm.copyWith(color: EColors.error)),
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                  ),
+                  child: Text(
+                    'CANCEL',
+                    style: ETextStyles.labelSm.copyWith(color: EColors.error),
+                  ),
                 ),
               if (AppEnv.stripeInvoicingEnabled &&
                   booking.status == 'confirmed')
                 TextButton(
                   onPressed: () => ctrl.sendStripeInvoice(booking.id),
                   style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero, minimumSize: Size.zero),
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                  ),
                   child: Text(
                     booking.stripeInvoiceId != null
                         ? 'RESEND INVOICE'
                         : 'SEND INVOICE',
-                    style: ETextStyles.labelSm
-                        .copyWith(color: EColors.onSurfaceMuted),
+                    style: ETextStyles.labelSm.copyWith(
+                      color: EColors.onSurfaceMuted,
+                    ),
                   ),
                 ),
               if (AppEnv.invoicesEnabled && booking.status == 'confirmed')
                 TextButton(
                   onPressed: () => ctrl.sendInvoice(booking.id),
                   style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero, minimumSize: Size.zero),
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                  ),
                   child: Text(
                     booking.invoiceNumber != null
                         ? 'RESEND PDF INVOICE'
                         : 'GENERATE PDF INVOICE',
-                    style: ETextStyles.labelSm
-                        .copyWith(color: EColors.onSurfaceMuted),
+                    style: ETextStyles.labelSm.copyWith(
+                      color: EColors.onSurfaceMuted,
+                    ),
                   ),
                 ),
             ],

@@ -21,16 +21,18 @@ class SubscriptionModel {
 
   bool get isActive => status == 'active' || status == 'trialing';
 
-  factory SubscriptionModel.fromMap(Map<String, dynamic> map) => SubscriptionModel(
-    id:                    map['id']          as String,
-    planId:                map['plan_id']     as String,
-    clientEmail:           map['client_email'] as String,
-    clientName:            map['client_name']  as String,
-    stripeSubscriptionId:  map['stripe_subscription_id'] as String?,
-    status:                map['status'] as String? ?? 'active',
-    currentPeriodEnd:      map['current_period_end'] != null
-        ? DateTime.parse(map['current_period_end'] as String).toLocal()
-        : null,
-    createdAt: DateTime.parse(map['created_at'] as String).toLocal(),
-  );
+  factory SubscriptionModel.fromMap(Map<String, dynamic> map) =>
+      SubscriptionModel(
+        id: map['id'] as String,
+        planId: map['plan_id'] as String,
+        clientEmail: map['client_email'] as String,
+        clientName: map['client_name'] as String,
+        stripeSubscriptionId: map['stripe_subscription_id'] as String?,
+        status: map['status'] as String? ?? 'active',
+        currentPeriodEnd:
+            map['current_period_end'] != null
+                ? DateTime.parse(map['current_period_end'] as String).toLocal()
+                : null,
+        createdAt: DateTime.parse(map['created_at'] as String).toLocal(),
+      );
 }

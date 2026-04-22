@@ -37,14 +37,15 @@ class CourseModel {
     thumbnailStoragePath: json['thumbnail_storage_path'] as String?,
     priceCents: json['price_cents'] as int? ?? 0,
     stripePriceId: json['stripe_price_id'] as String?,
-    subscriptionPlanIds: (json['subscription_plan_ids'] as List? ?? [])
-        .cast<String>(),
+    subscriptionPlanIds:
+        (json['subscription_plan_ids'] as List? ?? []).cast<String>(),
     instructorId: json['instructor_id'] as String?,
     isPublished: json['is_published'] as bool? ?? false,
     displayOrder: json['display_order'] as int? ?? 0,
-    createdAt: json['created_at'] != null
-        ? DateTime.parse(json['created_at'] as String)
-        : null,
+    createdAt:
+        json['created_at'] != null
+            ? DateTime.parse(json['created_at'] as String)
+            : null,
   );
 
   Map<String, dynamic> toJson() => {

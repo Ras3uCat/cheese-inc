@@ -11,20 +11,20 @@ class NewsletterModule implements AppModule {
 
   @override
   NavItem? get navItem => const NavItem(
-        label: 'Newsletter',
-        icon: Icons.mail_outline,
-        route: ERoutes.newsletter,
-      );
+    label: 'Newsletter',
+    icon: Icons.mail_outline,
+    route: ERoutes.newsletter,
+  );
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.newsletter,
-          page: () => const NewsletterView(),
-          binding: NewsletterBinding(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.newsletter,
+      page: () => const NewsletterView(),
+      binding: NewsletterBinding(),
+      transition: Transition.fadeIn,
+    ),
+  ];
 
   @override
   Bindings? get binding => null; // per-route binding used above

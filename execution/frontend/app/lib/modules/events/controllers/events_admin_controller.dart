@@ -9,12 +9,12 @@ class EventsAdminController extends GetxController {
   EventsAdminController(this._repo);
   final EventsRepository _repo;
 
-  final events          = <EventModel>[].obs;
+  final events = <EventModel>[].obs;
   final selectedEventId = RxnString();
-  final attendees       = <EventTicketModel>[].obs;
-  final ticketTypes     = <EventTicketTypeModel>[].obs;
+  final attendees = <EventTicketModel>[].obs;
+  final ticketTypes = <EventTicketTypeModel>[].obs;
 
-  final isLoading    = false.obs;
+  final isLoading = false.obs;
   final isCancelling = false.obs;
 
   @override
@@ -46,16 +46,16 @@ class EventsAdminController extends GetxController {
 
   Future<void> loadAttendees(String eventId) async {
     selectedEventId.value = eventId;
-    isLoading.value       = true;
+    isLoading.value = true;
     try {
       final results = await Future.wait([
         _repo.getAdminTicketTypes(eventId),
         _repo.getAttendees(eventId),
       ]);
       ticketTypes.value = results[0] as List<EventTicketTypeModel>;
-      attendees.value   = results[1] as List<EventTicketModel>;
+      attendees.value = results[1] as List<EventTicketModel>;
     } catch (_) {
-      attendees.value   = [];
+      attendees.value = [];
       ticketTypes.value = [];
     } finally {
       isLoading.value = false;
@@ -69,17 +69,17 @@ class EventsAdminController extends GetxController {
       if (idx >= 0) {
         final old = attendees[idx];
         attendees[idx] = EventTicketModel(
-          id:           old.id,
-          eventId:      old.eventId,
+          id: old.id,
+          eventId: old.eventId,
           ticketTypeId: old.ticketTypeId,
-          buyerName:    old.buyerName,
-          buyerEmail:   old.buyerEmail,
-          quantity:     old.quantity,
-          totalCents:   old.totalCents,
-          ticketCode:   old.ticketCode,
-          status:       'checked_in',
-          checkedInAt:  DateTime.now(),
-          createdAt:    old.createdAt,
+          buyerName: old.buyerName,
+          buyerEmail: old.buyerEmail,
+          quantity: old.quantity,
+          totalCents: old.totalCents,
+          ticketCode: old.ticketCode,
+          status: 'checked_in',
+          checkedInAt: DateTime.now(),
+          createdAt: old.createdAt,
         );
         // ignore: invalid_use_of_protected_member
         attendees.refresh();
@@ -96,7 +96,7 @@ class EventsAdminController extends GetxController {
         'Event cancelled',
         'All tickets have been cancelled and refunds issued.',
         backgroundColor: EColors.error.withValues(alpha: 0.9),
-        colorText:       EColors.onSurface,
+        colorText: EColors.onSurface,
       );
     } catch (_) {
       Get.snackbar('Error', 'Failed to cancel event. Please try again.');
@@ -105,7 +105,10 @@ class EventsAdminController extends GetxController {
     }
   }
 
-  Future<void> createTicketType(String eventId, Map<String, dynamic> data) async {
+  Future<void> createTicketType(
+    String eventId,
+    Map<String, dynamic> data,
+  ) async {
     await _repo.createTicketType(eventId, data);
     await loadAttendees(eventId);
   }
@@ -121,13 +124,25 @@ class EventsAdminController extends GetxController {
       await _repo.deleteTicketType(id);
       ticketTypes.removeWhere((t) => t.id == id);
     } catch (_) {
-      Get.snackbar('Error', 'Cannot delete a ticket type that has confirmed tickets.');
+      Get.snackbar(
+        'Error',
+        'Cannot delete a ticket type that has confirmed tickets.',
+      );
     }
   }
 
   // ── Computed stats for the attendees view ─────────────────────────────────
-  int get totalSold      => attendees.fold(0, (s, a) => s + (a.isPending || a.isConfirmed || a.isCheckedIn ? a.quantity : 0));
-  int get totalConfirmed => attendees.fold(0, (s, a) => s + (a.isConfirmed ? a.quantity : 0));
-  int get totalCheckedIn => attendees.fold(0, (s, a) => s + (a.isCheckedIn ? a.quantity : 0));
-  double get totalRevenue => attendees.fold(0.0, (s, a) => s + (a.isConfirmed || a.isCheckedIn ? a.totalPrice : 0));
+  int get totalSold => attendees.fold(
+    0,
+    (s, a) =>
+        s + (a.isPending || a.isConfirmed || a.isCheckedIn ? a.quantity : 0),
+  );
+  int get totalConfirmed =>
+      attendees.fold(0, (s, a) => s + (a.isConfirmed ? a.quantity : 0));
+  int get totalCheckedIn =>
+      attendees.fold(0, (s, a) => s + (a.isCheckedIn ? a.quantity : 0));
+  double get totalRevenue => attendees.fold(
+    0.0,
+    (s, a) => s + (a.isConfirmed || a.isCheckedIn ? a.totalPrice : 0),
+  );
 }

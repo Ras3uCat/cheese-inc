@@ -23,11 +23,11 @@ class _NewsletterFormWidgetState extends State<NewsletterFormWidget> {
   @override
   void initState() {
     super.initState();
-    _ctrl      = Get.find<NewsletterController>();
+    _ctrl = Get.find<NewsletterController>();
     _emailCtrl = TextEditingController();
-    _nameCtrl  = TextEditingController();
+    _nameCtrl = TextEditingController();
     _emailCtrl.addListener(() => _ctrl.email.value = _emailCtrl.text);
-    _nameCtrl.addListener(()  => _ctrl.name.value  = _nameCtrl.text);
+    _nameCtrl.addListener(() => _ctrl.name.value = _nameCtrl.text);
   }
 
   @override
@@ -66,23 +66,26 @@ class _NewsletterFormWidgetState extends State<NewsletterFormWidget> {
             ),
           ],
           const SizedBox(height: ESpacing.md),
-          Obx(() => ElevatedButton(
-                onPressed: _ctrl.isSubmitting.value ? null : _ctrl.subscribe,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: EColors.primary,
-                  foregroundColor: EColors.secondary,
-                  disabledBackgroundColor: EColors.primary.withValues(alpha: 0.5),
-                  shape: const RoundedRectangleBorder(),
-                  padding: const EdgeInsets.symmetric(vertical: ESpacing.md),
-                ),
-                child: _ctrl.isSubmitting.value
-                    ? const SizedBox(
+          Obx(
+            () => ElevatedButton(
+              onPressed: _ctrl.isSubmitting.value ? null : _ctrl.subscribe,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: EColors.primary,
+                foregroundColor: EColors.secondary,
+                disabledBackgroundColor: EColors.primary.withValues(alpha: 0.5),
+                shape: const RoundedRectangleBorder(),
+                padding: const EdgeInsets.symmetric(vertical: ESpacing.md),
+              ),
+              child:
+                  _ctrl.isSubmitting.value
+                      ? const SizedBox(
                         height: 18,
                         width: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Text('SUBSCRIBE', style: ETextStyles.button),
-              )),
+                      : Text('SUBSCRIBE', style: ETextStyles.button),
+            ),
+          ),
         ],
       );
     });

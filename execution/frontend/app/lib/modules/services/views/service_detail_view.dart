@@ -65,14 +65,14 @@ class ServiceDetailView extends StatelessWidget {
 
       // Meta description: trim to 160 chars
       final rawDesc = service.description;
-      final metaDesc = rawDesc.length > 160
-          ? '${rawDesc.substring(0, 157)}...'
-          : rawDesc;
+      final metaDesc =
+          rawDesc.length > 160 ? '${rawDesc.substring(0, 157)}...' : rawDesc;
 
       // Title: include city for local SEO when available
-      final pageTitle = AppEnv.city.isNotEmpty
-          ? '${service.name} in ${AppEnv.city} | ${AppEnv.clientName}'
-          : '${service.name} | ${AppEnv.clientName}';
+      final pageTitle =
+          AppEnv.city.isNotEmpty
+              ? '${service.name} in ${AppEnv.city} | ${AppEnv.clientName}'
+              : '${service.name} | ${AppEnv.clientName}';
 
       return SeoWrapper(
         title: pageTitle,
@@ -87,9 +87,10 @@ class ServiceDetailView extends StatelessWidget {
                 expandedHeight: 300,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: service.imageUrl != null
-                      ? Image.network(service.imageUrl!, fit: BoxFit.cover)
-                      : Container(color: EColors.primaryLight),
+                  background:
+                      service.imageUrl != null
+                          ? Image.network(service.imageUrl!, fit: BoxFit.cover)
+                          : Container(color: EColors.primaryLight),
                 ),
               ),
               SliverToBoxAdapter(
@@ -132,10 +133,11 @@ class ServiceDetailView extends StatelessWidget {
                       if (AppEnv.moduleEnabled('booking'))
                         Center(
                           child: ElevatedButton(
-                            onPressed: () => Get.toNamed(
-                              '/booking',
-                              arguments: {'serviceId': service.id},
-                            ),
+                            onPressed:
+                                () => Get.toNamed(
+                                  '/booking',
+                                  arguments: {'serviceId': service.id},
+                                ),
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: ESpacing.xl,

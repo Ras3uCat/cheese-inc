@@ -24,14 +24,19 @@ class SupabaseLocationRepository implements LocationRepository {
     String timezone = 'UTC',
     int sortOrder = 0,
   }) async {
-    final row = await _db.from('locations').insert({
-      'name': name,
-      'timezone': timezone,
-      'sort_order': sortOrder,
-      if (address != null && address.isNotEmpty) 'address': address,
-      if (city != null && city.isNotEmpty) 'city': city,
-      if (phone != null && phone.isNotEmpty) 'phone': phone,
-    }).select().single();
+    final row =
+        await _db
+            .from('locations')
+            .insert({
+              'name': name,
+              'timezone': timezone,
+              'sort_order': sortOrder,
+              if (address != null && address.isNotEmpty) 'address': address,
+              if (city != null && city.isNotEmpty) 'city': city,
+              if (phone != null && phone.isNotEmpty) 'phone': phone,
+            })
+            .select()
+            .single();
     return LocationModel.fromMap(row);
   }
 

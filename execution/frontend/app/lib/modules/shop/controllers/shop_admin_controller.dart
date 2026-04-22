@@ -7,12 +7,12 @@ class ShopAdminController extends GetxController {
   ShopAdminController(this._repo);
   final ShopRepository _repo;
 
-  final products      = <ProductModel>[].obs;
-  final orders        = <ShopOrderModel>[].obs;
+  final products = <ProductModel>[].obs;
+  final orders = <ShopOrderModel>[].obs;
   final discountCodes = <Map<String, dynamic>>[].obs;
-  final categories    = <Map<String, dynamic>>[].obs;
-  final statusFilter  = RxnString();
-  final isLoading     = false.obs;
+  final categories = <Map<String, dynamic>>[].obs;
+  final statusFilter = RxnString();
+  final isLoading = false.obs;
 
   @override
   void onInit() {
@@ -23,24 +23,37 @@ class ShopAdminController extends GetxController {
 
   Future<void> loadAll() async {
     isLoading.value = true;
-    await Future.wait([loadProducts(), loadOrders(), loadDiscountCodes(), loadCategories()]);
+    await Future.wait([
+      loadProducts(),
+      loadOrders(),
+      loadDiscountCodes(),
+      loadCategories(),
+    ]);
     isLoading.value = false;
   }
 
   Future<void> loadProducts() async {
-    try { products.value = await _repo.getAllProducts(); } catch (_) {}
+    try {
+      products.value = await _repo.getAllProducts();
+    } catch (_) {}
   }
 
   Future<void> loadOrders() async {
-    try { orders.value = await _repo.getAllOrders(status: statusFilter.value); } catch (_) {}
+    try {
+      orders.value = await _repo.getAllOrders(status: statusFilter.value);
+    } catch (_) {}
   }
 
   Future<void> loadDiscountCodes() async {
-    try { discountCodes.value = await _repo.getAllDiscountCodes(); } catch (_) {}
+    try {
+      discountCodes.value = await _repo.getAllDiscountCodes();
+    } catch (_) {}
   }
 
   Future<void> loadCategories() async {
-    try { categories.value = await _repo.getCategories(); } catch (_) {}
+    try {
+      categories.value = await _repo.getCategories();
+    } catch (_) {}
   }
 
   // ── Products ──────────────────────────────────────────────────────────────────

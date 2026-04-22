@@ -13,8 +13,8 @@ class ClientPhotosView extends StatefulWidget {
 }
 
 class _ClientPhotosViewState extends State<ClientPhotosView> {
-  final _db          = Supabase.instance.client;
-  final _pathCtrl    = TextEditingController();
+  final _db = Supabase.instance.client;
+  final _pathCtrl = TextEditingController();
   final _bookingCtrl = TextEditingController();
   List<Map<String, dynamic>> _photos = [];
   // storagePath -> signed URL
@@ -71,13 +71,13 @@ class _ClientPhotosViewState extends State<ClientPhotosView> {
   }
 
   Future<void> _add() async {
-    final path      = _pathCtrl.text.trim();
+    final path = _pathCtrl.text.trim();
     final bookingId = _bookingCtrl.text.trim();
     if (path.isEmpty || bookingId.isEmpty) return;
     await _db.from('client_photos').insert({
       'storage_path': path,
-      'booking_id':   bookingId,
-      'is_before':    _isBefore,
+      'booking_id': bookingId,
+      'is_before': _isBefore,
     });
     _pathCtrl.clear();
     _bookingCtrl.clear();
@@ -131,8 +131,7 @@ class _ClientPhotosViewState extends State<ClientPhotosView> {
                   children: [
                     Checkbox(
                       value: _isBefore,
-                      onChanged: (v) =>
-                          setState(() => _isBefore = v ?? true),
+                      onChanged: (v) => setState(() => _isBefore = v ?? true),
                       activeColor: EColors.primary,
                     ),
                     Text('Before', style: ETextStyles.labelSm),
@@ -154,37 +153,35 @@ class _ClientPhotosViewState extends State<ClientPhotosView> {
             if (_loading)
               const Center(child: CircularProgressIndicator())
             else if (_photos.isEmpty)
-              Center(
-                child: Text('No photos yet.', style: ETextStyles.bodyMd),
-              )
+              Center(child: Text('No photos yet.', style: ETextStyles.bodyMd))
             else
               Expanded(
                 child: ListView.separated(
                   itemCount: _photos.length,
                   separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (_, i) {
-                    final p     = _photos[i];
-                    final label = (p['is_before'] as bool? ?? true)
-                        ? 'BEFORE'
-                        : 'AFTER';
-                    final path    = p['storage_path'] as String;
-                    final url     = _signedUrls[path] ?? '';
-                    final bId     = p['booking_id'] as String;
-                    final preview = bId.length >= 8
-                        ? '${bId.substring(0, 8)}...'
-                        : bId;
+                    final p = _photos[i];
+                    final label =
+                        (p['is_before'] as bool? ?? true) ? 'BEFORE' : 'AFTER';
+                    final path = p['storage_path'] as String;
+                    final url = _signedUrls[path] ?? '';
+                    final bId = p['booking_id'] as String;
+                    final preview =
+                        bId.length >= 8 ? '${bId.substring(0, 8)}...' : bId;
                     return ListTile(
                       leading: SizedBox(
                         width: 56,
                         height: 56,
-                        child: url.isEmpty
-                            ? const Icon(Icons.broken_image)
-                            : Image.network(
-                                url,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, _, _) =>
-                                    const Icon(Icons.broken_image),
-                              ),
+                        child:
+                            url.isEmpty
+                                ? const Icon(Icons.broken_image)
+                                : Image.network(
+                                  url,
+                                  fit: BoxFit.cover,
+                                  errorBuilder:
+                                      (_, _, _) =>
+                                          const Icon(Icons.broken_image),
+                                ),
                       ),
                       title: Text(
                         '$label  •  $path',

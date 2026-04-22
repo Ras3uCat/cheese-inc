@@ -26,8 +26,11 @@ class _ReviewViewState extends State<ReviewView> {
 
   Future<void> _submit() async {
     final bookingId = Get.parameters['booking_id'];
-    final token     = Get.parameters['token'];
-    if (bookingId == null || token == null || bookingId.isEmpty || token.isEmpty) {
+    final token = Get.parameters['token'];
+    if (bookingId == null ||
+        token == null ||
+        bookingId.isEmpty ||
+        token.isEmpty) {
       setState(() => _error = 'Invalid review link.');
       return;
     }
@@ -35,17 +38,25 @@ class _ReviewViewState extends State<ReviewView> {
       setState(() => _error = 'Please select a rating.');
       return;
     }
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
-      await Supabase.instance.client.functions.invoke('submit-review', body: {
-        'booking_id': bookingId,
-        'token':      token,
-        'rating':     _rating,
-        if (_comment.text.trim().isNotEmpty) 'comment': _comment.text.trim(),
-      });
+      await Supabase.instance.client.functions.invoke(
+        'submit-review',
+        body: {
+          'booking_id': bookingId,
+          'token': token,
+          'rating': _rating,
+          if (_comment.text.trim().isNotEmpty) 'comment': _comment.text.trim(),
+        },
+      );
       setState(() => _submitted = true);
     } catch (_) {
-      setState(() => _error = 'This review link is invalid or has already been used.');
+      setState(
+        () => _error = 'This review link is invalid or has already been used.',
+      );
     } finally {
       setState(() => _loading = false);
     }
@@ -54,9 +65,12 @@ class _ReviewViewState extends State<ReviewView> {
   @override
   Widget build(BuildContext context) {
     final bookingId = Get.parameters['booking_id'];
-    final token     = Get.parameters['token'];
-    final invalid   = bookingId == null || token == null ||
-        bookingId.isEmpty || token.isEmpty;
+    final token = Get.parameters['token'];
+    final invalid =
+        bookingId == null ||
+        token == null ||
+        bookingId.isEmpty ||
+        token.isEmpty;
 
     return Scaffold(
       appBar: AppBar(backgroundColor: EColors.surface, elevation: 0),
@@ -66,18 +80,19 @@ class _ReviewViewState extends State<ReviewView> {
           constraints: const BoxConstraints(maxWidth: 480),
           child: Padding(
             padding: const EdgeInsets.all(ESpacing.xl),
-            child: invalid
-                ? Text('Invalid review link.', style: ETextStyles.bodyMd)
-                : _submitted
+            child:
+                invalid
+                    ? Text('Invalid review link.', style: ETextStyles.bodyMd)
+                    : _submitted
                     ? const _ThankYou()
                     : _Form(
-                        rating:   _rating,
-                        comment:  _comment,
-                        loading:  _loading,
-                        error:    _error,
-                        onRate:   (r) => setState(() => _rating = r),
-                        onSubmit: _submit,
-                      ),
+                      rating: _rating,
+                      comment: _comment,
+                      loading: _loading,
+                      error: _error,
+                      onRate: (r) => setState(() => _rating = r),
+                      onSubmit: _submit,
+                    ),
           ),
         ),
       ),
@@ -94,11 +109,17 @@ class _ThankYou extends StatelessWidget {
     children: [
       Icon(Icons.check_circle_outline, size: 64, color: EColors.primary),
       const SizedBox(height: ESpacing.lg),
-      Text('Thank you for your review!', style: ETextStyles.h3,
-          textAlign: TextAlign.center),
+      Text(
+        'Thank you for your review!',
+        style: ETextStyles.h3,
+        textAlign: TextAlign.center,
+      ),
       const SizedBox(height: ESpacing.sm),
-      Text('Your feedback helps us improve.', style: ETextStyles.bodyMd,
-          textAlign: TextAlign.center),
+      Text(
+        'Your feedback helps us improve.',
+        style: ETextStyles.bodyMd,
+        textAlign: TextAlign.center,
+      ),
     ],
   );
 }
@@ -129,17 +150,20 @@ class _Form extends StatelessWidget {
       Text('Your rating', style: ETextStyles.inputLabel),
       const SizedBox(height: ESpacing.sm),
       Row(
-        children: List.generate(5, (i) => IconButton(
-          icon: Icon(
-            i < rating ? Icons.star : Icons.star_border,
-            color: EColors.primary,
-            size: 36,
+        children: List.generate(
+          5,
+          (i) => IconButton(
+            icon: Icon(
+              i < rating ? Icons.star : Icons.star_border,
+              color: EColors.primary,
+              size: 36,
+            ),
+            onPressed: () => onRate(i + 1),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            splashRadius: 20,
           ),
-          onPressed: () => onRate(i + 1),
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
-          splashRadius: 20,
-        )),
+        ),
       ),
       const SizedBox(height: ESpacing.lg),
       TextField(
@@ -167,12 +191,14 @@ class _Form extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: ESpacing.md),
             shape: const RoundedRectangleBorder(),
           ),
-          child: loading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2))
-              : const Text('SUBMIT REVIEW'),
+          child:
+              loading
+                  ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                  : const Text('SUBMIT REVIEW'),
         ),
       ),
     ],

@@ -22,29 +22,41 @@ class AdminEventsListView extends GetView<EventsAdminController> {
           TextButton.icon(
             onPressed: () => _showEventDialog(context, null),
             icon: Icon(Icons.add, color: EColors.primary),
-            label: Text('New Event', style: ETextStyles.label.copyWith(color: EColors.primary)),
+            label: Text(
+              'New Event',
+              style: ETextStyles.label.copyWith(color: EColors.primary),
+            ),
           ),
           const SizedBox(width: ESpacing.sm),
         ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator(color: EColors.primary));
+          return Center(
+            child: CircularProgressIndicator(color: EColors.primary),
+          );
         }
         if (controller.events.isEmpty) {
-          return Center(child: Text('No events yet.', style: ETextStyles.bodyMuted));
+          return Center(
+            child: Text('No events yet.', style: ETextStyles.bodyMuted),
+          );
         }
         return ListView.separated(
           padding: const EdgeInsets.all(ESpacing.md),
           itemCount: controller.events.length,
           separatorBuilder: (_, _) => const SizedBox(height: ESpacing.sm),
-          itemBuilder: (_, i) => _EventRow(
-            event: controller.events[i],
-            onEdit: () => _showEventDialog(context, controller.events[i]),
-            onAttendees: () => Get.toNamed(
-              ERoutes.adminEventsAttendees.replaceFirst(':id', controller.events[i].id),
-            ),
-          ),
+          itemBuilder:
+              (_, i) => _EventRow(
+                event: controller.events[i],
+                onEdit: () => _showEventDialog(context, controller.events[i]),
+                onAttendees:
+                    () => Get.toNamed(
+                      ERoutes.adminEventsAttendees.replaceFirst(
+                        ':id',
+                        controller.events[i].id,
+                      ),
+                    ),
+              ),
         );
       }),
     );
@@ -66,12 +78,12 @@ class _EventRow extends StatelessWidget {
     required this.onEdit,
     required this.onAttendees,
   });
-  final EventModel   event;
+  final EventModel event;
   final VoidCallback onEdit;
   final VoidCallback onAttendees;
 
   Color get _statusColor {
-    if (event.isPublished)  return EColors.primary;
+    if (event.isPublished) return EColors.primary;
     if (event.isCancelled) return EColors.error;
     return EColors.onSurfaceMuted;
   }
@@ -80,12 +92,14 @@ class _EventRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color:  EColors.surfaceVariant,
+        color: EColors.surfaceVariant,
         border: Border.all(color: EColors.divider),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(
-            horizontal: ESpacing.md, vertical: ESpacing.xs),
+          horizontal: ESpacing.md,
+          vertical: ESpacing.xs,
+        ),
         title: Text(event.title, style: ETextStyles.h4),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,7 +110,9 @@ class _EventRow extends StatelessWidget {
             const SizedBox(height: ESpacing.xxs),
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: ESpacing.xs, vertical: 2),
+                horizontal: ESpacing.xs,
+                vertical: 2,
+              ),
               color: _statusColor.withValues(alpha: 0.12),
               child: Text(
                 event.status.toUpperCase(),
@@ -129,7 +145,7 @@ class _EventRow extends StatelessWidget {
 
 class _EventDialog extends StatefulWidget {
   const _EventDialog({required this.existing, required this.controller});
-  final EventModel?           existing;
+  final EventModel? existing;
   final EventsAdminController controller;
 
   @override
@@ -144,23 +160,23 @@ class _EventDialogState extends State<_EventDialog> {
   late final TextEditingController _imageUrl;
   late final TextEditingController _capacity;
 
-  String   _status   = 'draft';
-  DateTime _date      = DateTime.now().add(const Duration(days: 7));
-  bool     _slugEdited = false;
-  bool     _saving    = false;
+  String _status = 'draft';
+  DateTime _date = DateTime.now().add(const Duration(days: 7));
+  bool _slugEdited = false;
+  bool _saving = false;
 
   @override
   void initState() {
     super.initState();
     final e = widget.existing;
-    _title       = TextEditingController(text: e?.title ?? '');
-    _slug        = TextEditingController(text: e?.slug ?? '');
+    _title = TextEditingController(text: e?.title ?? '');
+    _slug = TextEditingController(text: e?.slug ?? '');
     _description = TextEditingController(text: e?.description ?? '');
-    _venue       = TextEditingController(text: e?.venue ?? '');
-    _imageUrl    = TextEditingController(text: e?.heroImageUrl ?? '');
-    _capacity    = TextEditingController(text: e != null ? '${e.capacity}' : '');
-    _status      = e?.status ?? 'draft';
-    _date        = e?.eventDate ?? DateTime.now().add(const Duration(days: 7));
+    _venue = TextEditingController(text: e?.venue ?? '');
+    _imageUrl = TextEditingController(text: e?.heroImageUrl ?? '');
+    _capacity = TextEditingController(text: e != null ? '${e.capacity}' : '');
+    _status = e?.status ?? 'draft';
+    _date = e?.eventDate ?? DateTime.now().add(const Duration(days: 7));
 
     _title.addListener(_autoSlug);
     if (e != null) _slugEdited = true;
@@ -169,7 +185,14 @@ class _EventDialogState extends State<_EventDialog> {
   @override
   void dispose() {
     _title.removeListener(_autoSlug);
-    for (final c in [_title, _slug, _description, _venue, _imageUrl, _capacity]) {
+    for (final c in [
+      _title,
+      _slug,
+      _description,
+      _venue,
+      _imageUrl,
+      _capacity,
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -209,26 +232,36 @@ class _EventDialogState extends State<_EventDialog> {
     );
     if (!mounted || time == null) return;
     setState(() {
-      _date = DateTime(picked.year, picked.month, picked.day, time.hour, time.minute);
+      _date = DateTime(
+        picked.year,
+        picked.month,
+        picked.day,
+        time.hour,
+        time.minute,
+      );
     });
   }
 
   Future<void> _save() async {
     final cap = int.tryParse(_capacity.text);
-    if (_title.text.trim().isEmpty || _slug.text.trim().isEmpty || cap == null) {
+    if (_title.text.trim().isEmpty ||
+        _slug.text.trim().isEmpty ||
+        cap == null) {
       return;
     }
     setState(() => _saving = true);
     try {
       final data = {
-        'title':         _title.text.trim(),
-        'slug':          _slug.text.trim(),
-        'description':   _description.text.trim().isEmpty ? null : _description.text.trim(),
-        'event_date':    _date.toUtc().toIso8601String(),
-        'venue':         _venue.text.trim().isEmpty ? null : _venue.text.trim(),
-        'hero_image_url': _imageUrl.text.trim().isEmpty ? null : _imageUrl.text.trim(),
-        'capacity':      cap,
-        'status':        _status,
+        'title': _title.text.trim(),
+        'slug': _slug.text.trim(),
+        'description':
+            _description.text.trim().isEmpty ? null : _description.text.trim(),
+        'event_date': _date.toUtc().toIso8601String(),
+        'venue': _venue.text.trim().isEmpty ? null : _venue.text.trim(),
+        'hero_image_url':
+            _imageUrl.text.trim().isEmpty ? null : _imageUrl.text.trim(),
+        'capacity': cap,
+        'status': _status,
       };
       if (widget.existing == null) {
         await widget.controller.createEvent(data);
@@ -257,14 +290,26 @@ class _EventDialogState extends State<_EventDialog> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(ESpacing.lg, ESpacing.lg, ESpacing.md, 0),
-              child: Row(children: [
-                Expanded(child: Text(isNew ? 'New Event' : 'Edit Event', style: ETextStyles.h3)),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
-                ),
-              ]),
+              padding: const EdgeInsets.fromLTRB(
+                ESpacing.lg,
+                ESpacing.lg,
+                ESpacing.md,
+                0,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      isNew ? 'New Event' : 'Edit Event',
+                      style: ETextStyles.h3,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
             ),
             const Divider(),
             Expanded(
@@ -274,16 +319,22 @@ class _EventDialogState extends State<_EventDialog> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
-                      controller:  _title,
-                      decoration:  InputDecoration(labelText: 'Title *', labelStyle: ETextStyles.inputLabel),
-                      style:       ETextStyles.inputText,
+                      controller: _title,
+                      decoration: InputDecoration(
+                        labelText: 'Title *',
+                        labelStyle: ETextStyles.inputLabel,
+                      ),
+                      style: ETextStyles.inputText,
                     ),
                     const SizedBox(height: ESpacing.md),
                     TextField(
-                      controller:   _slug,
-                      decoration:   InputDecoration(labelText: 'Slug *', labelStyle: ETextStyles.inputLabel),
-                      style:        ETextStyles.inputText,
-                      onChanged:    (_) => _slugEdited = true,
+                      controller: _slug,
+                      decoration: InputDecoration(
+                        labelText: 'Slug *',
+                        labelStyle: ETextStyles.inputLabel,
+                      ),
+                      style: ETextStyles.inputText,
+                      onChanged: (_) => _slugEdited = true,
                     ),
                     const SizedBox(height: ESpacing.md),
                     InkWell(
@@ -302,50 +353,71 @@ class _EventDialogState extends State<_EventDialog> {
                     ),
                     const SizedBox(height: ESpacing.md),
                     TextField(
-                      controller:  _capacity,
-                      decoration:  InputDecoration(labelText: 'Capacity *', labelStyle: ETextStyles.inputLabel),
-                      style:       ETextStyles.inputText,
+                      controller: _capacity,
+                      decoration: InputDecoration(
+                        labelText: 'Capacity *',
+                        labelStyle: ETextStyles.inputLabel,
+                      ),
+                      style: ETextStyles.inputText,
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: ESpacing.md),
                     TextField(
-                      controller:  _venue,
-                      decoration:  InputDecoration(labelText: 'Venue', labelStyle: ETextStyles.inputLabel),
-                      style:       ETextStyles.inputText,
+                      controller: _venue,
+                      decoration: InputDecoration(
+                        labelText: 'Venue',
+                        labelStyle: ETextStyles.inputLabel,
+                      ),
+                      style: ETextStyles.inputText,
                     ),
                     const SizedBox(height: ESpacing.md),
                     TextField(
-                      controller:  _description,
-                      decoration:  InputDecoration(labelText: 'Description', labelStyle: ETextStyles.inputLabel),
-                      style:       ETextStyles.inputText,
-                      maxLines:    3,
+                      controller: _description,
+                      decoration: InputDecoration(
+                        labelText: 'Description',
+                        labelStyle: ETextStyles.inputLabel,
+                      ),
+                      style: ETextStyles.inputText,
+                      maxLines: 3,
                     ),
                     const SizedBox(height: ESpacing.md),
                     TextField(
-                      controller:  _imageUrl,
-                      decoration:  InputDecoration(labelText: 'Hero image URL', labelStyle: ETextStyles.inputLabel),
-                      style:       ETextStyles.inputText,
+                      controller: _imageUrl,
+                      decoration: InputDecoration(
+                        labelText: 'Hero image URL',
+                        labelStyle: ETextStyles.inputLabel,
+                      ),
+                      style: ETextStyles.inputText,
                     ),
                     const SizedBox(height: ESpacing.md),
                     StatefulBuilder(
-                      builder: (_, setS) => InputDecorator(
-                        decoration: InputDecoration(
-                          labelText:  'Status',
-                          labelStyle: ETextStyles.inputLabel,
-                        ),
-                        child: DropdownButton<String>(
-                          value:           _status,
-                          isExpanded:      true,
-                          underline:       const SizedBox.shrink(),
-                          dropdownColor:   EColors.surfaceVariant,
-                          style:           ETextStyles.inputText,
-                          onChanged:       (v) { if (v != null) setS(() => _status = v); },
-                          items: const [
-                            DropdownMenuItem(value: 'draft',     child: Text('Draft')),
-                            DropdownMenuItem(value: 'published', child: Text('Published')),
-                          ],
-                        ),
-                      ),
+                      builder:
+                          (_, setS) => InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'Status',
+                              labelStyle: ETextStyles.inputLabel,
+                            ),
+                            child: DropdownButton<String>(
+                              value: _status,
+                              isExpanded: true,
+                              underline: const SizedBox.shrink(),
+                              dropdownColor: EColors.surfaceVariant,
+                              style: ETextStyles.inputText,
+                              onChanged: (v) {
+                                if (v != null) setS(() => _status = v);
+                              },
+                              items: const [
+                                DropdownMenuItem(
+                                  value: 'draft',
+                                  child: Text('Draft'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'published',
+                                  child: Text('Published'),
+                                ),
+                              ],
+                            ),
+                          ),
                     ),
                   ],
                 ),
@@ -354,28 +426,36 @@ class _EventDialogState extends State<_EventDialog> {
             const Divider(),
             Padding(
               padding: const EdgeInsets.all(ESpacing.md),
-              child: Row(children: [
-                const Spacer(),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Cancel', style: ETextStyles.label),
-                ),
-                const SizedBox(width: ESpacing.sm),
-                ElevatedButton(
-                  onPressed: _saving ? null : _save,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: EColors.primary,
-                    foregroundColor: EColors.secondary,
-                    shape: const RoundedRectangleBorder(),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: ESpacing.lg, vertical: ESpacing.md),
+              child: Row(
+                children: [
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('Cancel', style: ETextStyles.label),
                   ),
-                  child: _saving
-                      ? const SizedBox(width: 16, height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2))
-                      : Text('Save', style: ETextStyles.button),
-                ),
-              ]),
+                  const SizedBox(width: ESpacing.sm),
+                  ElevatedButton(
+                    onPressed: _saving ? null : _save,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: EColors.primary,
+                      foregroundColor: EColors.secondary,
+                      shape: const RoundedRectangleBorder(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: ESpacing.lg,
+                        vertical: ESpacing.md,
+                      ),
+                    ),
+                    child:
+                        _saving
+                            ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                            : Text('Save', style: ETextStyles.button),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

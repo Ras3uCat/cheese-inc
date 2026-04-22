@@ -19,10 +19,10 @@ class BookingConfirmationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final booking   = Get.arguments as BookingModel?;
+    final booking = Get.arguments as BookingModel?;
     final bookingId = Get.parameters['booking_id'];
     final fromStripe = bookingId != null && booking == null;
-    final isMobile   = MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
+    final isMobile = MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
 
     return Scaffold(
       backgroundColor: EColors.surface,
@@ -31,9 +31,10 @@ class BookingConfirmationView extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 520),
           child: Padding(
             padding: EdgeInsets.all(isMobile ? ESpacing.lg : ESpacing.xxl),
-            child: booking != null
-                ? _ConfirmationCard(booking: booking)
-                : fromStripe
+            child:
+                booking != null
+                    ? _ConfirmationCard(booking: booking)
+                    : fromStripe
                     ? _PaymentConfirmedCard()
                     : _NoBooking(),
           ),
@@ -69,8 +70,7 @@ class _ConfirmationCardState extends State<_ConfirmationCard> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.check_circle_outline,
-            color: EColors.primary, size: 48),
+        Icon(Icons.check_circle_outline, color: EColors.primary, size: 48),
         const SizedBox(height: ESpacing.lg),
         Text('You\'re booked.', style: ETextStyles.displayMd),
         const SizedBox(height: ESpacing.sm),
@@ -119,10 +119,11 @@ class _ConfirmationCardState extends State<_ConfirmationCard> {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
-              onPressed: () => showDialog<void>(
-                context: context,
-                builder: (_) => RecurringDialog(booking: booking),
-              ),
+              onPressed:
+                  () => showDialog<void>(
+                    context: context,
+                    builder: (_) => RecurringDialog(booking: booking),
+                  ),
               icon: const Icon(Icons.repeat, size: 16),
               label: Text('SET UP RECURRING', style: ETextStyles.button),
               style: OutlinedButton.styleFrom(
@@ -139,9 +140,10 @@ class _ConfirmationCardState extends State<_ConfirmationCard> {
           width: double.infinity,
           child: TextButton(
             onPressed: () => Get.offAllNamed(ERoutes.booking),
-            child: Text('BOOK ANOTHER',
-                style: ETextStyles.button.copyWith(
-                    color: EColors.onSurfaceMuted)),
+            child: Text(
+              'BOOK ANOTHER',
+              style: ETextStyles.button.copyWith(color: EColors.onSurfaceMuted),
+            ),
           ),
         ),
       ],
@@ -161,12 +163,17 @@ class _Row extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: ETextStyles.label.copyWith(color: EColors.onSurfaceMuted)),
+          Text(
+            label,
+            style: ETextStyles.label.copyWith(color: EColors.onSurfaceMuted),
+          ),
           Flexible(
-              child: Text(value,
-                  style: ETextStyles.body,
-                  textAlign: TextAlign.end)),
+            child: Text(
+              value,
+              style: ETextStyles.body,
+              textAlign: TextAlign.end,
+            ),
+          ),
         ],
       ),
     );
@@ -207,9 +214,10 @@ class _PaymentConfirmedCard extends StatelessWidget {
           width: double.infinity,
           child: TextButton(
             onPressed: () => Get.offAllNamed(ERoutes.booking),
-            child: Text('BOOK ANOTHER',
-                style: ETextStyles.button.copyWith(
-                    color: EColors.onSurfaceMuted)),
+            child: Text(
+              'BOOK ANOTHER',
+              style: ETextStyles.button.copyWith(color: EColors.onSurfaceMuted),
+            ),
           ),
         ),
       ],

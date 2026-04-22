@@ -16,45 +16,45 @@ class CoursesModule extends AppModule {
 
   @override
   NavItem? get navItem => const NavItem(
-        label: 'Courses',
-        icon: Icons.school_outlined,
-        route: ERoutes.courses,
-      );
+    label: 'Courses',
+    icon: Icons.school_outlined,
+    route: ERoutes.courses,
+  );
 
   @override
   Bindings? get binding => CoursesBinding();
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.courses,
-          page: () => const CourseCatalogView(),
-          binding: CoursesBinding(),
-        ),
-        GetPage(
-          name: ERoutes.courseDetail,
-          page: () => const CourseDetailView(),
-          binding: CoursesBinding(),
-        ),
-        GetPage(
-          name: ERoutes.adminCourses,
-          page: () => const CourseManagerView(),
-          binding: CoursesBinding(),
-        ),
-        GetPage(
-          name: ERoutes.adminCourseEditor,
-          page: () => const CourseSectionEditor(),
-          binding: CoursesBinding(),
-        ),
-        GetPage(
-          name: ERoutes.lessonPlayer,
-          page: () => const LessonPlayerView(),
-          binding: CoursesBinding(),
-        ),
-        GetPage(
-          name: ERoutes.adminCourseEnrollments,
-          page: () => const CourseEnrollmentsView(),
-          binding: CoursesBinding(),
-        ),
-      ];
+    GetPage(
+      name: ERoutes.courses,
+      page: () => const CourseCatalogView(),
+      binding: CoursesBinding(),
+    ),
+    GetPage(
+      name: ERoutes.courseDetail,
+      page: () => const CourseDetailView(),
+      binding: CoursesBinding(),
+    ),
+    GetPage(
+      name: ERoutes.adminCourses,
+      page: () => const CourseManagerView(),
+      binding: CoursesBinding(),
+    ),
+    GetPage(
+      name: ERoutes.adminCourseEditor,
+      page: () => const CourseSectionEditor(),
+      binding: CoursesBinding(),
+    ),
+    GetPage(
+      name: ERoutes.lessonPlayer,
+      page: () => const LessonPlayerView(),
+      binding: CoursesBinding(),
+    ),
+    GetPage(
+      name: ERoutes.adminCourseEnrollments,
+      page: () => const CourseEnrollmentsView(),
+      binding: CoursesBinding(),
+    ),
+  ];
 }

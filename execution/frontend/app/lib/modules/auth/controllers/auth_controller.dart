@@ -5,22 +5,23 @@ import '../../../core/router/app_router.dart';
 import '../../../shared/services/supabase_service.dart';
 
 class AuthController extends GetxController {
-  final _user     = Rxn<User>();
-  final _role     = ''.obs;
-  final _loading  = false.obs;
-  final _error    = ''.obs;
+  final _user = Rxn<User>();
+  final _role = ''.obs;
+  final _loading = false.obs;
+  final _error = ''.obs;
 
-  User?   get user      => _user.value;
-  String  get role      => _role.value;
-  bool    get isLoading => _loading.value;
-  String  get error     => _error.value;
-  bool    get isSignedIn => _user.value != null;
-  bool    get isMaster  => _role.value == 'master';
-  bool    get isStaff   => _role.value == 'staff';
+  User? get user => _user.value;
+  String get role => _role.value;
+  bool get isLoading => _loading.value;
+  String get error => _error.value;
+  bool get isSignedIn => _user.value != null;
+  bool get isMaster => _role.value == 'master';
+  bool get isStaff => _role.value == 'staff';
 
   @override
   void onInit() {
     super.onInit();
+    if (!SupabaseService.isConfigured) return;
     _user.value = SupabaseService.currentUser;
     if (_user.value != null) _loadRole();
 
@@ -36,11 +37,12 @@ class AuthController extends GetxController {
 
   Future<void> _loadRole() async {
     try {
-      final data = await SupabaseService.client
-          .from('profiles')
-          .select('role')
-          .eq('id', _user.value!.id)
-          .single();
+      final data =
+          await SupabaseService.client
+              .from('profiles')
+              .select('role')
+              .eq('id', _user.value!.id)
+              .single();
       _role.value = (data['role'] as String?) ?? '';
     } catch (_) {
       _role.value = '';
@@ -51,10 +53,7 @@ class AuthController extends GetxController {
     _loading.value = true;
     _error.value = '';
     try {
-      await SupabaseService.client.auth.signInWithPassword(
-        email: email,
-        password: password,
-      );
+      await SupabaseService.client.auth.signInWithPassword(email: email, password: password);
       _redirectByRole();
     } on AuthException catch (e) {
       _error.value = e.message;

@@ -17,9 +17,9 @@ class ComplianceView extends StatefulWidget {
 }
 
 class _ComplianceViewState extends State<ComplianceView> {
-  final _ctrl       = Get.find<MasterController>();
-  final _emailCtrl  = TextEditingController();
-  final _formKey    = GlobalKey<FormState>();
+  final _ctrl = Get.find<MasterController>();
+  final _emailCtrl = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   bool _loading = false;
   Map<String, dynamic>? _result;
@@ -38,53 +38,71 @@ class _ComplianceViewState extends State<ComplianceView> {
     final confirmed = await _showConfirmDialog(email);
     if (!confirmed) return;
 
-    setState(() { _loading = true; _result = null; _error = null; });
+    setState(() {
+      _loading = true;
+      _result = null;
+      _error = null;
+    });
     try {
       final summary = await _ctrl.forgetUser(email);
-      setState(() { _result = summary; });
+      setState(() {
+        _result = summary;
+      });
       _emailCtrl.clear();
     } catch (e) {
-      setState(() { _error = e.toString(); });
+      setState(() {
+        _error = e.toString();
+      });
     } finally {
-      setState(() { _loading = false; });
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
   Future<bool> _showConfirmDialog(String email) async {
     return await showDialog<bool>(
           context: context,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Permanent deletion'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'All data for the following email will be permanently deleted:',
-                  style: ETextStyles.body,
+          builder:
+              (ctx) => AlertDialog(
+                title: const Text('Permanent deletion'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'All data for the following email will be permanently deleted:',
+                      style: ETextStyles.body,
+                    ),
+                    const SizedBox(height: ESpacing.sm),
+                    Text(
+                      email,
+                      style: ETextStyles.body.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: ESpacing.md),
+                    Text(
+                      'This includes bookings, newsletter subscriptions, loyalty points, '
+                      'referrals, and the user account. This action cannot be undone.',
+                      style: ETextStyles.bodySm.copyWith(
+                        color: EColors.onSurfaceMuted,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: ESpacing.sm),
-                Text(email, style: ETextStyles.body.copyWith(fontWeight: FontWeight.w600)),
-                const SizedBox(height: ESpacing.md),
-                Text(
-                  'This includes bookings, newsletter subscriptions, loyalty points, '
-                  'referrals, and the user account. This action cannot be undone.',
-                  style: ETextStyles.bodySm.copyWith(color: EColors.onSurfaceMuted),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancel'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: const Text('Cancel'),
+                  ),
+                  FilledButton(
+                    style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                    onPressed: () => Navigator.pop(ctx, true),
+                    child: const Text('Delete all data'),
+                  ),
+                ],
               ),
-              FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: Colors.red),
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Delete all data'),
-              ),
-            ],
-          ),
         ) ??
         false;
   }
@@ -132,18 +150,21 @@ class _ComplianceViewState extends State<ComplianceView> {
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton(
-                        style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
                         onPressed: _loading ? null : _submit,
-                        child: _loading
-                            ? const SizedBox(
-                                height: 18,
-                                width: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const Text('Delete all data for this email'),
+                        child:
+                            _loading
+                                ? const SizedBox(
+                                  height: 18,
+                                  width: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                                : const Text('Delete all data for this email'),
                       ),
                     ),
                   ],
@@ -151,7 +172,10 @@ class _ComplianceViewState extends State<ComplianceView> {
               ),
               if (_error != null) ...[
                 const SizedBox(height: ESpacing.lg),
-                _StatusCard(isError: true, child: Text(_error!, style: ETextStyles.bodySm)),
+                _StatusCard(
+                  isError: true,
+                  child: Text(_error!, style: ETextStyles.bodySm),
+                ),
               ],
               if (_result != null) ...[
                 const SizedBox(height: ESpacing.lg),
@@ -176,13 +200,19 @@ class _DeletionSummary extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Deletion complete', style: ETextStyles.body.copyWith(fontWeight: FontWeight.w600)),
+          Text(
+            'Deletion complete',
+            style: ETextStyles.body.copyWith(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: ESpacing.sm),
-          _Row('Bookings deleted',     '${result['bookings'] ?? 0}'),
-          _Row('Newsletter entries',   '${result['newsletter'] ?? 0}'),
-          _Row('Loyalty points',       '${result['loyalty'] ?? 0}'),
-          _Row('Referrals',            '${result['referrals'] ?? 0}'),
-          _Row('Auth account removed', result['auth_user'] == true ? 'Yes' : 'No'),
+          _Row('Bookings deleted', '${result['bookings'] ?? 0}'),
+          _Row('Newsletter entries', '${result['newsletter'] ?? 0}'),
+          _Row('Loyalty points', '${result['loyalty'] ?? 0}'),
+          _Row('Referrals', '${result['referrals'] ?? 0}'),
+          _Row(
+            'Auth account removed',
+            result['auth_user'] == true ? 'Yes' : 'No',
+          ),
         ],
       ),
     );
@@ -202,7 +232,10 @@ class _Row extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: ETextStyles.bodySm),
-          Text(value,  style: ETextStyles.bodySm.copyWith(fontWeight: FontWeight.w600)),
+          Text(
+            value,
+            style: ETextStyles.bodySm.copyWith(fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );

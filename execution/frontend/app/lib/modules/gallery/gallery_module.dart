@@ -11,20 +11,20 @@ class GalleryModule implements AppModule {
 
   @override
   NavItem get navItem => const NavItem(
-        label: 'Gallery',
-        icon: Icons.photo_library_outlined,
-        route: ERoutes.gallery,
-      );
+    label: 'Gallery',
+    icon: Icons.photo_library_outlined,
+    route: ERoutes.gallery,
+  );
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.gallery,
-          page: () => const GalleryView(),
-          binding: GalleryBinding(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.gallery,
+      page: () => const GalleryView(),
+      binding: GalleryBinding(),
+      transition: Transition.fadeIn,
+    ),
+  ];
 
   @override
   Bindings? get binding => null;

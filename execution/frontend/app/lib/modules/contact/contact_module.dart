@@ -11,20 +11,20 @@ class ContactModule implements AppModule {
 
   @override
   NavItem? get navItem => const NavItem(
-        label: 'Contact',
-        icon: Icons.mail_outline,
-        route: ERoutes.contact,
-      );
+    label: 'Contact',
+    icon: Icons.mail_outline,
+    route: ERoutes.contact,
+  );
 
   @override
   Bindings? get binding => ContactBinding();
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.contact,
-          page: () => const ContactView(),
-          binding: ContactBinding(),
-        ),
-      ];
+    GetPage(
+      name: ERoutes.contact,
+      page: () => const ContactView(),
+      binding: ContactBinding(),
+    ),
+  ];
 }

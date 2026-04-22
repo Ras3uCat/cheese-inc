@@ -11,20 +11,20 @@ class HomeModule implements AppModule {
 
   @override
   NavItem? get navItem => const NavItem(
-        label: 'Home',
-        icon: Icons.home_outlined,
-        route: ERoutes.home,
-      );
+    label: 'Home',
+    icon: Icons.home_outlined,
+    route: ERoutes.home,
+  );
 
   @override
   Bindings? get binding => HomeBinding();
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.home,
-          page: () => const HomeView(),
-          binding: HomeBinding(),
-        ),
-      ];
+    GetPage(
+      name: ERoutes.home,
+      page: () => const HomeView(),
+      binding: HomeBinding(),
+    ),
+  ];
 }

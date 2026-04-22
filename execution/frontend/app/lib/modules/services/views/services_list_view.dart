@@ -16,12 +16,14 @@ class ServicesListView extends StatelessWidget {
     final pt = PersonalityTheme.fromEnv();
     final isDesktop = MediaQuery.sizeOf(context).width > ESpacing.tabletBreak;
 
-    final servicesTitle = AppEnv.city.isNotEmpty
-        ? 'Services in ${AppEnv.city} | ${AppEnv.clientName}'
-        : 'Our Services | ${AppEnv.clientName}';
-    final servicesDesc = AppEnv.city.isNotEmpty
-        ? 'Explore our professional services in ${AppEnv.city}. Book online today.'
-        : 'Explore our professional services. Book online today.';
+    final servicesTitle =
+        AppEnv.city.isNotEmpty
+            ? 'Services in ${AppEnv.city} | ${AppEnv.clientName}'
+            : 'Our Services | ${AppEnv.clientName}';
+    final servicesDesc =
+        AppEnv.city.isNotEmpty
+            ? 'Explore our professional services in ${AppEnv.city}. Book online today.'
+            : 'Explore our professional services. Book online today.';
 
     return SeoWrapper(
       title: servicesTitle,
@@ -59,13 +61,15 @@ class ServicesListView extends StatelessWidget {
                       childAspectRatio: isDesktop ? 1.0 : 3.0,
                     ),
                     itemCount: ctrl.services.length,
-                    itemBuilder: (_, i) => ServiceCard(
-                      service: ctrl.services[i],
-                      pt: pt,
-                      onTap: () => Get.toNamed(
-                        '${ERoutes.services}/${ctrl.services[i].slug}',
-                      ),
-                    ),
+                    itemBuilder:
+                        (_, i) => ServiceCard(
+                          service: ctrl.services[i],
+                          pt: pt,
+                          onTap:
+                              () => Get.toNamed(
+                                '${ERoutes.services}/${ctrl.services[i].slug}',
+                              ),
+                        ),
                   ),
                 ],
               ),

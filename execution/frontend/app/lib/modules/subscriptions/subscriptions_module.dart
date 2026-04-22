@@ -12,14 +12,14 @@ class SubscriptionsModule implements AppModule {
   NavItem? get navItem => const NavItem(
     label: 'Memberships',
     route: ERoutes.subscriptions,
-    icon:  Icons.card_membership_outlined,
+    icon: Icons.card_membership_outlined,
   );
 
   @override
   List<GetPage> get routes => [
     GetPage(
-      name:       ERoutes.subscriptions,
-      page:       () => const SubscriptionsView(),
+      name: ERoutes.subscriptions,
+      page: () => const SubscriptionsView(),
       transition: Transition.fadeIn,
     ),
   ];

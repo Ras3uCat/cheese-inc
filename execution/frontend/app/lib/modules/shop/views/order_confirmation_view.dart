@@ -11,7 +11,7 @@ class OrderConfirmationView extends GetView<ShopController> {
 
   @override
   Widget build(BuildContext context) {
-    final status  = Get.parameters['status'];
+    final status = Get.parameters['status'];
     final orderId = Get.parameters['order_id'];
     final success = status == 'success';
 
@@ -43,16 +43,18 @@ class OrderConfirmationView extends GetView<ShopController> {
                   success
                       ? "You'll receive a confirmation email shortly."
                       : 'Your cart has been saved. You can try again when ready.',
-                  style: ETextStyles.bodyMd
-                      .copyWith(color: EColors.onSurfaceMuted),
+                  style: ETextStyles.bodyMd.copyWith(
+                    color: EColors.onSurfaceMuted,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 if (success && orderId != null) ...[
                   const SizedBox(height: ESpacing.sm),
                   Text(
                     'Order #${orderId.substring(0, 8).toUpperCase()}',
-                    style: ETextStyles.bodyMd
-                        .copyWith(color: EColors.onSurfaceMuted),
+                    style: ETextStyles.bodyMd.copyWith(
+                      color: EColors.onSurfaceMuted,
+                    ),
                   ),
                 ],
                 const SizedBox(height: ESpacing.xl),
@@ -61,7 +63,9 @@ class OrderConfirmationView extends GetView<ShopController> {
                     backgroundColor: EColors.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: ESpacing.xl, vertical: ESpacing.md),
+                      horizontal: ESpacing.xl,
+                      vertical: ESpacing.md,
+                    ),
                   ),
                   onPressed: () => Get.offAllNamed(ERoutes.shop),
                   child: const Text('Continue Shopping'),

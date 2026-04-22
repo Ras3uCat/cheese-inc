@@ -60,8 +60,10 @@ class ClientForm extends GetView<BookingController> {
             labelStyle: ETextStyles.inputLabel,
           ),
           textCapitalization: TextCapitalization.characters,
-          onChanged: (v) =>
-              controller.promoCode.value = v.trim().isEmpty ? null : v.trim(),
+          onChanged:
+              (v) =>
+                  controller.promoCode.value =
+                      v.trim().isEmpty ? null : v.trim(),
         ),
         if (AppEnv.giftEnabled) ...[
           const SizedBox(height: ESpacing.md),
@@ -97,48 +99,57 @@ class GiftVoucherField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              style: ETextStyles.inputText,
-              textCapitalization: TextCapitalization.characters,
-              decoration: InputDecoration(
-                labelText: 'GIFT VOUCHER CODE (optional)',
-                labelStyle: ETextStyles.inputLabel,
-                suffixIcon: addons.isValidatingVoucher.value
-                    ? const Padding(
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            style: ETextStyles.inputText,
+            textCapitalization: TextCapitalization.characters,
+            decoration: InputDecoration(
+              labelText: 'GIFT VOUCHER CODE (optional)',
+              labelStyle: ETextStyles.inputLabel,
+              suffixIcon:
+                  addons.isValidatingVoucher.value
+                      ? const Padding(
                         padding: EdgeInsets.all(12),
                         child: SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2)),
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
                       )
-                    : addons.hasVoucher
-                        ? Icon(Icons.check_circle,
-                            color: EColors.primary, size: 20)
-                        : null,
-              ),
-              onChanged: (v) {
-                addons.giftVoucherCode.value = v;
-                if (v.trim().length >= 6) addons.validateGiftVoucher(v);
-                if (v.trim().isEmpty) addons.validateGiftVoucher('');
-              },
+                      : addons.hasVoucher
+                      ? Icon(
+                        Icons.check_circle,
+                        color: EColors.primary,
+                        size: 20,
+                      )
+                      : null,
             ),
-            if (addons.voucherError.value != null) ...[
-              const SizedBox(height: ESpacing.xs),
-              Text(addons.voucherError.value!,
-                  style: ETextStyles.bodySm.copyWith(color: EColors.error)),
-            ],
-            if (addons.hasVoucher) ...[
-              const SizedBox(height: ESpacing.xs),
-              Text(
-                'Voucher applied: \$${addons.giftDiscountDollars.toStringAsFixed(2)} off',
-                style: ETextStyles.bodySm.copyWith(color: EColors.primary),
-              ),
-            ],
+            onChanged: (v) {
+              addons.giftVoucherCode.value = v;
+              if (v.trim().length >= 6) addons.validateGiftVoucher(v);
+              if (v.trim().isEmpty) addons.validateGiftVoucher('');
+            },
+          ),
+          if (addons.voucherError.value != null) ...[
+            const SizedBox(height: ESpacing.xs),
+            Text(
+              addons.voucherError.value!,
+              style: ETextStyles.bodySm.copyWith(color: EColors.error),
+            ),
           ],
-        ));
+          if (addons.hasVoucher) ...[
+            const SizedBox(height: ESpacing.xs),
+            Text(
+              'Voucher applied: \$${addons.giftDiscountDollars.toStringAsFixed(2)} off',
+              style: ETextStyles.bodySm.copyWith(color: EColors.primary),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }
 
@@ -167,9 +178,11 @@ class LoyaltyRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.stars_outlined,
-                color: isApplied ? EColors.primary : EColors.onSurfaceMuted,
-                size: 18),
+            Icon(
+              Icons.stars_outlined,
+              color: isApplied ? EColors.primary : EColors.onSurfaceMuted,
+              size: 18,
+            ),
             const SizedBox(width: ESpacing.sm),
             Expanded(
               child: Text(
@@ -177,19 +190,25 @@ class LoyaltyRow extends StatelessWidget {
                     ? 'Loyalty: -\$${addons.loyaltyDiscountDollars.toStringAsFixed(2)} applied'
                     : '$balance pts (worth \$${(balance * addons.loyaltyCentsPerPoint.value / 100).toStringAsFixed(2)})',
                 style: ETextStyles.bodySm.copyWith(
-                    color: isApplied ? EColors.primary : EColors.onSurface),
+                  color: isApplied ? EColors.primary : EColors.onSurface,
+                ),
               ),
             ),
             if (canRedeem)
               TextButton(
-                onPressed: isApplied
-                    ? addons.clearLoyaltyRedeem
-                    : () => addons.applyLoyaltyPoints(controller.totalPrice),
+                onPressed:
+                    isApplied
+                        ? addons.clearLoyaltyRedeem
+                        : () =>
+                            addons.applyLoyaltyPoints(controller.totalPrice),
                 style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero, minimumSize: Size.zero),
-                child: Text(isApplied ? 'REMOVE' : 'APPLY',
-                    style: ETextStyles.labelSm
-                        .copyWith(color: EColors.primary)),
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                ),
+                child: Text(
+                  isApplied ? 'REMOVE' : 'APPLY',
+                  style: ETextStyles.labelSm.copyWith(color: EColors.primary),
+                ),
               ),
           ],
         ),

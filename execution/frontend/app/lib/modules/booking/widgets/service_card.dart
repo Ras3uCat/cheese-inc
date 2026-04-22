@@ -33,9 +33,10 @@ class _ServiceCardState extends State<ServiceCard>
       vsync: this,
       duration: const Duration(milliseconds: 150),
     );
-    _liftAnim = Tween<double>(begin: 0, end: -4).animate(
-      CurvedAnimation(parent: _liftController, curve: Curves.easeOut),
-    );
+    _liftAnim = Tween<double>(
+      begin: 0,
+      end: -4,
+    ).animate(CurvedAnimation(parent: _liftController, curve: Curves.easeOut));
   }
 
   @override
@@ -56,29 +57,32 @@ class _ServiceCardState extends State<ServiceCard>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _liftAnim,
-      builder: (context, child) => Transform.translate(
-        offset: Offset(0, _liftAnim.value),
-        child: child,
-      ),
+      builder:
+          (context, child) => Transform.translate(
+            offset: Offset(0, _liftAnim.value),
+            child: child,
+          ),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: (_) => setState(() => _hovered = true),
-        onExit:  (_) => setState(() => _hovered = false),
+        onExit: (_) => setState(() => _hovered = false),
         child: GestureDetector(
           onTap: widget.onTap,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
             height: 100.0,
             decoration: BoxDecoration(
-              color: widget.isSelected
-                  ? EColors.primary.withValues(alpha: 0.06)
-                  : _hovered
+              color:
+                  widget.isSelected
+                      ? EColors.primary.withValues(alpha: 0.06)
+                      : _hovered
                       ? EColors.surfaceVariant
                       : EColors.surface,
               border: Border.all(
-                color: widget.isSelected
-                    ? EColors.primary
-                    : _hovered
+                color:
+                    widget.isSelected
+                        ? EColors.primary
+                        : _hovered
                         ? EColors.onSurfaceMuted.withValues(alpha: 0.4)
                         : EColors.divider,
                 width: widget.isSelected ? 1.0 : 0.5,
@@ -94,17 +98,21 @@ class _ServiceCardState extends State<ServiceCard>
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: ESpacing.sm, vertical: 3),
-                        color: widget.isSelected
-                            ? EColors.primary
-                            : EColors.divider,
+                          horizontal: ESpacing.sm,
+                          vertical: 3,
+                        ),
+                        color:
+                            widget.isSelected
+                                ? EColors.primary
+                                : EColors.divider,
                         child: Text(
                           widget.service.categoryLabel,
                           style: ETextStyles.labelSm.copyWith(
                             fontSize: 9,
-                            color: widget.isSelected
-                                ? EColors.secondary
-                                : EColors.onSurfaceMuted,
+                            color:
+                                widget.isSelected
+                                    ? EColors.secondary
+                                    : EColors.onSurfaceMuted,
                           ),
                         ),
                       ),
@@ -118,10 +126,14 @@ class _ServiceCardState extends State<ServiceCard>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(widget.service.formattedDuration,
-                          style: ETextStyles.duration),
-                      Text(widget.service.formattedPrice,
-                          style: ETextStyles.price),
+                      Text(
+                        widget.service.formattedDuration,
+                        style: ETextStyles.duration,
+                      ),
+                      Text(
+                        widget.service.formattedPrice,
+                        style: ETextStyles.price,
+                      ),
                     ],
                   ),
                 ],

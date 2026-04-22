@@ -14,15 +14,11 @@ class NewsletterView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SeoWrapper(
       title: 'Newsletter',
-      description: 'Subscribe to ${AppEnv.clientName} for exclusive offers and news.',
+      description:
+          'Subscribe to ${AppEnv.clientName} for exclusive offers and news.',
       child: AppShell(
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _Hero(),
-              _FormSection(),
-            ],
-          ),
+          child: Column(children: [_Hero(), _FormSection()]),
         ),
       ),
     );
@@ -59,7 +55,8 @@ class _Hero extends StatelessWidget {
                 'Join the ${AppEnv.clientName} community. No spam — '
                 'just the things worth knowing about.',
                 style: ETextStyles.body.copyWith(
-                    color: EColors.white.withValues(alpha: 0.7)),
+                  color: EColors.white.withValues(alpha: 0.7),
+                ),
               ),
             ],
           ),

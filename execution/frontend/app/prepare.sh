@@ -42,7 +42,9 @@ modules     = set(m.strip() for m in modules_str.split(',') if m.strip())
 short_name  = c.get('SHORT_NAME', client_name[:12])
 
 # HOURS_JSON: optional, defaults to empty array (no structured hours in JSON-LD)
-hours_json  = c.get('HOURS_JSON', '[]')
+# May arrive as a parsed object from Raspucat — re-serialize to string for template replacement.
+_hours_raw  = c.get('HOURS_JSON', '[]')
+hours_json  = json.dumps(_hours_raw) if not isinstance(_hours_raw, str) else _hours_raw
 
 replacements = {
     'CLIENT_NAME':          client_name,

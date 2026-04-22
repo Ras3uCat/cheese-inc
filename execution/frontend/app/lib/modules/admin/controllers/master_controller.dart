@@ -15,13 +15,13 @@ class MasterController extends GetxController {
   final AdminRepository _repo = Get.find<AdminRepository>();
 
   // ── State ─────────────────────────────────────────────────────────────────
-  final isLoading  = false.obs;
-  final error      = RxnString();
+  final isLoading = false.obs;
+  final error = RxnString();
 
   // ── Bookings ──────────────────────────────────────────────────────────────
-  final bookings       = <BookingModel>[].obs;
-  final statusFilter   = RxnString();    // null = all
-  final artistFilter   = RxnString();    // null = all
+  final bookings = <BookingModel>[].obs;
+  final statusFilter = RxnString(); // null = all
+  final artistFilter = RxnString(); // null = all
 
   // ── Services ──────────────────────────────────────────────────────────────
   final services = <ServiceModel>[].obs;
@@ -45,7 +45,7 @@ class MasterController extends GetxController {
   final clients = <Map<String, dynamic>>[].obs;
 
   // ── Business config + hours ───────────────────────────────────────────────
-  final config       = <String, dynamic>{}.obs;
+  final config = <String, dynamic>{}.obs;
   final businessHours = <Map<String, dynamic>>[].obs;
 
   @override
@@ -59,7 +59,10 @@ class MasterController extends GetxController {
     error.value = null;
     try {
       final results = await Future.wait([
-        _repo.getBookings(status: statusFilter.value, artistId: artistFilter.value),
+        _repo.getBookings(
+          status: statusFilter.value,
+          artistId: artistFilter.value,
+        ),
         _repo.getServices(),
         _repo.getTestimonials(),
         _repo.getFaqs(),
@@ -69,13 +72,13 @@ class MasterController extends GetxController {
         _repo.getBusinessHours(),
         _repo.getStaffProfiles(),
       ]);
-      bookings.value      = results[0] as List<BookingModel>;
-      services.value      = results[1] as List<ServiceModel>;
-      testimonials.value  = results[2] as List<TestimonialModel>;
-      faqs.value          = results[3] as List<FaqItemModel>;
+      bookings.value = results[0] as List<BookingModel>;
+      services.value = results[1] as List<ServiceModel>;
+      testimonials.value = results[2] as List<TestimonialModel>;
+      faqs.value = results[3] as List<FaqItemModel>;
       galleryPhotos.value = results[4] as List<GalleryPhotoModel>;
-      blogPosts.value     = results[5] as List<BlogPostModel>;
-      config.value        = results[6] as Map<String, dynamic>;
+      blogPosts.value = results[5] as List<BlogPostModel>;
+      config.value = results[6] as Map<String, dynamic>;
       businessHours.value = results[7] as List<Map<String, dynamic>>;
       staffProfiles.value = results[8] as List<Map<String, dynamic>>;
     } catch (e) {
@@ -95,7 +98,9 @@ class MasterController extends GetxController {
   Future<void> _refreshBookings() async {
     try {
       bookings.value = await _repo.getBookings(
-          status: statusFilter.value, artistId: artistFilter.value);
+        status: statusFilter.value,
+        artistId: artistFilter.value,
+      );
     } catch (_) {}
   }
 
@@ -112,8 +117,7 @@ class MasterController extends GetxController {
   }
 
   // ── Staff profiles ────────────────────────────────────────────────────────
-  Future<void> updateStaffProfile(
-      String id, Map<String, dynamic> data) async {
+  Future<void> updateStaffProfile(String id, Map<String, dynamic> data) async {
     await _repo.updateStaffProfile(id, data);
     staffProfiles.value = await _repo.getStaffProfiles();
   }
@@ -225,9 +229,8 @@ class MasterController extends GetxController {
       Get.find<CalendarTokenRepository>().regenerateToken(staffId);
 
   // ── Computed ──────────────────────────────────────────────────────────────
-  List<BookingModel> get upcomingBookings => bookings
-      .where((b) => b.startTime.isAfter(DateTime.now()))
-      .toList();
+  List<BookingModel> get upcomingBookings =>
+      bookings.where((b) => b.startTime.isAfter(DateTime.now())).toList();
 
   Map<String, List<ServiceModel>> get servicesByCategory {
     final map = <String, List<ServiceModel>>{};
@@ -249,7 +252,10 @@ class MasterController extends GetxController {
         Get.snackbar('Error', data!['error'].toString());
         return;
       }
-      Get.snackbar('Invoice sent', data?['invoice_url'] as String? ?? 'Invoice emailed to client');
+      Get.snackbar(
+        'Invoice sent',
+        data?['invoice_url'] as String? ?? 'Invoice emailed to client',
+      );
       await loadAll();
     } catch (_) {
       Get.snackbar('Error', 'Could not send invoice');

@@ -19,18 +19,18 @@ class GiftModule implements AppModule {
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.gift,
-          page: () => const GiftView(),
-          binding: GiftBinding(),
-          transition: Transition.fadeIn,
-        ),
-        GetPage(
-          name: ERoutes.giftSuccess,
-          page: () => const GiftSuccessView(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.gift,
+      page: () => const GiftView(),
+      binding: GiftBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: ERoutes.giftSuccess,
+      page: () => const GiftSuccessView(),
+      transition: Transition.fadeIn,
+    ),
+  ];
 
   @override
   Bindings? get binding => null;
@@ -40,19 +40,21 @@ class GiftModule implements AppModule {
 
 class GiftBinding extends Bindings {
   @override
-  void dependencies() { Get.put(GiftController()); }
+  void dependencies() {
+    Get.put(GiftController());
+  }
 }
 
 // ── Controller ────────────────────────────────────────────────────────────────
 
 class GiftController extends GetxController {
   final selectedAmountCents = 2500.obs; // default £25
-  final customAmount        = ''.obs;
-  final purchaserEmail      = ''.obs;
-  final recipientEmail      = ''.obs;
-  final message             = ''.obs;
-  final isLoading           = false.obs;
-  final error               = RxnString();
+  final customAmount = ''.obs;
+  final purchaserEmail = ''.obs;
+  final recipientEmail = ''.obs;
+  final message = ''.obs;
+  final isLoading = false.obs;
+  final error = RxnString();
 
   static const presets = [2500, 5000, 10000]; // £25 / £50 / £100
 
@@ -76,14 +78,15 @@ class GiftController extends GetxController {
       final res = await Supabase.instance.client.functions.invoke(
         'create-gift-checkout',
         body: {
-          'amount_cents':        effectiveAmountCents,
-          'purchased_by_email':  purchaserEmail.value.trim(),
-          'recipient_email':     recipientEmail.value.trim(),
-          'message':             message.value.trim(),
+          'amount_cents': effectiveAmountCents,
+          'purchased_by_email': purchaserEmail.value.trim(),
+          'recipient_email': recipientEmail.value.trim(),
+          'message': message.value.trim(),
         },
       );
       final url = res.data?['url'] as String?;
-      if (url == null || url.isEmpty) throw Exception('No checkout URL returned.');
+      if (url == null || url.isEmpty)
+        throw Exception('No checkout URL returned.');
       await launchUrl(Uri.parse(url), mode: LaunchMode.platformDefault);
     } catch (e) {
       error.value = 'Could not start checkout. Please try again.';
@@ -113,41 +116,48 @@ class GiftView extends GetView<GiftController> {
           child: ListView(
             padding: const EdgeInsets.all(ESpacing.xl),
             children: [
-              Text('Give the gift of great service.',
-                  style: ETextStyles.h2),
+              Text('Give the gift of great service.', style: ETextStyles.h2),
               const SizedBox(height: ESpacing.xs),
-              Text('Sent instantly by email to the recipient.',
-                  style: ETextStyles.bodyMuted),
+              Text(
+                'Sent instantly by email to the recipient.',
+                style: ETextStyles.bodyMuted,
+              ),
               const SizedBox(height: ESpacing.xl),
 
               // Amount presets
               Text('Select amount', style: ETextStyles.label),
               const SizedBox(height: ESpacing.sm),
-              Obx(() => Wrap(
-                    spacing: ESpacing.sm,
-                    children: GiftController.presets.map((cents) {
-                      final selected =
-                          controller.selectedAmountCents.value == cents &&
-                          controller.customAmount.value.isEmpty;
-                      return ChoiceChip(
-                        label: Text('£${cents ~/ 100}',
+              Obx(
+                () => Wrap(
+                  spacing: ESpacing.sm,
+                  children:
+                      GiftController.presets.map((cents) {
+                        final selected =
+                            controller.selectedAmountCents.value == cents &&
+                            controller.customAmount.value.isEmpty;
+                        return ChoiceChip(
+                          label: Text(
+                            '£${cents ~/ 100}',
                             style: ETextStyles.label.copyWith(
-                              color: selected
-                                  ? EColors.secondary
-                                  : EColors.onSurface,
-                            )),
-                        selected: selected,
-                        selectedColor: EColors.primary,
-                        backgroundColor: EColors.surfaceVariant,
-                        side: BorderSide(color: EColors.divider, width: 0.5),
-                        shape: const RoundedRectangleBorder(),
-                        onSelected: (_) {
-                          controller.selectedAmountCents.value = cents;
-                          controller.customAmount.value = '';
-                        },
-                      );
-                    }).toList(),
-                  )),
+                              color:
+                                  selected
+                                      ? EColors.secondary
+                                      : EColors.onSurface,
+                            ),
+                          ),
+                          selected: selected,
+                          selectedColor: EColors.primary,
+                          backgroundColor: EColors.surfaceVariant,
+                          side: BorderSide(color: EColors.divider, width: 0.5),
+                          shape: const RoundedRectangleBorder(),
+                          onSelected: (_) {
+                            controller.selectedAmountCents.value = cents;
+                            controller.customAmount.value = '';
+                          },
+                        );
+                      }).toList(),
+                ),
+              ),
               const SizedBox(height: ESpacing.md),
 
               // Custom amount
@@ -201,40 +211,55 @@ class GiftView extends GetView<GiftController> {
               const SizedBox(height: ESpacing.xl),
 
               // Error
-              Obx(() => controller.error.value != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: ESpacing.md),
-                      child: Text(controller.error.value!,
-                          style: ETextStyles.bodySm
-                              .copyWith(color: EColors.error)),
-                    )
-                  : const SizedBox.shrink()),
+              Obx(
+                () =>
+                    controller.error.value != null
+                        ? Padding(
+                          padding: const EdgeInsets.only(bottom: ESpacing.md),
+                          child: Text(
+                            controller.error.value!,
+                            style: ETextStyles.bodySm.copyWith(
+                              color: EColors.error,
+                            ),
+                          ),
+                        )
+                        : const SizedBox.shrink(),
+              ),
 
               // CTA
-              Obx(() => SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: controller.isLoading.value
-                          ? null
-                          : controller.launchCheckout,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: EColors.primary,
-                        foregroundColor: EColors.secondary,
-                        shape: const RoundedRectangleBorder(),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: ESpacing.md),
+              Obx(
+                () => SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed:
+                        controller.isLoading.value
+                            ? null
+                            : controller.launchCheckout,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: EColors.primary,
+                      foregroundColor: EColors.secondary,
+                      shape: const RoundedRectangleBorder(),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: ESpacing.md,
                       ),
-                      child: controller.isLoading.value
-                          ? const SizedBox(
+                    ),
+                    child:
+                        controller.isLoading.value
+                            ? const SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white))
-                          : Text('Buy Gift Voucher',
-                              style: ETextStyles.button),
-                    ),
-                  )),
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                            : Text(
+                              'Buy Gift Voucher',
+                              style: ETextStyles.button,
+                            ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -260,8 +285,11 @@ class GiftSuccessView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.card_giftcard_outlined,
-                    size: 64, color: EColors.primary),
+                Icon(
+                  Icons.card_giftcard_outlined,
+                  size: 64,
+                  color: EColors.primary,
+                ),
                 const SizedBox(height: ESpacing.lg),
                 Text('Gift voucher sent!', style: ETextStyles.h2),
                 const SizedBox(height: ESpacing.sm),
@@ -279,7 +307,9 @@ class GiftSuccessView extends StatelessWidget {
                     foregroundColor: EColors.secondary,
                     shape: const RoundedRectangleBorder(),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: ESpacing.xl, vertical: ESpacing.md),
+                      horizontal: ESpacing.xl,
+                      vertical: ESpacing.md,
+                    ),
                   ),
                   child: Text('Back to home', style: ETextStyles.button),
                 ),

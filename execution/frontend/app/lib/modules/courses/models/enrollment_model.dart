@@ -27,13 +27,15 @@ class CourseEnrollment {
         courseId: json['course_id'] as String,
         clientEmail: json['client_email'] as String,
         status: json['status'] as String? ?? 'pending',
-        enrolledAt: json['enrolled_at'] != null
-            ? DateTime.parse(json['enrolled_at'] as String)
-            : null,
+        enrolledAt:
+            json['enrolled_at'] != null
+                ? DateTime.parse(json['enrolled_at'] as String)
+                : null,
         stripeCheckoutSession: json['stripe_checkout_session'] as String?,
-        expiresAt: json['expires_at'] != null
-            ? DateTime.parse(json['expires_at'] as String)
-            : null,
+        expiresAt:
+            json['expires_at'] != null
+                ? DateTime.parse(json['expires_at'] as String)
+                : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -70,12 +72,14 @@ class LessonProgress {
     lessonId: json['lesson_id'] as String,
     clientEmail: json['client_email'] as String,
     watchedSeconds: json['watched_seconds'] as int? ?? 0,
-    completedAt: json['completed_at'] != null
-        ? DateTime.parse(json['completed_at'] as String)
-        : null,
-    updatedAt: json['updated_at'] != null
-        ? DateTime.parse(json['updated_at'] as String)
-        : null,
+    completedAt:
+        json['completed_at'] != null
+            ? DateTime.parse(json['completed_at'] as String)
+            : null,
+    updatedAt:
+        json['updated_at'] != null
+            ? DateTime.parse(json['updated_at'] as String)
+            : null,
   );
 
   Map<String, dynamic> toJson() => {

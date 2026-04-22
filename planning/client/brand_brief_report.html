@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Brief — Cheese Inc.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0D0907;
+    --surface: #1a1410;
+    --surface2: #241c16;
+    --primary: #CC2200;
+    --accent: #E8650A;
+    --gold: #D4A853;
+    --text: #F0E6D0;
+    --text-muted: #9a8878;
+    --border: rgba(240,230,208,0.1);
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-serif: 'Playfair Display', Georgia, serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 900px; margin: 0 auto; padding: 60px 40px; }
+  section { margin-bottom: 80px; }
+
+  @media print {
+    .no-print { display: none !important; }
+    body { background: #fff; color: #111; }
+    :root { --bg: #fff; --surface: #f5f5f5; --surface2: #ebebeb; --text: #111; --text-muted: #666; --border: rgba(0,0,0,0.1); }
+    section { page-break-before: always; }
+    section:first-of-type { page-break-before: avoid; }
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(204,34,0,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cover-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 24px;
+  }
+  .cover-title {
+    font-family: var(--font-serif);
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 700;
+    line-height: 1.0;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .cover-sub {
+    font-size: 18px;
+    color: var(--text-muted);
+    margin-bottom: 48px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .cover-meta span { display: flex; flex-direction: column; gap: 4px; }
+  .cover-meta strong { color: var(--text); font-size: 14px; }
+
+  /* ── SECTION HEADERS ── */
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+
+  /* ── BUSINESS IDENTITY ── */
+  .identity-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: 4px;
+    padding: 32px;
+  }
+  .identity-type {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .identity-name {
+    font-family: var(--font-serif);
+    font-size: 40px;
+    color: var(--text);
+  }
+
+  /* ── BRAND FEELING WORDS ── */
+  .words-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .word-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 40px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .word-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--primary);
+  }
+  .word-card:nth-child(2)::before { background: var(--accent); }
+  .word-card:nth-child(3)::before { background: var(--gold); }
+  .word-text {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .word-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ── CELEBRITY ── */
+  .celebrity-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 40px;
+    position: relative;
+  }
+  .celebrity-card::before {
+    content: '"';
+    position: absolute;
+    top: 16px; left: 32px;
+    font-family: var(--font-serif);
+    font-size: 120px;
+    line-height: 1;
+    color: var(--primary);
+    opacity: 0.2;
+  }
+  .celebrity-name {
+    font-family: var(--font-serif);
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .celebrity-reason {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+  .celebrity-signals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .signal-tag {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* ── TARGET CUSTOMER ── */
+  .customer-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    margin-bottom: 20px;
+  }
+  .customer-quote {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--text);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .customer-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .customer-tag {
+    background: rgba(204,34,0,0.15);
+    border: 1px solid rgba(204,34,0,0.3);
+    border-radius: 2px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--primary);
+    letter-spacing: 0.5px;
+  }
+
+  /* ── INSPIRATION URLS ── */
+  .urls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .url-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: border-color 0.2s;
+  }
+  .url-card:hover { border-color: var(--primary); }
+  .url-domain {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .url-full {
+    font-size: 12px;
+    color: var(--text-muted);
+    word-break: break-all;
+  }
+  .url-visit {
+    font-size: 12px;
+    color: var(--primary);
+    letter-spacing: 1px;
+    margin-top: auto;
+  }
+
+  /* ── DIFF TABLE ── */
+  .diff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .diff-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .diff-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .diff-table td:first-child {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    width: 180px;
+  }
+  .old-value {
+    color: #ef4444;
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+  .new-value {
+    color: #22c55e;
+    font-weight: 500;
+  }
+  .unchanged { color: var(--text-muted); font-style: italic; }
+
+  /* ── NEXT STEPS ── */
+  .steps-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .steps-list li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-cmd {
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-right: 8px;
+  }
+  .step-desc { font-size: 14px; color: var(--text-muted); }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- COVER -->
+  <section class="cover">
+    <p class="cover-label">Brand Brief</p>
+    <h1 class="cover-title">Cheese Inc.</h1>
+    <p class="cover-sub">artisan cheese shop</p>
+    <div class="cover-meta">
+      <span><strong>Prepared by</strong>Raspucat</span>
+      <span><strong>Date</strong>April 20, 2026</span>
+      <span><strong>Status</strong>Discovery-Grade</span>
+    </div>
+  </section>
+
+  <!-- BUSINESS IDENTITY -->
+  <section>
+    <p class="section-label">01</p>
+    <h2 class="section-title">Business Identity</h2>
+    <div class="identity-card">
+      <p class="identity-type">artisan cheese shop</p>
+      <h3 class="identity-name">Cheese Inc.</h3>
+    </div>
+  </section>
+
+  <!-- BRAND FEELING -->
+  <section>
+    <p class="section-label">02</p>
+    <h2 class="section-title">Brand Feeling</h2>
+    <p style="color:var(--text-muted);margin-bottom:24px;font-size:14px;">How customers should <em>feel</em> when they visit the site — mood, not product.</p>
+    <div class="words-grid">
+      <div class="word-card">
+        <p class="word-text">Bold</p>
+        <p class="word-label">First impression</p>
+      </div>
+      <div class="word-card">
+        <p class="word-text">Sensory</p>
+        <p class="word-label">Experience</p>
+      </div>
+      <div class="word-card">
+        <p class="word-text">Playful</p>
+        <p class="word-label">Personality</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CELEBRITY AESTHETIC -->
+  <section>
+    <p class="section-label">03</p>
+    <h2 class="section-title">Aesthetic Reference</h2>
+    <div class="celebrity-card">
+      <h3 class="celebrity-name">Wes Anderson</h3>
+      <p class="celebrity-reason">whimsical, warm, obsessively art-directed</p>
+      <div class="celebrity-signals">
+        <span class="signal-tag">Symmetrical compositions</span>
+        <span class="signal-tag">Pastel + warm tones</span>
+        <span class="signal-tag">Precise typography</span>
+        <span class="signal-tag">Unexpected colour pops</span>
+        <span class="signal-tag">Handcrafted details</span>
+        <span class="signal-tag">Retro-modern tension</span>
+        <span class="signal-tag">Every element intentional</span>
+        <span class="signal-tag">Warm dark atmosphere</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TARGET CUSTOMER -->
+  <section>
+    <p class="section-label">04</p>
+    <h2 class="section-title">Target Customer</h2>
+    <div class="customer-card">
+      <p class="customer-quote">"Food-obsessed professionals aged 28–45 in the Pacific Northwest who treat dinner parties as entertainment."</p>
+      <div class="customer-tags">
+        <span class="customer-tag">Ages 28–45</span>
+        <span class="customer-tag">Pacific Northwest</span>
+        <span class="customer-tag">Food-obsessed</span>
+        <span class="customer-tag">Professional</span>
+        <span class="customer-tag">Dinner party host</span>
+        <span class="customer-tag">Entertains at home</span>
+        <span class="customer-tag">Treats food as culture</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSPIRATION URLS -->
+  <section>
+    <p class="section-label">05</p>
+    <h2 class="section-title">Visual Inspiration</h2>
+    <div class="urls-grid">
+      <a class="url-card" href="https://www.drinksom.eu/" target="_blank">
+        <p class="url-domain">drinksom.eu</p>
+        <p class="url-full">https://www.drinksom.eu/</p>
+        <p class="url-visit">Visit →</p>
+      </a>
+      <a class="url-card" href="https://www.utopiatokyo.com/" target="_blank">
+        <p class="url-domain">utopiatokyo.com</p>
+        <p class="url-full">https://www.utopiatokyo.com/</p>
+        <p class="url-visit">Visit →</p>
+      </a>
+      <a class="url-card" href="https://www.planetono.space/" target="_blank">
+        <p class="url-domain">planetono.space</p>
+        <p class="url-full">https://www.planetono.space/</p>
+        <p class="url-visit">Visit →</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- BEFORE / AFTER DIFF -->
+  <section>
+    <p class="section-label">06</p>
+    <h2 class="section-title">What Changed</h2>
+    <table class="diff-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Before</th>
+          <th>After</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>BRAND_THREE_WORDS</td>
+          <td><span class="old-value">Cheesy Yummy Gooey</span></td>
+          <td><span class="new-value">Bold Sensory Playful</span></td>
+        </tr>
+        <tr>
+          <td>BRAND_CELEBRITY</td>
+          <td><span class="old-value">Rob Lowe, he's yummy and cheesy</span></td>
+          <td><span class="new-value">Wes Anderson — whimsical, warm, obsessively art-directed</span></td>
+        </tr>
+        <tr>
+          <td>BRAND_TARGET_CUSTOMER</td>
+          <td><span class="old-value">cheese eaters</span></td>
+          <td><span class="new-value">Food-obsessed professionals aged 28–45 in the Pacific Northwest who treat dinner parties as entertainment</span></td>
+        </tr>
+        <tr>
+          <td>BUSINESS_TYPE</td>
+          <td><span class="unchanged">Not set</span></td>
+          <td><span class="new-value">artisan cheese shop</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="footer">
+    <p>Prepared by Raspucat · Cheese Inc. · April 2026</p>
+  </div>
+
+</div>
+</body>
+</html>

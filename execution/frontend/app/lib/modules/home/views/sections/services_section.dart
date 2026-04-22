@@ -7,8 +7,36 @@ import '../../../../core/theme/e_text_styles.dart';
 import '../../../../core/theme/personality_theme.dart';
 import '../../../../core/config/app_env.dart';
 import '../../../booking/models/artist_model.dart';
+import '../../../booking/models/service_model.dart';
 import '../../controllers/home_controller.dart';
 import 'section_shared_widgets.dart';
+
+const _kDemoServices = [
+  ServiceModel(
+    id: 'demo-1',
+    name: 'Cheese Tasting',
+    category: 'Experience',
+    durationMinutes: 60,
+    price: 45,
+    description: 'A guided flight of six handpicked cheeses paired with local honey and fig jam.',
+  ),
+  ServiceModel(
+    id: 'demo-2',
+    name: 'Cheese Board Curation',
+    category: 'Experience',
+    durationMinutes: 30,
+    price: 85,
+    description: 'A bespoke board built to your occasion — weddings, dinner parties, date nights.',
+  ),
+  ServiceModel(
+    id: 'demo-3',
+    name: 'Cheesemaking Class',
+    category: 'Workshop',
+    durationMinutes: 180,
+    price: 120,
+    description: 'Make your own mozzarella or ricotta from scratch. Take it home the same day.',
+  ),
+];
 
 // ─── Services Section ─────────────────────────────────────────────────────────
 class ServicesSection extends StatelessWidget {
@@ -21,37 +49,31 @@ class ServicesSection extends StatelessWidget {
 
     return Obx(() {
       final ctrl = Get.find<HomeController>();
-      if (ctrl.services.isEmpty) return const SizedBox.shrink();
+      final items = ctrl.services.isEmpty ? _kDemoServices : ctrl.services;
 
       return SectionWrapper(
         child: Column(
           children: [
-            SectionHeader(
-              overline: ctrl.servicesOverline,
-              title: ctrl.servicesTitle,
-              subtitle: ctrl.servicesSubtitle.isEmpty
-                  ? null
-                  : ctrl.servicesSubtitle,
-              textAlign: pt.heroTextAlign,
-            ),
+            OrnamentalHeader(title: ctrl.servicesTitle),
             const SizedBox(height: ESpacing.xxl),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: isDesktop ? 3 : 1,
-                crossAxisSpacing: ESpacing.lg,
-                mainAxisSpacing: ESpacing.lg,
-                childAspectRatio: isDesktop ? 1.0 : 3.0,
+            if (isDesktop)
+              _ServicesIconRow(items: items)
+            else
+              Column(
+                children:
+                    items
+                        .map(
+                          (s) => Padding(
+                            padding: const EdgeInsets.only(bottom: ESpacing.lg),
+                            child: ServiceCard(
+                              service: s,
+                              pt: pt,
+                              onTap: () => Get.toNamed('${ERoutes.services}/${s.slug}'),
+                            ),
+                          ),
+                        )
+                        .toList(),
               ),
-              itemCount: ctrl.services.length,
-              itemBuilder: (_, i) => ServiceCard(
-                service: ctrl.services[i],
-                pt: pt,
-                onTap: () =>
-                    Get.toNamed('${ERoutes.services}/${ctrl.services[i].slug}'),
-              ),
-            ),
           ],
         ),
       );
@@ -59,7 +81,90 @@ class ServicesSection extends StatelessWidget {
   }
 }
 
-// ─── Team Section ─────────────────────────────────────────────────────────────
+// ─── Services Icon Row (desktop) ─────────────────────────────────────────────
+
+class _ServicesIconRow extends StatelessWidget {
+  const _ServicesIconRow({required this.items});
+  final List<ServiceModel> items;
+
+  static IconData _iconFor(String slug) => switch (slug) {
+    'cheese-tasting' => Icons.wine_bar_outlined,
+    'cheese-board-curation' => Icons.grid_view_outlined,
+    'cheesemaking-class' => Icons.science_outlined,
+    _ => Icons.star_outline,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < items.length; i++) ...[
+            if (i > 0)
+              VerticalDivider(
+                color: EColors.secondary.withValues(alpha: 0.3),
+                width: 1,
+                thickness: 1,
+              ),
+            Expanded(child: _ServiceIconCol(service: items[i], icon: _iconFor(items[i].slug))),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ServiceIconCol extends StatefulWidget {
+  const _ServiceIconCol({required this.service, required this.icon});
+  final ServiceModel service;
+  final IconData icon;
+
+  @override
+  State<_ServiceIconCol> createState() => _ServiceIconColState();
+}
+
+class _ServiceIconColState extends State<_ServiceIconCol> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
+          color: _hovered ? EColors.secondary.withValues(alpha: 0.06) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: ESpacing.xl, vertical: ESpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(widget.icon, color: _hovered ? EColors.primary : EColors.secondary, size: 40),
+            const SizedBox(height: ESpacing.md),
+            Text(
+              widget.service.name,
+              style: ETextStyles.h3.copyWith(color: EColors.onSurface),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: ESpacing.sm),
+            Text(
+              widget.service.description,
+              style: ETextStyles.bodyMuted,
+              textAlign: TextAlign.center,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class TeamSection extends StatelessWidget {
   const TeamSection({super.key});
 
@@ -86,9 +191,8 @@ class TeamSection extends StatelessWidget {
               spacing: ESpacing.lg,
               runSpacing: ESpacing.lg,
               alignment: WrapAlignment.center,
-              children: ctrl.teamMembers
-                  .map((m) => _TeamCard(member: m, isMobile: isMobile))
-                  .toList(),
+              children:
+                  ctrl.teamMembers.map((m) => _TeamCard(member: m, isMobile: isMobile)).toList(),
             ),
           ],
         ),
@@ -114,18 +218,15 @@ class _TeamCard extends StatelessWidget {
             SizedBox(
               height: 200,
               width: double.infinity,
-              child: member.photoUrl != null
-                  ? Image.network(member.photoUrl!, fit: BoxFit.cover)
-                  : Container(
-                      color: EColors.primaryLight,
-                      child: Center(
-                        child: Icon(
-                          Icons.person_outline,
-                          size: 64,
-                          color: EColors.primary,
+              child:
+                  member.photoUrl != null
+                      ? Image.network(member.photoUrl!, fit: BoxFit.cover)
+                      : Container(
+                        color: EColors.primaryLight,
+                        child: Center(
+                          child: Icon(Icons.person_outline, size: 64, color: EColors.primary),
                         ),
                       ),
-                    ),
             ),
             Padding(
               padding: const EdgeInsets.all(ESpacing.lg),
@@ -156,7 +257,6 @@ class _TeamCard extends StatelessWidget {
   }
 }
 
-// ─── CTA Section ─────────────────────────────────────────────────────────────
 class CtaSection extends StatelessWidget {
   const CtaSection({super.key});
 
@@ -165,36 +265,36 @@ class CtaSection extends StatelessWidget {
     return Obx(() {
       final ctrl = Get.find<HomeController>();
       return Container(
-        color: EColors.primary,
+        color: EColors.surface,
         padding: const EdgeInsets.symmetric(
           vertical: ESpacing.xxxl,
           horizontal: ESpacing.pagePaddingH,
         ),
-        child: Center(
-          child: Column(
-            children: [
-              Text(
-                ctrl.ctaTitle,
-                style: ETextStyles.displayMd.copyWith(color: Colors.white),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: ESpacing.lg),
-              OutlinedButton(
-                onPressed: AppEnv.moduleEnabled('booking')
-                    ? () => Get.toNamed(ERoutes.booking)
-                    : () => Get.toNamed(ERoutes.contact),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: const BorderSide(color: Colors.white),
+        child: Column(
+          children: [
+            OrnamentalHeader(title: ctrl.ctaTitle),
+            const SizedBox(height: ESpacing.xxl),
+            ElevatedButton(
+              onPressed:
+                  AppEnv.moduleEnabled('booking')
+                      ? () => Get.toNamed(ERoutes.booking)
+                      : () => Get.toNamed(ERoutes.contact),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: EColors.primary,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(220, 52),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                textStyle: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.5,
                 ),
-                child: Text(ctrl.ctaButtonLabel),
               ),
-            ],
-          ),
+              child: Text(ctrl.ctaButtonLabel.toUpperCase()),
+            ),
+          ],
         ),
       );
     });
   }
 }
-
-// (Removed private _SectionWrapper and _SectionHeader)

@@ -26,7 +26,9 @@ class GdprBanner extends GetView<GdprController> {
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(
-                  horizontal: ESpacing.lg, vertical: ESpacing.md),
+                horizontal: ESpacing.lg,
+                vertical: ESpacing.md,
+              ),
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(color: EColors.surfaceVariant, width: 1),
@@ -61,10 +63,7 @@ class GdprBanner extends GetView<GdprController> {
                       children: [
                         message,
                         const SizedBox(height: ESpacing.sm),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: actions,
-                        ),
+                        Align(alignment: Alignment.centerRight, child: actions),
                       ],
                     );
                   }

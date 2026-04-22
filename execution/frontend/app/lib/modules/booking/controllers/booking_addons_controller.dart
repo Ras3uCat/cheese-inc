@@ -8,24 +8,25 @@ class BookingAddonsController extends GetxController {
   final BookingRepository _repository = Get.find<BookingRepository>();
 
   // ── Config (loaded from business_config on init) ──────────────────────────
-  final depositPct          = 100.obs;   // 0 = no payment now; 1–99 = partial deposit; 100 = full upfront
-  final loyaltyCentsPerPoint = 1.obs;    // 1 point = N cents
-  final loyaltyMinRedeem    = 500.obs;   // minimum points needed to redeem
+  final depositPct =
+      100.obs; // 0 = no payment now; 1–99 = partial deposit; 100 = full upfront
+  final loyaltyCentsPerPoint = 1.obs; // 1 point = N cents
+  final loyaltyMinRedeem = 500.obs; // minimum points needed to redeem
 
   // ── SMS ───────────────────────────────────────────────────────────────────
   final smsPhone = ''.obs;
 
   // ── Gift voucher ──────────────────────────────────────────────────────────
-  final giftVoucherCode       = ''.obs;
-  final giftVoucherId         = RxnString();
+  final giftVoucherCode = ''.obs;
+  final giftVoucherId = RxnString();
   final giftVoucherAmountCents = 0.obs;
-  final isValidatingVoucher   = false.obs;
-  final voucherError          = RxnString();
+  final isValidatingVoucher = false.obs;
+  final voucherError = RxnString();
 
   // ── Loyalty ───────────────────────────────────────────────────────────────
-  final loyaltyBalance         = 0.obs;   // current points balance for entered email
-  final loyaltyRedeemPoints    = 0.obs;   // how many points user chose to redeem
-  final isLoadingLoyalty       = false.obs;
+  final loyaltyBalance = 0.obs; // current points balance for entered email
+  final loyaltyRedeemPoints = 0.obs; // how many points user chose to redeem
+  final isLoadingLoyalty = false.obs;
 
   @override
   void onInit() {
@@ -36,9 +37,11 @@ class BookingAddonsController extends GetxController {
   Future<void> _loadConfig() async {
     try {
       final cfg = await _repository.getBookingConfig();
-      depositPct.value           = (cfg['deposit_pct']           as num?)?.toInt() ?? 100;
-      loyaltyCentsPerPoint.value = (cfg['loyalty_cents_per_point'] as num?)?.toInt() ?? 1;
-      loyaltyMinRedeem.value     = (cfg['loyalty_min_redeem']     as num?)?.toInt() ?? 500;
+      depositPct.value = (cfg['deposit_pct'] as num?)?.toInt() ?? 100;
+      loyaltyCentsPerPoint.value =
+          (cfg['loyalty_cents_per_point'] as num?)?.toInt() ?? 1;
+      loyaltyMinRedeem.value =
+          (cfg['loyalty_min_redeem'] as num?)?.toInt() ?? 500;
     } catch (_) {
       // Use defaults — non-fatal
     }
@@ -60,9 +63,9 @@ class BookingAddonsController extends GetxController {
         voucherError.value = 'Invalid or expired voucher code.';
         _clearVoucher();
       } else {
-        giftVoucherId.value          = result['id'] as String;
+        giftVoucherId.value = result['id'] as String;
         giftVoucherAmountCents.value = (result['amount_cents'] as num).toInt();
-        voucherError.value           = null;
+        voucherError.value = null;
       }
     } catch (_) {
       voucherError.value = 'Could not validate voucher. Try again.';
@@ -73,7 +76,7 @@ class BookingAddonsController extends GetxController {
   }
 
   void _clearVoucher() {
-    giftVoucherId.value          = null;
+    giftVoucherId.value = null;
     giftVoucherAmountCents.value = 0;
   }
 
@@ -81,7 +84,7 @@ class BookingAddonsController extends GetxController {
 
   Future<void> loadLoyaltyBalance(String email) async {
     if (email.isEmpty || !email.contains('@')) {
-      loyaltyBalance.value      = 0;
+      loyaltyBalance.value = 0;
       loyaltyRedeemPoints.value = 0;
       return;
     }
@@ -100,8 +103,9 @@ class BookingAddonsController extends GetxController {
   void applyLoyaltyPoints(double totalPrice) {
     if (loyaltyBalance.value < loyaltyMinRedeem.value) return;
     final maxByBalance = loyaltyBalance.value;
-    final maxByTotal   = (totalPrice * 100 / loyaltyCentsPerPoint.value).floor();
-    loyaltyRedeemPoints.value = maxByBalance < maxByTotal ? maxByBalance : maxByTotal;
+    final maxByTotal = (totalPrice * 100 / loyaltyCentsPerPoint.value).floor();
+    loyaltyRedeemPoints.value =
+        maxByBalance < maxByTotal ? maxByBalance : maxByTotal;
   }
 
   void clearLoyaltyRedeem() => loyaltyRedeemPoints.value = 0;
@@ -123,7 +127,8 @@ class BookingAddonsController extends GetxController {
 
   /// Total charge after all discounts, plus tip. Never below zero (before tip).
   double chargeAmount(double totalPrice) {
-    final discounted = totalPrice - giftDiscountDollars - loyaltyDiscountDollars;
+    final discounted =
+        totalPrice - giftDiscountDollars - loyaltyDiscountDollars;
     return (discounted < 0 ? 0 : discounted) + tipDollars;
   }
 
@@ -150,13 +155,13 @@ class BookingAddonsController extends GetxController {
   // ── Reset ─────────────────────────────────────────────────────────────────
 
   void reset() {
-    smsPhone.value               = '';
-    giftVoucherCode.value        = '';
-    giftVoucherId.value          = null;
+    smsPhone.value = '';
+    giftVoucherCode.value = '';
+    giftVoucherId.value = null;
     giftVoucherAmountCents.value = 0;
-    voucherError.value           = null;
-    loyaltyBalance.value         = 0;
-    loyaltyRedeemPoints.value    = 0;
-    tipAmountCents.value         = 0;
+    voucherError.value = null;
+    loyaltyBalance.value = 0;
+    loyaltyRedeemPoints.value = 0;
+    tipAmountCents.value = 0;
   }
 }

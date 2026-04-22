@@ -94,13 +94,14 @@ class CourseCard extends StatelessWidget {
           children: [
             Expanded(
               flex: 3,
-              child: thumbUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: thumbUrl,
-                      fit: BoxFit.cover,
-                      errorWidget: (context, url, error) => _placeholder(),
-                    )
-                  : _placeholder(),
+              child:
+                  thumbUrl != null
+                      ? CachedNetworkImage(
+                        imageUrl: thumbUrl,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => _placeholder(),
+                      )
+                      : _placeholder(),
             ),
             Expanded(
               flex: 2,
@@ -145,10 +146,9 @@ class CourseCard extends StatelessWidget {
   }
 
   Widget _placeholder() => Container(
-        color: EColors.primaryLight,
-        child: Center(
-          child:
-              Icon(Icons.play_circle_outline, size: 48, color: EColors.primary),
-        ),
-      );
+    color: EColors.primaryLight,
+    child: Center(
+      child: Icon(Icons.play_circle_outline, size: 48, color: EColors.primary),
+    ),
+  );
 }

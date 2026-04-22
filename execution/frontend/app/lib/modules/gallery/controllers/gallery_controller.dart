@@ -3,7 +3,7 @@ import '../../../shared/services/supabase_service.dart';
 import '../models/gallery_photo_model.dart';
 
 class GalleryController extends GetxController {
-  final photos    = <GalleryPhotoModel>[].obs;
+  final photos = <GalleryPhotoModel>[].obs;
   final isLoading = false.obs;
 
   @override
@@ -20,13 +20,14 @@ class GalleryController extends GetxController {
           .select()
           .eq('is_active', true)
           .order('display_order');
-      photos.value = (rows as List).map((r) {
-        final m = r as Map<String, dynamic>;
-        final url = SupabaseService.client.storage
-            .from('gallery')
-            .getPublicUrl(m['storage_path'] as String);
-        return GalleryPhotoModel.fromMap(m, publicUrl: url);
-      }).toList();
+      photos.value =
+          (rows as List).map((r) {
+            final m = r as Map<String, dynamic>;
+            final url = SupabaseService.client.storage
+                .from('gallery')
+                .getPublicUrl(m['storage_path'] as String);
+            return GalleryPhotoModel.fromMap(m, publicUrl: url);
+          }).toList();
     } catch (_) {
       photos.value = [];
     } finally {

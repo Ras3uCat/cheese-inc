@@ -18,7 +18,7 @@ class _StaffBundlesViewState extends State<StaffBundlesView> {
   final _db = Supabase.instance.client;
 
   bool _loading = true;
-  List<Map<String, dynamic>> _bundles  = [];
+  List<Map<String, dynamic>> _bundles = [];
   List<Map<String, dynamic>> _myServices = [];
 
   @override
@@ -43,9 +43,9 @@ class _StaffBundlesViewState extends State<StaffBundlesView> {
 
       if (mounted) {
         setState(() {
-          _bundles    = List<Map<String, dynamic>>.from(results[0] as List);
+          _bundles = List<Map<String, dynamic>>.from(results[0] as List);
           _myServices = List<Map<String, dynamic>>.from(results[1] as List);
-          _loading    = false;
+          _loading = false;
         });
       }
     } catch (_) {
@@ -59,8 +59,12 @@ class _StaffBundlesViewState extends State<StaffBundlesView> {
       if (mounted) setState(() => _bundles.removeWhere((b) => b['id'] == id));
     } catch (_) {
       if (mounted) {
-        Get.snackbar('Error', 'Failed to delete bundle.',
-            backgroundColor: EColors.error, colorText: EColors.white);
+        Get.snackbar(
+          'Error',
+          'Failed to delete bundle.',
+          backgroundColor: EColors.error,
+          colorText: EColors.white,
+        );
       }
     }
   }
@@ -83,100 +87,110 @@ class _StaffBundlesViewState extends State<StaffBundlesView> {
     final descCtrl = TextEditingController();
     final selected = <String>{};
 
-    Get.dialog(StatefulBuilder(
-      builder: (ctx, setState) => AlertDialog(
-        backgroundColor: EColors.surface,
-        title: Text('New Bundle', style: ETextStyles.h3),
-        content: SizedBox(
-          width: 400,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextField(
-                  controller: nameCtrl,
-                  style: ETextStyles.inputText,
-                  decoration: InputDecoration(
-                    labelText: 'Bundle Name',
-                    labelStyle: ETextStyles.inputLabel,
+    Get.dialog(
+      StatefulBuilder(
+        builder:
+            (ctx, setState) => AlertDialog(
+              backgroundColor: EColors.surface,
+              title: Text('New Bundle', style: ETextStyles.h3),
+              content: SizedBox(
+                width: 400,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextField(
+                        controller: nameCtrl,
+                        style: ETextStyles.inputText,
+                        decoration: InputDecoration(
+                          labelText: 'Bundle Name',
+                          labelStyle: ETextStyles.inputLabel,
+                        ),
+                      ),
+                      const SizedBox(height: ESpacing.md),
+                      TextField(
+                        controller: discCtrl,
+                        keyboardType: TextInputType.number,
+                        style: ETextStyles.inputText,
+                        decoration: InputDecoration(
+                          labelText: 'Discount %',
+                          labelStyle: ETextStyles.inputLabel,
+                        ),
+                      ),
+                      const SizedBox(height: ESpacing.md),
+                      TextField(
+                        controller: descCtrl,
+                        style: ETextStyles.inputText,
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                          labelText: 'Description (optional)',
+                          labelStyle: ETextStyles.inputLabel,
+                        ),
+                      ),
+                      const SizedBox(height: ESpacing.md),
+                      Text('Include Services', style: ETextStyles.label),
+                      const SizedBox(height: ESpacing.sm),
+                      ..._myServices.map((row) {
+                        final svc = row['services'] as Map<String, dynamic>?;
+                        final sid = svc?['id'] as String? ?? '';
+                        final name = svc?['name'] as String? ?? sid;
+                        return CheckboxListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          value: selected.contains(sid),
+                          activeColor: EColors.primary,
+                          title: Text(name, style: ETextStyles.bodySm),
+                          onChanged: (v) {
+                            setState(() {
+                              if (v == true) {
+                                selected.add(sid);
+                              } else {
+                                selected.remove(sid);
+                              }
+                            });
+                          },
+                        );
+                      }),
+                    ],
                   ),
                 ),
-                const SizedBox(height: ESpacing.md),
-                TextField(
-                  controller: discCtrl,
-                  keyboardType: TextInputType.number,
-                  style: ETextStyles.inputText,
-                  decoration: InputDecoration(
-                    labelText: 'Discount %',
-                    labelStyle: ETextStyles.inputLabel,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: Get.back,
+                  child: Text(
+                    'CANCEL',
+                    style: ETextStyles.button.copyWith(
+                      color: EColors.onSurfaceMuted,
+                    ),
                   ),
                 ),
-                const SizedBox(height: ESpacing.md),
-                TextField(
-                  controller: descCtrl,
-                  style: ETextStyles.inputText,
-                  maxLines: 2,
-                  decoration: InputDecoration(
-                    labelText: 'Description (optional)',
-                    labelStyle: ETextStyles.inputLabel,
+                ElevatedButton(
+                  onPressed: () async {
+                    if (nameCtrl.text.trim().isEmpty) return;
+                    Get.back();
+                    await _createBundle(
+                      name: nameCtrl.text.trim(),
+                      discountPct: double.tryParse(discCtrl.text) ?? 0,
+                      description:
+                          descCtrl.text.trim().isEmpty
+                              ? null
+                              : descCtrl.text.trim(),
+                      serviceIds: selected.toList(),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: EColors.primary,
+                    foregroundColor: EColors.white,
+                    shape: const RoundedRectangleBorder(),
                   ),
+                  child: Text('CREATE', style: ETextStyles.button),
                 ),
-                const SizedBox(height: ESpacing.md),
-                Text('Include Services', style: ETextStyles.label),
-                const SizedBox(height: ESpacing.sm),
-                ..._myServices.map((row) {
-                  final svc  = row['services'] as Map<String, dynamic>?;
-                  final sid  = svc?['id'] as String? ?? '';
-                  final name = svc?['name'] as String? ?? sid;
-                  return CheckboxListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    value: selected.contains(sid),
-                    activeColor: EColors.primary,
-                    title: Text(name, style: ETextStyles.bodySm),
-                    onChanged: (v) {
-                      setState(() {
-                        if (v == true) {
-                          selected.add(sid);
-                        } else {
-                          selected.remove(sid);
-                        }
-                      });
-                    },
-                  );
-                }),
               ],
             ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: Get.back,
-            child: Text('CANCEL',
-                style: ETextStyles.button.copyWith(color: EColors.onSurfaceMuted)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (nameCtrl.text.trim().isEmpty) return;
-              Get.back();
-              await _createBundle(
-                name:        nameCtrl.text.trim(),
-                discountPct: double.tryParse(discCtrl.text) ?? 0,
-                description: descCtrl.text.trim().isEmpty ? null : descCtrl.text.trim(),
-                serviceIds:  selected.toList(),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: EColors.primary,
-              foregroundColor: EColors.white,
-              shape: const RoundedRectangleBorder(),
-            ),
-            child: Text('CREATE', style: ETextStyles.button),
-          ),
-        ],
       ),
-    ));
+    );
   }
 
   Future<void> _createBundle({
@@ -189,18 +203,22 @@ class _StaffBundlesViewState extends State<StaffBundlesView> {
     if (uid == null) return;
     try {
       await _db.from('packages').insert({
-        'artist_id':    uid,
-        'name':         name,
+        'artist_id': uid,
+        'name': name,
         'discount_pct': discountPct,
-        'description':  description,
-        'service_ids':  serviceIds,
-        'is_active':    true,
+        'description': description,
+        'service_ids': serviceIds,
+        'is_active': true,
       });
       await _load();
     } catch (_) {
       if (mounted) {
-        Get.snackbar('Error', 'Failed to create bundle.',
-            backgroundColor: EColors.error, colorText: EColors.white);
+        Get.snackbar(
+          'Error',
+          'Failed to create bundle.',
+          backgroundColor: EColors.error,
+          colorText: EColors.white,
+        );
       }
     }
   }
@@ -216,60 +234,80 @@ class _StaffBundlesViewState extends State<StaffBundlesView> {
           Container(
             padding: const EdgeInsets.all(ESpacing.lg),
             decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: EColors.divider, width: 0.5)),
-            ),
-            child: Row(children: [
-              Text('My Bundles', style: ETextStyles.h2),
-              const Spacer(),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.add, size: 16),
-                label: Text('NEW BUNDLE', style: ETextStyles.button),
-                onPressed: _showAddDialog,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: EColors.primary,
-                  foregroundColor: EColors.white,
-                  shape: const RoundedRectangleBorder(),
-                ),
+              border: Border(
+                bottom: BorderSide(color: EColors.divider, width: 0.5),
               ),
-            ]),
+            ),
+            child: Row(
+              children: [
+                Text('My Bundles', style: ETextStyles.h2),
+                const Spacer(),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.add, size: 16),
+                  label: Text('NEW BUNDLE', style: ETextStyles.button),
+                  onPressed: _showAddDialog,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: EColors.primary,
+                    foregroundColor: EColors.white,
+                    shape: const RoundedRectangleBorder(),
+                  ),
+                ),
+              ],
+            ),
           ),
           Expanded(
-            child: _loading
-                ? const Center(child: CircularProgressIndicator())
-                : _bundles.isEmpty
-                    ? Center(child: Text('No bundles yet.', style: ETextStyles.bodyMuted))
+            child:
+                _loading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _bundles.isEmpty
+                    ? Center(
+                      child: Text(
+                        'No bundles yet.',
+                        style: ETextStyles.bodyMuted,
+                      ),
+                    )
                     : ListView.separated(
-                        padding: const EdgeInsets.all(ESpacing.lg),
-                        itemCount: _bundles.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: ESpacing.sm),
-                        itemBuilder: (_, i) {
-                          final b         = _bundles[i];
-                          final id        = b['id'] as String;
-                          final name      = b['name'] as String? ?? '';
-                          final disc      = (b['discount_pct'] as num?)?.toDouble() ?? 0.0;
-                          final isActive  = b['is_active'] as bool? ?? true;
-                          final svcIds    = (b['service_ids'] as List?)?.length ?? 0;
+                      padding: const EdgeInsets.all(ESpacing.lg),
+                      itemCount: _bundles.length,
+                      separatorBuilder:
+                          (_, _) => const SizedBox(height: ESpacing.sm),
+                      itemBuilder: (_, i) {
+                        final b = _bundles[i];
+                        final id = b['id'] as String;
+                        final name = b['name'] as String? ?? '';
+                        final disc =
+                            (b['discount_pct'] as num?)?.toDouble() ?? 0.0;
+                        final isActive = b['is_active'] as bool? ?? true;
+                        final svcIds = (b['service_ids'] as List?)?.length ?? 0;
 
-                          return Dismissible(
-                            key: ValueKey(id),
-                            direction: DismissDirection.endToStart,
-                            background: Container(
-                              alignment: Alignment.centerRight,
-                              color: EColors.error,
-                              padding: const EdgeInsets.only(right: ESpacing.lg),
-                              child: Icon(Icons.delete_outline, color: EColors.white),
+                        return Dismissible(
+                          key: ValueKey(id),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            color: EColors.error,
+                            padding: const EdgeInsets.only(right: ESpacing.lg),
+                            child: Icon(
+                              Icons.delete_outline,
+                              color: EColors.white,
                             ),
-                            onDismissed: (_) => _delete(id),
-                            child: Container(
-                              padding: const EdgeInsets.all(ESpacing.md),
-                              decoration: BoxDecoration(
-                                color: EColors.surfaceVariant,
-                                border: Border.all(color: EColors.divider, width: 0.5),
+                          ),
+                          onDismissed: (_) => _delete(id),
+                          child: Container(
+                            padding: const EdgeInsets.all(ESpacing.md),
+                            decoration: BoxDecoration(
+                              color: EColors.surfaceVariant,
+                              border: Border.all(
+                                color: EColors.divider,
+                                width: 0.5,
                               ),
-                              child: Row(children: [
+                            ),
+                            child: Row(
+                              children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(name, style: ETextStyles.h4),
                                       Text(
@@ -284,11 +322,12 @@ class _StaffBundlesViewState extends State<StaffBundlesView> {
                                   activeTrackColor: EColors.primary,
                                   onChanged: (v) => _toggleActive(id, v),
                                 ),
-                              ]),
+                              ],
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),

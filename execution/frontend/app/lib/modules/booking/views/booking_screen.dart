@@ -23,8 +23,9 @@ class BookingScreen extends GetView<BookingController> {
       final preselectedId = args['preselectedArtistId'] as String?;
       if (preselectedId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final artist = controller.artists
-              .firstWhereOrNull((a) => a.id == preselectedId);
+          final artist = controller.artists.firstWhereOrNull(
+            (a) => a.id == preselectedId,
+          );
           if (artist != null) controller.selectArtist(artist);
         });
       }
@@ -43,8 +44,8 @@ class BookingScreen extends GetView<BookingController> {
         }
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 250),
-          transitionBuilder: (child, anim) =>
-              FadeTransition(opacity: anim, child: child),
+          transitionBuilder:
+              (child, anim) => FadeTransition(opacity: anim, child: child),
           child: IndexedStack(
             key: ValueKey(controller.currentStep.value),
             index: controller.currentStep.value,
@@ -75,22 +76,33 @@ class _BookingAppBar extends GetView<BookingController>
       ),
       child: Row(
         children: [
-          Obx(() => controller.currentStep.value > 0
-              ? MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: controller.goBack,
-                    child: Row(children: [
-                      Icon(Icons.arrow_back_ios,
-                          color: EColors.onSurface, size: 16),
-                      const SizedBox(width: ESpacing.xs),
-                      Text('BACK',
-                          style: ETextStyles.label.copyWith(
-                              color: EColors.onSurfaceMuted)),
-                    ]),
-                  ),
-                )
-              : const SizedBox(width: 48)),
+          Obx(
+            () =>
+                controller.currentStep.value > 0
+                    ? MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: controller.goBack,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.arrow_back_ios,
+                              color: EColors.onSurface,
+                              size: 16,
+                            ),
+                            const SizedBox(width: ESpacing.xs),
+                            Text(
+                              'BACK',
+                              style: ETextStyles.label.copyWith(
+                                color: EColors.onSurfaceMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                    : const SizedBox(width: 48),
+          ),
           const Spacer(),
           const StepIndicator(),
           const Spacer(),
@@ -98,8 +110,7 @@ class _BookingAppBar extends GetView<BookingController>
             cursor: SystemMouseCursors.click,
             child: GestureDetector(
               onTap: controller.closeBooking,
-              child: Icon(Icons.close,
-                  color: EColors.onSurfaceMuted, size: 20),
+              child: Icon(Icons.close, color: EColors.onSurfaceMuted, size: 20),
             ),
           ),
         ],

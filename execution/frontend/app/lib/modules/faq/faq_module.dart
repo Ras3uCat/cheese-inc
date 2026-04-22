@@ -11,20 +11,20 @@ class FaqModule implements AppModule {
 
   @override
   NavItem? get navItem => const NavItem(
-        label: 'FAQ',
-        icon: Icons.quiz_outlined,
-        route: ERoutes.faq,
-      );
+    label: 'FAQ',
+    icon: Icons.quiz_outlined,
+    route: ERoutes.faq,
+  );
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.faq,
-          page: () => const FaqView(),
-          binding: FaqBinding(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.faq,
+      page: () => const FaqView(),
+      binding: FaqBinding(),
+      transition: Transition.fadeIn,
+    ),
+  ];
 
   @override
   Bindings? get binding => null;

@@ -165,16 +165,43 @@ class AppEnv {
     'COURSES_ENABLED',
     defaultValue: false,
   );
-  static const tipEnabled = bool.fromEnvironment('TIP_ENABLED', defaultValue: false);
-  static const digestEnabled = bool.fromEnvironment('DIGEST_ENABLED', defaultValue: false);
-  static const chatbotEnabled = bool.fromEnvironment('CHATBOT_ENABLED', defaultValue: false);
+  static const tipEnabled = bool.fromEnvironment(
+    'TIP_ENABLED',
+    defaultValue: false,
+  );
+  static const digestEnabled = bool.fromEnvironment(
+    'DIGEST_ENABLED',
+    defaultValue: false,
+  );
+  static const chatbotEnabled = bool.fromEnvironment(
+    'CHATBOT_ENABLED',
+    defaultValue: false,
+  );
   static const chatbotFull = String.fromEnvironment('CHATBOT_MODE') == 'full';
-  static const pushEnabled = bool.fromEnvironment('PUSH_ENABLED', defaultValue: false);
-  static const stripeInvoicingEnabled = bool.fromEnvironment('STRIPE_INVOICING_ENABLED', defaultValue: false);
-  static const invoicesEnabled = bool.fromEnvironment('INVOICES_ENABLED', defaultValue: false);
-  static const reviewsSyncEnabled = bool.fromEnvironment('REVIEWS_SYNC_ENABLED', defaultValue: false);
-  static const locationsEnabled = bool.fromEnvironment('LOCATIONS_ENABLED', defaultValue: false);
-  static const fcmEnabled = bool.fromEnvironment('FCM_ENABLED', defaultValue: false);
+  static const pushEnabled = bool.fromEnvironment(
+    'PUSH_ENABLED',
+    defaultValue: false,
+  );
+  static const stripeInvoicingEnabled = bool.fromEnvironment(
+    'STRIPE_INVOICING_ENABLED',
+    defaultValue: false,
+  );
+  static const invoicesEnabled = bool.fromEnvironment(
+    'INVOICES_ENABLED',
+    defaultValue: false,
+  );
+  static const reviewsSyncEnabled = bool.fromEnvironment(
+    'REVIEWS_SYNC_ENABLED',
+    defaultValue: false,
+  );
+  static const locationsEnabled = bool.fromEnvironment(
+    'LOCATIONS_ENABLED',
+    defaultValue: false,
+  );
+  static const fcmEnabled = bool.fromEnvironment(
+    'FCM_ENABLED',
+    defaultValue: false,
+  );
   static const vapidPublicKey = String.fromEnvironment('VAPID_PUBLIC_KEY');
 
   // ─── Modules ─────────────────────────────────────────────────────────────
@@ -183,11 +210,12 @@ class AppEnv {
     'MODULES',
     defaultValue: 'home,contact,auth',
   );
-  static List<String> get modules => _modulesRaw
-      .split(',')
-      .map((m) => m.trim())
-      .where((m) => m.isNotEmpty)
-      .toList();
+  static List<String> get modules =>
+      _modulesRaw
+          .split(',')
+          .map((m) => m.trim())
+          .where((m) => m.isNotEmpty)
+          .toList();
 
   // ─── Credentials (server-adjacent only — publishable/anon keys) ──────────
   static const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
@@ -200,9 +228,10 @@ class AppEnv {
   static bool moduleEnabled(String id) =>
       _systemModules.contains(id) || modules.contains(id);
 
-  static List<String> get homeSectionList => homeSections
-      .split(',')
-      .map((s) => s.trim())
-      .where((s) => s.isNotEmpty)
-      .toList();
+  static List<String> get homeSectionList =>
+      homeSections
+          .split(',')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
 }

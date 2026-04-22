@@ -26,7 +26,7 @@ class ArtistCard extends StatefulWidget {
 class _ArtistCardState extends State<ArtistCard> {
   bool _hovered = false;
 
-  double get _width  => widget.compact ? 120.0 : 200.0;
+  double get _width => widget.compact ? 120.0 : 200.0;
   double get _height => widget.compact ? 160.0 : 260.0;
 
   @override
@@ -34,7 +34,7 @@ class _ArtistCardState extends State<ArtistCard> {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
-      onExit:  (_) => setState(() => _hovered = false),
+      onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
@@ -44,9 +44,10 @@ class _ArtistCardState extends State<ArtistCard> {
           decoration: BoxDecoration(
             color: EColors.surfaceVariant,
             border: Border.all(
-              color: widget.isSelected
-                  ? EColors.primary
-                  : _hovered
+              color:
+                  widget.isSelected
+                      ? EColors.primary
+                      : _hovered
                       ? EColors.onSurfaceMuted
                       : EColors.divider,
               width: widget.isSelected ? 1.0 : 0.5,
@@ -59,10 +60,11 @@ class _ArtistCardState extends State<ArtistCard> {
                   child: CachedNetworkImage(
                     imageUrl: widget.artist.photoUrl!,
                     fit: BoxFit.cover,
-                    placeholder: (_, _) =>
-                        Container(color: EColors.surfaceVariant),
-                    errorWidget: (_, _, _) =>
-                        _PhotoPlaceholder(name: widget.artist.name),
+                    placeholder:
+                        (_, _) => Container(color: EColors.surfaceVariant),
+                    errorWidget:
+                        (_, _, _) =>
+                            _PhotoPlaceholder(name: widget.artist.name),
                   ),
                 )
               else
@@ -71,10 +73,13 @@ class _ArtistCardState extends State<ArtistCard> {
                 ),
               // Bottom overlay
               Positioned(
-                bottom: 0, left: 0, right: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
                 child: Container(
-                  padding:
-                      EdgeInsets.all(widget.compact ? ESpacing.sm : ESpacing.md),
+                  padding: EdgeInsets.all(
+                    widget.compact ? ESpacing.sm : ESpacing.md,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
@@ -91,17 +96,20 @@ class _ArtistCardState extends State<ArtistCard> {
                     children: [
                       Text(
                         widget.artist.name,
-                        style: widget.compact
-                            ? ETextStyles.labelSm
-                            : ETextStyles.h4,
+                        style:
+                            widget.compact
+                                ? ETextStyles.labelSm
+                                : ETextStyles.h4,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (!widget.compact && widget.artist.specialty.isNotEmpty) ...[
+                      if (!widget.compact &&
+                          widget.artist.specialty.isNotEmpty) ...[
                         const SizedBox(height: ESpacing.xs),
                         Text(
                           widget.artist.specialty.toUpperCase(),
                           style: ETextStyles.labelSm.copyWith(
-                              color: EColors.primaryMedium),
+                            color: EColors.primaryMedium,
+                          ),
                         ),
                       ],
                     ],
@@ -111,9 +119,7 @@ class _ArtistCardState extends State<ArtistCard> {
               // Corner accents when selected
               if (widget.isSelected)
                 Positioned.fill(
-                  child: CustomPaint(
-                    painter: _CornerAccentPainter(),
-                  ),
+                  child: CustomPaint(painter: _CornerAccentPainter()),
                 ),
             ],
           ),
@@ -134,8 +140,7 @@ class _PhotoPlaceholder extends StatelessWidget {
       child: Center(
         child: Text(
           name.isNotEmpty ? name[0].toUpperCase() : '?',
-          style: ETextStyles.displayMd.copyWith(
-              color: EColors.onSurfaceMuted),
+          style: ETextStyles.displayMd.copyWith(color: EColors.onSurfaceMuted),
         ),
       ),
     );
@@ -145,17 +150,24 @@ class _PhotoPlaceholder extends StatelessWidget {
 class _CornerAccentPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = EColors.primary
-      ..strokeWidth = 1.5
-      ..style = PaintingStyle.stroke;
+    final paint =
+        Paint()
+          ..color = EColors.primary
+          ..strokeWidth = 1.5
+          ..style = PaintingStyle.stroke;
     const arm = 16.0;
     canvas.drawLine(Offset.zero, const Offset(arm, 0), paint);
     canvas.drawLine(Offset.zero, const Offset(0, arm), paint);
-    canvas.drawLine(Offset(size.width, size.height),
-        Offset(size.width - arm, size.height), paint);
-    canvas.drawLine(Offset(size.width, size.height),
-        Offset(size.width, size.height - arm), paint);
+    canvas.drawLine(
+      Offset(size.width, size.height),
+      Offset(size.width - arm, size.height),
+      paint,
+    );
+    canvas.drawLine(
+      Offset(size.width, size.height),
+      Offset(size.width, size.height - arm),
+      paint,
+    );
   }
 
   @override
@@ -185,7 +197,7 @@ class _AnyArtistCardState extends State<AnyArtistCard> {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
-      onExit:  (_) => setState(() => _hovered = false),
+      onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
@@ -193,9 +205,10 @@ class _AnyArtistCardState extends State<AnyArtistCard> {
           width: 200.0,
           height: 260.0,
           decoration: BoxDecoration(
-            color: widget.isSelected
-                ? EColors.primary.withValues(alpha: 0.08)
-                : _hovered
+            color:
+                widget.isSelected
+                    ? EColors.primary.withValues(alpha: 0.08)
+                    : _hovered
                     ? EColors.surfaceVariant
                     : EColors.secondary,
             border: Border.all(
@@ -209,25 +222,26 @@ class _AnyArtistCardState extends State<AnyArtistCard> {
               children: [
                 Icon(
                   Icons.shuffle_rounded,
-                  color: widget.isSelected
-                      ? EColors.primary
-                      : EColors.onSurfaceMuted,
+                  color:
+                      widget.isSelected
+                          ? EColors.primary
+                          : EColors.onSurfaceMuted,
                   size: ESpacing.xl,
                 ),
                 const SizedBox(height: ESpacing.md),
                 Text(
                   'ANY ARTIST',
                   style: ETextStyles.h4.copyWith(
-                    color: widget.isSelected
-                        ? EColors.primary
-                        : EColors.onSurface,
+                    color:
+                        widget.isSelected ? EColors.primary : EColors.onSurface,
                   ),
                 ),
                 const SizedBox(height: ESpacing.xs),
                 Text(
                   "Show me who's available",
                   style: ETextStyles.bodySm.copyWith(
-                      color: EColors.onSurfaceMuted),
+                    color: EColors.onSurfaceMuted,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],

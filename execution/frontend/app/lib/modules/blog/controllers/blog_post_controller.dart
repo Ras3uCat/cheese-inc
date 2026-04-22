@@ -4,9 +4,9 @@ import '../models/blog_post_model.dart';
 
 /// Loads a single published post by slug (from Get.parameters['slug']).
 class BlogPostController extends GetxController {
-  final post      = Rxn<BlogPostModel>();
+  final post = Rxn<BlogPostModel>();
   final isLoading = false.obs;
-  final notFound  = false.obs;
+  final notFound = false.obs;
 
   @override
   void onInit() {
@@ -17,14 +17,15 @@ class BlogPostController extends GetxController {
 
   Future<void> _load(String slug) async {
     isLoading.value = true;
-    notFound.value  = false;
+    notFound.value = false;
     try {
-      final row = await SupabaseService.client
-          .from('blog_posts')
-          .select()
-          .eq('slug', slug)
-          .eq('is_published', true)
-          .single();
+      final row =
+          await SupabaseService.client
+              .from('blog_posts')
+              .select()
+              .eq('slug', slug)
+              .eq('is_published', true)
+              .single();
       post.value = BlogPostModel.fromMap(row);
     } catch (_) {
       notFound.value = true;

@@ -17,14 +17,15 @@ class CalendarSyncWidget extends StatelessWidget {
       '${AppEnv.supabaseUrl}/functions/v1/staff-calendar?token=$token';
 
   Uri _gcalUri(String token) => Uri.parse(
-      'https://calendar.google.com/calendar/r/settings/addbyurl'
-      '?url=${Uri.encodeComponent(_feedUrl(token))}');
+    'https://calendar.google.com/calendar/r/settings/addbyurl'
+    '?url=${Uri.encodeComponent(_feedUrl(token))}',
+  );
 
   void _copy(BuildContext context, String token) {
     Clipboard.setData(ClipboardData(text: _feedUrl(token)));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Calendar URL copied!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Calendar URL copied!')));
   }
 
   Future<void> _openGcal(String token) async {
@@ -35,29 +36,33 @@ class CalendarSyncWidget extends StatelessWidget {
   }
 
   void _confirmRegenerate(BuildContext context, StaffController ctrl) {
-    Get.dialog(AlertDialog(
-      backgroundColor: EColors.surface,
-      title: Text('Regenerate token?', style: ETextStyles.h3),
-      content: Text(
-        'Your existing calendar subscriptions will stop updating. '
-        'You will need to re-subscribe with the new URL.',
-        style: ETextStyles.body,
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: EColors.surface,
+        title: Text('Regenerate token?', style: ETextStyles.h3),
+        content: Text(
+          'Your existing calendar subscriptions will stop updating. '
+          'You will need to re-subscribe with the new URL.',
+          style: ETextStyles.body,
+        ),
+        actions: [
+          TextButton(
+            onPressed: Get.back,
+            child: Text('Cancel', style: ETextStyles.label),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              ctrl.regenerateCalendarToken();
+            },
+            child: Text(
+              'Regenerate',
+              style: ETextStyles.label.copyWith(color: EColors.error),
+            ),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: Get.back,
-          child: Text('Cancel', style: ETextStyles.label),
-        ),
-        TextButton(
-          onPressed: () {
-            Get.back();
-            ctrl.regenerateCalendarToken();
-          },
-          child: Text('Regenerate',
-              style: ETextStyles.label.copyWith(color: EColors.error)),
-        ),
-      ],
-    ));
+    );
   }
 
   @override
@@ -71,12 +76,17 @@ class CalendarSyncWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            Icon(Icons.calendar_today_outlined,
-                size: 18, color: EColors.primary),
-            const SizedBox(width: ESpacing.sm),
-            Text('Subscribe to Calendar', style: ETextStyles.h4),
-          ]),
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_today_outlined,
+                size: 18,
+                color: EColors.primary,
+              ),
+              const SizedBox(width: ESpacing.sm),
+              Text('Subscribe to Calendar', style: ETextStyles.h4),
+            ],
+          ),
           const SizedBox(height: ESpacing.xs),
           Text(
             'Add your bookings to Google Calendar, Apple Calendar, or Outlook.',
@@ -89,8 +99,10 @@ class CalendarSyncWidget extends StatelessWidget {
             }
             final token = ctrl.calendarToken.value;
             if (token == null) {
-              return Text('Unable to load calendar URL.',
-                  style: ETextStyles.bodySmMuted);
+              return Text(
+                'Unable to load calendar URL.',
+                style: ETextStyles.bodySmMuted,
+              );
             }
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,15 +110,18 @@ class CalendarSyncWidget extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: ESpacing.md, vertical: ESpacing.sm),
+                    horizontal: ESpacing.md,
+                    vertical: ESpacing.sm,
+                  ),
                   decoration: BoxDecoration(
-                    color:  EColors.surfaceVariant,
+                    color: EColors.surfaceVariant,
                     border: Border.all(color: EColors.divider),
                   ),
                   child: SelectableText(
                     _feedUrl(token),
-                    style: ETextStyles.caption
-                        .copyWith(fontFamily: 'monospace'),
+                    style: ETextStyles.caption.copyWith(
+                      fontFamily: 'monospace',
+                    ),
                   ),
                 ),
                 const SizedBox(height: ESpacing.sm),
@@ -123,7 +138,9 @@ class CalendarSyncWidget extends StatelessWidget {
                         side: BorderSide(color: EColors.primary),
                         textStyle: ETextStyles.labelSm,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: ESpacing.md, vertical: ESpacing.xs),
+                          horizontal: ESpacing.md,
+                          vertical: ESpacing.xs,
+                        ),
                         shape: const RoundedRectangleBorder(),
                       ),
                     ),
@@ -136,7 +153,9 @@ class CalendarSyncWidget extends StatelessWidget {
                         side: BorderSide(color: EColors.divider),
                         textStyle: ETextStyles.labelSm,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: ESpacing.md, vertical: ESpacing.xs),
+                          horizontal: ESpacing.md,
+                          vertical: ESpacing.xs,
+                        ),
                         shape: const RoundedRectangleBorder(),
                       ),
                     ),
@@ -146,7 +165,9 @@ class CalendarSyncWidget extends StatelessWidget {
                         foregroundColor: EColors.onSurfaceMuted,
                         textStyle: ETextStyles.labelSm,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: ESpacing.sm, vertical: ESpacing.xs),
+                          horizontal: ESpacing.sm,
+                          vertical: ESpacing.xs,
+                        ),
                       ),
                       child: const Text('Regenerate token'),
                     ),

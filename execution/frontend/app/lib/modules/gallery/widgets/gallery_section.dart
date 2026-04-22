@@ -2,64 +2,38 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/theme/e_colors.dart';
+import '../../../core/theme/e_spacing.dart';
 import '../../../core/theme/e_text_styles.dart';
+import '../../../core/widgets/inertia_carousel.dart';
+import '../../../core/widgets/shimmer_placeholder.dart';
+import '../../../core/widgets/tilt_card.dart';
 import '../controllers/gallery_controller.dart';
 import '../models/gallery_photo_model.dart';
 
 class GallerySection extends GetView<GalleryController> {
-  const GallerySection({super.key});
+  const GallerySection({super.key, this.isHomepage = false});
+
+  final bool isHomepage;
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Padding(
-          padding: EdgeInsets.symmetric(vertical: 48),
-          child: Center(child: CircularProgressIndicator()),
+        return isHomepage
+            ? const SizedBox.shrink()
+            : const Padding(
+              padding: EdgeInsets.symmetric(vertical: 48),
+              child: Center(child: CircularProgressIndicator()),
+            );
+      }
+      if (controller.photos.isEmpty) return const SizedBox.shrink();
+      if (isHomepage) {
+        return _HomepageGallery(
+          photos: controller.photos.take(8).toList(),
+          onTap: (i) => _showLightbox(context, i),
         );
       }
-      if (controller.photos.isEmpty) {
-        return const SizedBox.shrink();
-      }
-      return LayoutBuilder(
-        builder: (_, constraints) {
-          final cols = constraints.maxWidth > 900
-              ? 4
-              : constraints.maxWidth > 600
-                  ? 3
-                  : 2;
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: cols,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: controller.photos.length,
-            itemBuilder: (ctx, i) {
-              final photo = controller.photos[i];
-              return GestureDetector(
-                onTap: () => _showLightbox(ctx, i),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CachedNetworkImage(
-                    imageUrl: photo.publicUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (_, _) =>
-                        Container(color: EColors.surfaceVariant),
-                    errorWidget: (_, _, _) => Container(
-                      color: EColors.surfaceVariant,
-                      child: const Icon(Icons.broken_image, color: Colors.grey),
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      );
+      return _FullGallery(photos: controller.photos, onTap: (i) => _showLightbox(context, i));
     });
   }
 
@@ -67,9 +41,104 @@ class GallerySection extends GetView<GalleryController> {
     showDialog<void>(
       context: context,
       barrierColor: Colors.black87,
-      builder: (_) => _LightboxDialog(
-        photos: controller.photos,
-        initialIndex: initialIndex,
+      builder: (_) => _LightboxDialog(photos: controller.photos, initialIndex: initialIndex),
+    );
+  }
+}
+
+// ── Homepage gallery: 4-col grid on desktop, InertiaCarousel on mobile ────────
+
+class _HomepageGallery extends StatelessWidget {
+  const _HomepageGallery({required this.photos, required this.onTap});
+
+  final List<GalleryPhotoModel> photos;
+  final void Function(int) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
+
+    if (isMobile) {
+      return InertiaCarousel(
+        itemCount: photos.length,
+        itemBuilder: (ctx, i) => _GalleryCell(photo: photos[i], index: i, onTap: () => onTap(i)),
+      );
+    }
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        crossAxisSpacing: ESpacing.xs,
+        mainAxisSpacing: ESpacing.xs,
+      ),
+      itemCount: photos.length,
+      itemBuilder: (ctx, i) => _GalleryCell(photo: photos[i], index: i, onTap: () => onTap(i)),
+    );
+  }
+}
+
+// ── Full gallery page: responsive grid ────────────────────────────────────────
+
+class _FullGallery extends StatelessWidget {
+  const _FullGallery({required this.photos, required this.onTap});
+
+  final List<GalleryPhotoModel> photos;
+  final void Function(int) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        final cols =
+            constraints.maxWidth > 900
+                ? 4
+                : constraints.maxWidth > 600
+                ? 3
+                : 2;
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: cols,
+            crossAxisSpacing: ESpacing.xs,
+            mainAxisSpacing: ESpacing.xs,
+          ),
+          itemCount: photos.length,
+          itemBuilder: (ctx, i) => _GalleryCell(photo: photos[i], index: i, onTap: () => onTap(i)),
+        );
+      },
+    );
+  }
+}
+
+// ── Individual gallery cell ────────────────────────────────────────────────────
+
+class _GalleryCell extends StatelessWidget {
+  const _GalleryCell({required this.photo, required this.index, required this.onTap});
+
+  final GalleryPhotoModel photo;
+  final int index;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return TiltCard(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AspectRatio(
+          aspectRatio: 1 / 1,
+          child: CachedNetworkImage(
+            imageUrl: photo.publicUrl,
+            fit: BoxFit.cover,
+            // TODO(image-gen): gallery-item-$index
+            placeholder:
+                (_, _) => ShimmerPlaceholder(aspectRatio: 1 / 1, slot: 'gallery-item-$index'),
+            errorWidget:
+                (_, _, _) => ShimmerPlaceholder(aspectRatio: 1 / 1, slot: 'gallery-item-$index'),
+          ),
+        ),
       ),
     );
   }
@@ -78,10 +147,7 @@ class GallerySection extends GetView<GalleryController> {
 // ── Lightbox ──────────────────────────────────────────────────────────────────
 
 class _LightboxDialog extends StatefulWidget {
-  const _LightboxDialog({
-    required this.photos,
-    required this.initialIndex,
-  });
+  const _LightboxDialog({required this.photos, required this.initialIndex});
   final List<GalleryPhotoModel> photos;
   final int initialIndex;
 
@@ -97,7 +163,7 @@ class _LightboxDialogState extends State<_LightboxDialog> {
   void initState() {
     super.initState();
     _current = widget.initialIndex;
-    _page    = PageController(initialPage: widget.initialIndex);
+    _page = PageController(initialPage: widget.initialIndex);
   }
 
   @override
@@ -113,32 +179,28 @@ class _LightboxDialogState extends State<_LightboxDialog> {
       backgroundColor: Colors.transparent,
       child: Stack(
         children: [
-          // Tap background to close
           GestureDetector(
             onTap: () => Navigator.pop(context),
             child: Container(color: Colors.transparent),
           ),
-
-          // Swipeable photo viewer
           Center(
             child: PageView.builder(
               controller: _page,
               itemCount: widget.photos.length,
               onPageChanged: (i) => setState(() => _current = i),
-              itemBuilder: (_, i) => InteractiveViewer(
-                child: CachedNetworkImage(
-                  imageUrl: widget.photos[i].publicUrl,
-                  fit: BoxFit.contain,
-                  placeholder: (_, _) =>
-                      const Center(child: CircularProgressIndicator()),
-                  errorWidget: (_, _, _) =>
-                      const Icon(Icons.broken_image, color: Colors.white, size: 48),
-                ),
-              ),
+              itemBuilder:
+                  (_, i) => InteractiveViewer(
+                    child: CachedNetworkImage(
+                      imageUrl: widget.photos[i].publicUrl,
+                      fit: BoxFit.contain,
+                      placeholder: (_, _) => const Center(child: CircularProgressIndicator()),
+                      errorWidget:
+                          (_, _, _) =>
+                              const Icon(Icons.broken_image, color: Colors.white, size: 48),
+                    ),
+                  ),
             ),
           ),
-
-          // Close button
           Positioned(
             top: 16,
             right: 16,
@@ -147,8 +209,6 @@ class _LightboxDialogState extends State<_LightboxDialog> {
               onPressed: () => Navigator.pop(context),
             ),
           ),
-
-          // Caption
           if (photo.caption != null)
             Positioned(
               bottom: 32,
@@ -156,8 +216,7 @@ class _LightboxDialogState extends State<_LightboxDialog> {
               right: 0,
               child: Center(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(8),
@@ -169,8 +228,6 @@ class _LightboxDialogState extends State<_LightboxDialog> {
                 ),
               ),
             ),
-
-          // Prev arrow
           if (widget.photos.length > 1 && _current > 0)
             Positioned(
               left: 8,
@@ -178,31 +235,28 @@ class _LightboxDialogState extends State<_LightboxDialog> {
               bottom: 0,
               child: Center(
                 child: IconButton(
-                  icon: const Icon(Icons.chevron_left,
-                      color: Colors.white, size: 40),
-                  onPressed: () => _page.previousPage(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.ease,
-                  ),
+                  icon: const Icon(Icons.chevron_left, color: Colors.white, size: 40),
+                  onPressed:
+                      () => _page.previousPage(
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeOutCubic,
+                      ),
                 ),
               ),
             ),
-
-          // Next arrow
-          if (widget.photos.length > 1 &&
-              _current < widget.photos.length - 1)
+          if (widget.photos.length > 1 && _current < widget.photos.length - 1)
             Positioned(
               right: 8,
               top: 0,
               bottom: 0,
               child: Center(
                 child: IconButton(
-                  icon: const Icon(Icons.chevron_right,
-                      color: Colors.white, size: 40),
-                  onPressed: () => _page.nextPage(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.ease,
-                  ),
+                  icon: const Icon(Icons.chevron_right, color: Colors.white, size: 40),
+                  onPressed:
+                      () => _page.nextPage(
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeOutCubic,
+                      ),
                 ),
               ),
             ),

@@ -40,11 +40,12 @@ class CourseCatalogView extends GetView<CourseCatalogController> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: isDesktop
-                  ? 3
-                  : (MediaQuery.sizeOf(context).width > ESpacing.mobileBreak
-                        ? 2
-                        : 1),
+              crossAxisCount:
+                  isDesktop
+                      ? 3
+                      : (MediaQuery.sizeOf(context).width > ESpacing.mobileBreak
+                          ? 2
+                          : 1),
               crossAxisSpacing: ESpacing.lg,
               mainAxisSpacing: ESpacing.lg,
               childAspectRatio: 0.85,

@@ -74,8 +74,8 @@ class CourseEnrollmentsView extends GetView<CourseEnrollmentsController> {
                       children: [
                         if (e.status != 'active')
                           ElevatedButton(
-                            onPressed: () =>
-                                controller.updateStatus(e.id, 'active'),
+                            onPressed:
+                                () => controller.updateStatus(e.id, 'active'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
@@ -86,8 +86,9 @@ class CourseEnrollmentsView extends GetView<CourseEnrollmentsController> {
                           const SizedBox(width: ESpacing.sm),
                         if (e.status != 'cancelled')
                           OutlinedButton(
-                            onPressed: () =>
-                                controller.updateStatus(e.id, 'cancelled'),
+                            onPressed:
+                                () =>
+                                    controller.updateStatus(e.id, 'cancelled'),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.red,
                               side: const BorderSide(color: Colors.red),

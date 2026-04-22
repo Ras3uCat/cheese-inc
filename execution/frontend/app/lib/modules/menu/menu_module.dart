@@ -11,20 +11,20 @@ class MenuModule implements AppModule {
 
   @override
   NavItem get navItem => const NavItem(
-        label: 'Menu',
-        icon: Icons.menu_book_outlined,
-        route: ERoutes.menu,
-      );
+    label: 'Menu',
+    icon: Icons.menu_book_outlined,
+    route: ERoutes.menu,
+  );
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.menu,
-          page: () => const MenuCatalogView(),
-          binding: MenuBinding(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.menu,
+      page: () => const MenuCatalogView(),
+      binding: MenuBinding(),
+      transition: Transition.fadeIn,
+    ),
+  ];
 
   @override
   Bindings? get binding => null;

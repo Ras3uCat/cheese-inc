@@ -22,38 +22,39 @@ class TimeSlotChip extends StatefulWidget {
 class _TimeSlotChipState extends State<TimeSlotChip> {
   bool _hovered = false;
 
-  bool get _isBooked    => widget.slot.isBooked;
-  bool get _isSelected  => widget.isSelected;
+  bool get _isBooked => widget.slot.isBooked;
+  bool get _isSelected => widget.isSelected;
   bool get _isAvailable => !_isBooked;
 
   Color get _bgColor {
     if (_isSelected) return EColors.primary.withValues(alpha: 0.1);
-    if (_isBooked)   return EColors.divider;
-    if (_hovered)    return EColors.surfaceVariant;
+    if (_isBooked) return EColors.divider;
+    if (_hovered) return EColors.surfaceVariant;
     return EColors.surface;
   }
 
   Color get _borderColor {
     if (_isSelected) return EColors.primary;
-    if (_isBooked)   return EColors.divider;
-    if (_hovered)    return EColors.onSurfaceMuted.withValues(alpha: 0.4);
+    if (_isBooked) return EColors.divider;
+    if (_hovered) return EColors.onSurfaceMuted.withValues(alpha: 0.4);
     return EColors.divider;
   }
 
   Color get _timeColor {
     if (_isSelected) return EColors.primary;
-    if (_isBooked)   return EColors.onSurfaceMuted.withValues(alpha: 0.35);
+    if (_isBooked) return EColors.onSurfaceMuted.withValues(alpha: 0.35);
     return EColors.onSurface;
   }
 
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      cursor: _isBooked
-          ? SystemMouseCursors.forbidden
-          : SystemMouseCursors.click,
-      onEnter: (_) { if (_isAvailable) setState(() => _hovered = true); },
-      onExit:  (_) => setState(() => _hovered = false),
+      cursor:
+          _isBooked ? SystemMouseCursors.forbidden : SystemMouseCursors.click,
+      onEnter: (_) {
+        if (_isAvailable) setState(() => _hovered = true);
+      },
+      onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: _isBooked ? null : widget.onTap,
         child: AnimatedContainer(
@@ -77,11 +78,13 @@ class _TimeSlotChipState extends State<TimeSlotChip> {
                       style: ETextStyles.h4.copyWith(
                         color: _timeColor,
                         fontSize: 16,
-                        decoration: _isBooked
-                            ? TextDecoration.lineThrough
-                            : TextDecoration.none,
-                        decorationColor:
-                            EColors.onSurfaceMuted.withValues(alpha: 0.4),
+                        decoration:
+                            _isBooked
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                        decorationColor: EColors.onSurfaceMuted.withValues(
+                          alpha: 0.4,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -92,9 +95,10 @@ class _TimeSlotChipState extends State<TimeSlotChip> {
                               : 'UNAVAILABLE')
                           : '→ ${widget.slot.formattedEndTime}',
                       style: ETextStyles.duration.copyWith(
-                        color: _isBooked
-                            ? EColors.error.withValues(alpha: 0.6)
-                            : EColors.onSurfaceMuted,
+                        color:
+                            _isBooked
+                                ? EColors.error.withValues(alpha: 0.6)
+                                : EColors.onSurfaceMuted,
                         fontSize: 10,
                         letterSpacing: _isBooked ? 1.5 : 0,
                       ),
@@ -117,9 +121,10 @@ class _TimeSlotChipState extends State<TimeSlotChip> {
 class _DiagonalLinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = EColors.divider.withValues(alpha: 0.5)
-      ..strokeWidth = 0.5;
+    final paint =
+        Paint()
+          ..color = EColors.divider.withValues(alpha: 0.5)
+          ..strokeWidth = 0.5;
     canvas.drawLine(Offset(0, size.height), Offset(size.width, 0), paint);
   }
 

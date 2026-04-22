@@ -5,7 +5,7 @@ import '../../core/config/app_env.dart';
 /// AppModule — contract every feature module must implement.
 abstract class AppModule {
   String get moduleId;
-  NavItem? get navItem;      // null = not shown in nav (e.g. auth)
+  NavItem? get navItem; // null = not shown in nav (e.g. auth)
   List<GetPage> get routes;
   Bindings? get binding;
 }

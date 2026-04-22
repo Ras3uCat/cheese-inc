@@ -10,9 +10,10 @@ String _generateSessionId() {
 }
 
 class ChatbotController extends GetxController {
-  final messages  = <ChatbotMessage>[].obs;
+  final messages = <ChatbotMessage>[].obs;
   final isLoading = false.obs;
-  final isOpen    = false.obs;
+  final isOpen = false.obs;
+  final currentRoute = ''.obs;
 
   final String sessionId = _generateSessionId();
 
@@ -25,17 +26,11 @@ class ChatbotController extends GetxController {
     isLoading.value = true;
 
     try {
-      final history = messages
-          .map((m) => m.toJson())
-          .toList();
+      final history = messages.map((m) => m.toJson()).toList();
 
       final res = await SupabaseService.client.functions.invoke(
         'chat',
-        body: {
-          'message':    text.trim(),
-          'session_id': sessionId,
-          'history':    history,
-        },
+        body: {'message': text.trim(), 'session_id': sessionId, 'history': history},
       );
 
       final reply = (res.data as Map<String, dynamic>?)?['reply'] as String? ?? '';
@@ -43,10 +38,12 @@ class ChatbotController extends GetxController {
         messages.add(ChatbotMessage(role: 'assistant', content: reply));
       }
     } catch (_) {
-      messages.add(const ChatbotMessage(
-        role: 'assistant',
-        content: 'Sorry, something went wrong. Please try again.',
-      ));
+      messages.add(
+        const ChatbotMessage(
+          role: 'assistant',
+          content: 'Sorry, something went wrong. Please try again.',
+        ),
+      );
     } finally {
       isLoading.value = false;
     }

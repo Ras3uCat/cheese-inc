@@ -63,15 +63,20 @@ class _ConfigSectionState extends State<_ConfigSection> {
     super.initState();
     final c = widget.controller.config;
     _cancelHours = TextEditingController(
-        text: (c['cancellation_hours'] ?? 24).toString());
+      text: (c['cancellation_hours'] ?? 24).toString(),
+    );
     _cancelRefund = TextEditingController(
-        text: (c['cancellation_refund_pct'] ?? 100).toString());
-    _buffer   = TextEditingController(
-        text: (c['buffer_minutes'] ?? 0).toString());
+      text: (c['cancellation_refund_pct'] ?? 100).toString(),
+    );
+    _buffer = TextEditingController(
+      text: (c['buffer_minutes'] ?? 0).toString(),
+    );
     _interval = TextEditingController(
-        text: (c['booking_interval_minutes'] ?? 20).toString());
+      text: (c['booking_interval_minutes'] ?? 20).toString(),
+    );
     _depositPct = TextEditingController(
-        text: (c['deposit_pct'] ?? 100).toString());
+      text: (c['deposit_pct'] ?? 100).toString(),
+    );
   }
 
   @override
@@ -89,57 +94,85 @@ class _ConfigSectionState extends State<_ConfigSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          Text('Booking Rules', style: ETextStyles.h3),
-          const Spacer(),
-          ElevatedButton(
-            onPressed: _save,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: EColors.primary,
-              foregroundColor: EColors.secondary,
-              shape: const RoundedRectangleBorder(),
+        Row(
+          children: [
+            Text('Booking Rules', style: ETextStyles.h3),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: _save,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: EColors.primary,
+                foregroundColor: EColors.secondary,
+                shape: const RoundedRectangleBorder(),
+              ),
+              child: Text('SAVE', style: ETextStyles.button),
             ),
-            child: Text('SAVE', style: ETextStyles.button),
-          ),
-        ]),
+          ],
+        ),
         const SizedBox(height: ESpacing.md),
-        Row(children: [
-          Expanded(child: _NumField(ctrl: _cancelHours,
-              label: 'Cancellation window (hrs)')),
-          const SizedBox(width: ESpacing.md),
-          Expanded(child: _NumField(ctrl: _cancelRefund,
-              label: 'Refund on cancel (%)')),
-        ]),
+        Row(
+          children: [
+            Expanded(
+              child: _NumField(
+                ctrl: _cancelHours,
+                label: 'Cancellation window (hrs)',
+              ),
+            ),
+            const SizedBox(width: ESpacing.md),
+            Expanded(
+              child: _NumField(
+                ctrl: _cancelRefund,
+                label: 'Refund on cancel (%)',
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: ESpacing.md),
-        Row(children: [
-          Expanded(child: _NumField(ctrl: _buffer,
-              label: 'Buffer between bookings (min)')),
-          const SizedBox(width: ESpacing.md),
-          Expanded(child: _NumField(ctrl: _interval,
-              label: 'Slot interval (min)')),
-        ]),
+        Row(
+          children: [
+            Expanded(
+              child: _NumField(
+                ctrl: _buffer,
+                label: 'Buffer between bookings (min)',
+              ),
+            ),
+            const SizedBox(width: ESpacing.md),
+            Expanded(
+              child: _NumField(ctrl: _interval, label: 'Slot interval (min)'),
+            ),
+          ],
+        ),
         const SizedBox(height: ESpacing.md),
-        Row(children: [
-          Expanded(child: _NumField(ctrl: _depositPct,
-              label: 'Deposit % (0 = pay at appt, 100 = full now)')),
-          const SizedBox(width: ESpacing.md),
-          const Expanded(child: SizedBox.shrink()),
-        ]),
+        Row(
+          children: [
+            Expanded(
+              child: _NumField(
+                ctrl: _depositPct,
+                label: 'Deposit % (0 = pay at appt, 100 = full now)',
+              ),
+            ),
+            const SizedBox(width: ESpacing.md),
+            const Expanded(child: SizedBox.shrink()),
+          ],
+        ),
       ],
     );
   }
 
   Future<void> _save() async {
     await widget.controller.saveConfig({
-      'cancellation_hours':       int.tryParse(_cancelHours.text) ?? 24,
-      'cancellation_refund_pct':  int.tryParse(_cancelRefund.text) ?? 100,
-      'buffer_minutes':           int.tryParse(_buffer.text) ?? 0,
+      'cancellation_hours': int.tryParse(_cancelHours.text) ?? 24,
+      'cancellation_refund_pct': int.tryParse(_cancelRefund.text) ?? 100,
+      'buffer_minutes': int.tryParse(_buffer.text) ?? 0,
       'booking_interval_minutes': int.tryParse(_interval.text) ?? 20,
-      'deposit_pct':              (int.tryParse(_depositPct.text))?.clamp(0, 100) ?? 100,
+      'deposit_pct': (int.tryParse(_depositPct.text))?.clamp(0, 100) ?? 100,
     });
-    Get.snackbar('Saved', 'Business rules updated.',
-        backgroundColor: EColors.primary.withValues(alpha: 0.9),
-        colorText: EColors.secondary);
+    Get.snackbar(
+      'Saved',
+      'Business rules updated.',
+      backgroundColor: EColors.primary.withValues(alpha: 0.9),
+      colorText: EColors.secondary,
+    );
   }
 }
 
@@ -159,7 +192,8 @@ class _HoursSection extends StatelessWidget {
         ...List.generate(7, (i) {
           final weekday = i + 1;
           final row = controller.businessHours.firstWhereOrNull(
-              (h) => h['weekday'] == weekday);
+            (h) => h['weekday'] == weekday,
+          );
           if (row == null) return const SizedBox.shrink();
           return _HourRow(
             label: _days[i],
@@ -198,10 +232,12 @@ class _HourRowState extends State<_HourRow> {
   void initState() {
     super.initState();
     _closed = widget.row['closed'] as bool? ?? false;
-    _open   = TextEditingController(
-        text: (widget.row['open_time'] as String?)?.substring(0, 5) ?? '09:00');
-    _close  = TextEditingController(
-        text: (widget.row['close_time'] as String?)?.substring(0, 5) ?? '17:00');
+    _open = TextEditingController(
+      text: (widget.row['open_time'] as String?)?.substring(0, 5) ?? '09:00',
+    );
+    _close = TextEditingController(
+      text: (widget.row['close_time'] as String?)?.substring(0, 5) ?? '17:00',
+    );
   }
 
   @override
@@ -215,65 +251,69 @@ class _HourRowState extends State<_HourRow> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: ESpacing.sm),
-      child: Row(children: [
-        SizedBox(
-          width: 36,
-          child: Text(widget.label, style: ETextStyles.label),
-        ),
-        Switch(
-          value: !_closed,
-          activeTrackColor: EColors.primary,
-          onChanged: (v) => setState(() => _closed = !v),
-        ),
-        if (!_closed) ...[
-          const SizedBox(width: ESpacing.sm),
+      child: Row(
+        children: [
           SizedBox(
-            width: 72,
-            child: TextField(
-              controller: _open,
-              style: ETextStyles.bodySm,
-              decoration: InputDecoration(
-                isDense: true,
-                hintText: '09:00',
-                hintStyle: ETextStyles.bodySmMuted,
+            width: 36,
+            child: Text(widget.label, style: ETextStyles.label),
+          ),
+          Switch(
+            value: !_closed,
+            activeTrackColor: EColors.primary,
+            onChanged: (v) => setState(() => _closed = !v),
+          ),
+          if (!_closed) ...[
+            const SizedBox(width: ESpacing.sm),
+            SizedBox(
+              width: 72,
+              child: TextField(
+                controller: _open,
+                style: ETextStyles.bodySm,
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: '09:00',
+                  hintStyle: ETextStyles.bodySmMuted,
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: ESpacing.sm),
-            child: Text('–', style: ETextStyles.body),
-          ),
-          SizedBox(
-            width: 72,
-            child: TextField(
-              controller: _close,
-              style: ETextStyles.bodySm,
-              decoration: InputDecoration(
-                isDense: true,
-                hintText: '17:00',
-                hintStyle: ETextStyles.bodySmMuted,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: ESpacing.sm),
+              child: Text('–', style: ETextStyles.body),
+            ),
+            SizedBox(
+              width: 72,
+              child: TextField(
+                controller: _close,
+                style: ETextStyles.bodySm,
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: '17:00',
+                  hintStyle: ETextStyles.bodySmMuted,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: ESpacing.md),
-          TextButton(
-            onPressed: _save,
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: Size.zero,
+            const SizedBox(width: ESpacing.md),
+            TextButton(
+              onPressed: _save,
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+              ),
+              child: Text(
+                'SAVE',
+                style: ETextStyles.labelSm.copyWith(color: EColors.primary),
+              ),
             ),
-            child: Text('SAVE',
-                style: ETextStyles.labelSm.copyWith(color: EColors.primary)),
-          ),
+          ],
         ],
-      ]),
+      ),
     );
   }
 
   Future<void> _save() async {
     await widget.controller.saveBusinessHour(widget.weekday, {
-      'closed':     _closed,
-      'open_time':  _closed ? null : _open.text,
+      'closed': _closed,
+      'open_time': _closed ? null : _open.text,
       'close_time': _closed ? null : _close.text,
     });
   }

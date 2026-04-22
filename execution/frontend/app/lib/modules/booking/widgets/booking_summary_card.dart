@@ -13,7 +13,7 @@ class BookingSummaryCard extends GetView<BookingController> {
   Widget build(BuildContext context) {
     return Obx(() {
       final artist = controller.selectedArtist.value;
-      final slot   = controller.selectedSlot.value;
+      final slot = controller.selectedSlot.value;
       if (artist == null || slot == null) return const SizedBox.shrink();
 
       return Container(
@@ -29,97 +29,128 @@ class BookingSummaryCard extends GetView<BookingController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                  child: Text(artist.name,
-                      style: ETextStyles.h3,
-                      overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    artist.name,
+                    style: ETextStyles.h3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 const SizedBox(width: ESpacing.sm),
-                Text(slot.formattedDate,
-                    style: ETextStyles.label.copyWith(
-                        color: EColors.onSurfaceMuted)),
+                Text(
+                  slot.formattedDate,
+                  style: ETextStyles.label.copyWith(
+                    color: EColors.onSurfaceMuted,
+                  ),
+                ),
               ],
             ),
             if (artist.specialty.isNotEmpty) ...[
               const SizedBox(height: ESpacing.xs),
-              Text(artist.specialty.toUpperCase(),
-                  style: ETextStyles.overline),
+              Text(artist.specialty.toUpperCase(), style: ETextStyles.overline),
             ],
             const SizedBox(height: ESpacing.xs),
-            Text(slot.formattedTime,
-                style: ETextStyles.body.copyWith(color: EColors.primary)),
+            Text(
+              slot.formattedTime,
+              style: ETextStyles.body.copyWith(color: EColors.primary),
+            ),
             const SizedBox(height: ESpacing.lg),
             Divider(color: EColors.divider, thickness: 0.5, height: 1),
             const SizedBox(height: ESpacing.md),
             Obx(() {
               final pkgId = controller.selectedPackageId.value;
               if (pkgId == null) return const SizedBox.shrink();
-              final pkg = controller.packages
-                  .firstWhereOrNull((p) => p.id == pkgId);
+              final pkg = controller.packages.firstWhereOrNull(
+                (p) => p.id == pkgId,
+              );
               if (pkg == null) return const SizedBox.shrink();
               return Padding(
                 padding: const EdgeInsets.only(bottom: ESpacing.xs),
-                child: Row(children: [
-                  Icon(Icons.local_offer_outlined,
-                      size: 14, color: EColors.primary),
-                  const SizedBox(width: ESpacing.xs),
-                  Text(pkg.name,
-                      style: ETextStyles.labelSm
-                          .copyWith(color: EColors.primary)),
-                  if (pkg.discountPct > 0) ...[
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.local_offer_outlined,
+                      size: 14,
+                      color: EColors.primary,
+                    ),
                     const SizedBox(width: ESpacing.xs),
-                    Text('(${pkg.discountPct}% off)',
-                        style: ETextStyles.labelSm
-                            .copyWith(color: EColors.primary)),
+                    Text(
+                      pkg.name,
+                      style: ETextStyles.labelSm.copyWith(
+                        color: EColors.primary,
+                      ),
+                    ),
+                    if (pkg.discountPct > 0) ...[
+                      const SizedBox(width: ESpacing.xs),
+                      Text(
+                        '(${pkg.discountPct}% off)',
+                        style: ETextStyles.labelSm.copyWith(
+                          color: EColors.primary,
+                        ),
+                      ),
+                    ],
                   ],
-                ]),
+                ),
               );
             }),
-            ...controller.selectedServices.map((svc) => Padding(
-                  padding: const EdgeInsets.only(bottom: ESpacing.sm),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(svc.name, style: ETextStyles.body),
-                      Text(svc.formattedDuration,
-                          style: ETextStyles.duration),
-                    ],
-                  ),
-                )),
+            ...controller.selectedServices.map(
+              (svc) => Padding(
+                padding: const EdgeInsets.only(bottom: ESpacing.sm),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(svc.name, style: ETextStyles.body),
+                    Text(svc.formattedDuration, style: ETextStyles.duration),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: ESpacing.sm),
             Divider(color: EColors.divider, thickness: 0.5, height: 1),
             const SizedBox(height: ESpacing.md),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('TOTAL DURATION',
-                    style:
-                        ETextStyles.label.copyWith(color: EColors.onSurfaceMuted)),
-                Text(controller.formattedTotalDuration,
-                    style: ETextStyles.body),
+                Text(
+                  'TOTAL DURATION',
+                  style: ETextStyles.label.copyWith(
+                    color: EColors.onSurfaceMuted,
+                  ),
+                ),
+                Text(
+                  controller.formattedTotalDuration,
+                  style: ETextStyles.body,
+                ),
               ],
             ),
             const SizedBox(height: ESpacing.xs),
             Obx(() {
               final addons = Get.find<BookingAddonsController>();
-              final total  = controller.totalPrice;
+              final total = controller.totalPrice;
               final deposit = addons.depositDue(total);
               final hasDiscount = addons.hasDiscount;
-              final depositPct  = addons.depositPct.value;
+              final depositPct = addons.depositPct.value;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('TOTAL',
-                          style: ETextStyles.label.copyWith(
-                              color: EColors.onSurfaceMuted)),
-                      Text('\$${total.toStringAsFixed(2)}',
-                          style: hasDiscount
-                              ? ETextStyles.price.copyWith(
+                      Text(
+                        'TOTAL',
+                        style: ETextStyles.label.copyWith(
+                          color: EColors.onSurfaceMuted,
+                        ),
+                      ),
+                      Text(
+                        '\$${total.toStringAsFixed(2)}',
+                        style:
+                            hasDiscount
+                                ? ETextStyles.price.copyWith(
                                   decoration: TextDecoration.lineThrough,
-                                  color: EColors.onSurfaceMuted)
-                              : ETextStyles.price),
+                                  color: EColors.onSurfaceMuted,
+                                )
+                                : ETextStyles.price,
+                      ),
                     ],
                   ),
                   if (addons.hasVoucher) ...[
@@ -127,12 +158,18 @@ class BookingSummaryCard extends GetView<BookingController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('GIFT VOUCHER',
-                            style: ETextStyles.label.copyWith(
-                                color: EColors.primary)),
-                        Text('- \$${addons.giftDiscountDollars.toStringAsFixed(2)}',
-                            style: ETextStyles.body.copyWith(
-                                color: EColors.primary)),
+                        Text(
+                          'GIFT VOUCHER',
+                          style: ETextStyles.label.copyWith(
+                            color: EColors.primary,
+                          ),
+                        ),
+                        Text(
+                          '- \$${addons.giftDiscountDollars.toStringAsFixed(2)}',
+                          style: ETextStyles.body.copyWith(
+                            color: EColors.primary,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -141,12 +178,18 @@ class BookingSummaryCard extends GetView<BookingController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('LOYALTY POINTS',
-                            style: ETextStyles.label.copyWith(
-                                color: EColors.primary)),
-                        Text('- \$${addons.loyaltyDiscountDollars.toStringAsFixed(2)}',
-                            style: ETextStyles.body.copyWith(
-                                color: EColors.primary)),
+                        Text(
+                          'LOYALTY POINTS',
+                          style: ETextStyles.label.copyWith(
+                            color: EColors.primary,
+                          ),
+                        ),
+                        Text(
+                          '- \$${addons.loyaltyDiscountDollars.toStringAsFixed(2)}',
+                          style: ETextStyles.body.copyWith(
+                            color: EColors.primary,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -155,10 +198,16 @@ class BookingSummaryCard extends GetView<BookingController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('GRATUITY',
-                            style: ETextStyles.label.copyWith(color: EColors.onSurfaceMuted)),
-                        Text('+ \$${addons.tipDollars.toStringAsFixed(2)}',
-                            style: ETextStyles.body),
+                        Text(
+                          'GRATUITY',
+                          style: ETextStyles.label.copyWith(
+                            color: EColors.onSurfaceMuted,
+                          ),
+                        ),
+                        Text(
+                          '+ \$${addons.tipDollars.toStringAsFixed(2)}',
+                          style: ETextStyles.body,
+                        ),
                       ],
                     ),
                   ],
@@ -169,12 +218,18 @@ class BookingSummaryCard extends GetView<BookingController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('DUE NOW',
-                            style: ETextStyles.label.copyWith(
-                                color: EColors.onSurface)),
-                        Text('Pay at appointment',
-                            style: ETextStyles.bodyMd.copyWith(
-                                color: EColors.onSurfaceMuted)),
+                        Text(
+                          'DUE NOW',
+                          style: ETextStyles.label.copyWith(
+                            color: EColors.onSurface,
+                          ),
+                        ),
+                        Text(
+                          'Pay at appointment',
+                          style: ETextStyles.bodyMd.copyWith(
+                            color: EColors.onSurfaceMuted,
+                          ),
+                        ),
                       ],
                     ),
                   ] else if (hasDiscount) ...[
@@ -184,13 +239,18 @@ class BookingSummaryCard extends GetView<BookingController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(addons.isDepositEnabled
-                            ? 'DUE NOW ($depositPct%)'
-                            : 'DUE NOW',
-                            style: ETextStyles.label.copyWith(
-                                color: EColors.onSurface)),
-                        Text('\$${deposit.toStringAsFixed(2)}',
-                            style: ETextStyles.price),
+                        Text(
+                          addons.isDepositEnabled
+                              ? 'DUE NOW ($depositPct%)'
+                              : 'DUE NOW',
+                          style: ETextStyles.label.copyWith(
+                            color: EColors.onSurface,
+                          ),
+                        ),
+                        Text(
+                          '\$${deposit.toStringAsFixed(2)}',
+                          style: ETextStyles.price,
+                        ),
                       ],
                     ),
                   ] else if (addons.isDepositEnabled) ...[
@@ -200,21 +260,31 @@ class BookingSummaryCard extends GetView<BookingController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('DUE NOW ($depositPct%)',
-                            style: ETextStyles.label.copyWith(
-                                color: EColors.onSurface)),
-                        Text('\$${deposit.toStringAsFixed(2)}',
-                            style: ETextStyles.price),
+                        Text(
+                          'DUE NOW ($depositPct%)',
+                          style: ETextStyles.label.copyWith(
+                            color: EColors.onSurface,
+                          ),
+                        ),
+                        Text(
+                          '\$${deposit.toStringAsFixed(2)}',
+                          style: ETextStyles.price,
+                        ),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('BALANCE AT APPOINTMENT',
-                            style: ETextStyles.label.copyWith(
-                                color: EColors.onSurfaceMuted)),
-                        Text('\$${(total - deposit).toStringAsFixed(2)}',
-                            style: ETextStyles.body),
+                        Text(
+                          'BALANCE AT APPOINTMENT',
+                          style: ETextStyles.label.copyWith(
+                            color: EColors.onSurfaceMuted,
+                          ),
+                        ),
+                        Text(
+                          '\$${(total - deposit).toStringAsFixed(2)}',
+                          style: ETextStyles.body,
+                        ),
                       ],
                     ),
                   ],

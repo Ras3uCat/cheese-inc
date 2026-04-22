@@ -20,16 +20,18 @@ class MenuItemModel {
   });
 
   String get displayPrice =>
-      price == null ? 'Price on request' : '\$${(price! / 100).toStringAsFixed(2)}';
+      price == null
+          ? 'Price on request'
+          : '\$${(price! / 100).toStringAsFixed(2)}';
 
   factory MenuItemModel.fromMap(Map<String, dynamic> map) => MenuItemModel(
-        id:          map['id']          as String,
-        category:    map['category']    as String,
-        name:        map['name']        as String,
-        description: map['description'] as String?,
-        price:       map['price']       as int?,
-        imageUrl:    map['image_url']   as String?,
-        isAvailable: map['is_available'] as bool? ?? true,
-        sortOrder:   map['sort_order']   as int? ?? 0,
-      );
+    id: map['id'] as String,
+    category: map['category'] as String,
+    name: map['name'] as String,
+    description: map['description'] as String?,
+    price: map['price'] as int?,
+    imageUrl: map['image_url'] as String?,
+    isAvailable: map['is_available'] as bool? ?? true,
+    sortOrder: map['sort_order'] as int? ?? 0,
+  );
 }

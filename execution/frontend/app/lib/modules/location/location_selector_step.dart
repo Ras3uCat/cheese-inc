@@ -36,20 +36,27 @@ class LocationSelectorStep extends StatelessWidget {
                 style: ETextStyles.bodyMd.copyWith(color: EColors.error),
               );
             }
-            final active = ctrl.locations
-                .where((l) => l.isActive)
-                .toList()
-              ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+            final active =
+                ctrl.locations.where((l) => l.isActive).toList()
+                  ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
             if (active.isEmpty) {
               return Text(
                 'No locations available.',
-                style: ETextStyles.bodyMd.copyWith(color: EColors.onSurfaceMuted),
+                style: ETextStyles.bodyMd.copyWith(
+                  color: EColors.onSurfaceMuted,
+                ),
               );
             }
             return Column(
-              children: active
-                  .map((loc) => _LocationCard(location: loc, onTap: () => onSelected(loc)))
-                  .toList(),
+              children:
+                  active
+                      .map(
+                        (loc) => _LocationCard(
+                          location: loc,
+                          onTap: () => onSelected(loc),
+                        ),
+                      )
+                      .toList(),
             );
           }),
         ],
@@ -86,8 +93,9 @@ class _LocationCard extends StatelessWidget {
                       const SizedBox(height: ESpacing.xs),
                       Text(
                         location.displayAddress,
-                        style: ETextStyles.bodyMd
-                            .copyWith(color: EColors.onSurfaceMuted),
+                        style: ETextStyles.bodyMd.copyWith(
+                          color: EColors.onSurfaceMuted,
+                        ),
                       ),
                     ],
                     if (location.phone != null &&
@@ -95,15 +103,15 @@ class _LocationCard extends StatelessWidget {
                       const SizedBox(height: ESpacing.xs),
                       Text(
                         location.phone!,
-                        style: ETextStyles.bodyMd
-                            .copyWith(color: EColors.onSurfaceMuted),
+                        style: ETextStyles.bodyMd.copyWith(
+                          color: EColors.onSurfaceMuted,
+                        ),
                       ),
                     ],
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right_outlined,
-                  color: EColors.onSurfaceMuted),
+              Icon(Icons.chevron_right_outlined, color: EColors.onSurfaceMuted),
             ],
           ),
         ),

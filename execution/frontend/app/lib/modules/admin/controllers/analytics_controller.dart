@@ -4,9 +4,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AnalyticsController extends GetxController {
   final _client = Supabase.instance.client;
 
-  final period    = 'week'.obs;
+  final period = 'week'.obs;
   final isLoading = false.obs;
-  final _data     = Rxn<Map<String, dynamic>>();
+  final _data = Rxn<Map<String, dynamic>>();
 
   @override
   void onInit() {
@@ -20,8 +20,10 @@ class AnalyticsController extends GetxController {
   Future<void> load() async {
     isLoading.value = true;
     try {
-      final result = await _client
-          .rpc('get_revenue_summary', params: {'p_period': period.value});
+      final result = await _client.rpc(
+        'get_revenue_summary',
+        params: {'p_period': period.value},
+      );
       _data.value = (result as Map?)?.cast<String, dynamic>();
     } catch (_) {
       _data.value = null;

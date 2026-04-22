@@ -1,36 +1,131 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../core/config/app_env.dart';
-import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/e_colors.dart';
 import '../../../../core/theme/e_spacing.dart';
 import '../../../../core/theme/e_text_styles.dart';
 import '../../../../core/theme/personality_theme.dart';
+import '../../../../core/widgets/ambient_hero_background.dart';
+import '../../../../core/widgets/text_reveal.dart';
 import '../../controllers/home_controller.dart';
+import '_hero_cta.dart';
 
-// ─── Full-bleed hero ──────────────────────────────────────────────────────────
-class HeroFullbleed extends StatelessWidget {
+export '_hero_centered.dart';
+export '_hero_split.dart';
+
+const _kHeroLocalAsset = 'assets/images/hero_background.jpg';
+
+class HeroFullbleed extends StatefulWidget {
   const HeroFullbleed({super.key});
 
   @override
+  State<HeroFullbleed> createState() => _HeroFullbleedState();
+}
+
+class _HeroFullbleedState extends State<HeroFullbleed> {
+  static const _kEnterDuration = Duration(milliseconds: 700);
+  static const _kEnterCurve = Curves.easeOut;
+  static const _kSlideOffset = Offset(0, 0.06);
+  static const _kStaggerStep = Duration(milliseconds: 150);
+
+  bool _overlineVisible = false;
+  bool _titleVisible = false;
+  bool _taglineVisible = false;
+  bool _ctaVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startStagger());
+  }
+
+  void _startStagger() {
+    Future.delayed(Duration.zero, () {
+      if (mounted) setState(() => _overlineVisible = true);
+    });
+    Future.delayed(_kStaggerStep, () {
+      if (mounted) setState(() => _titleVisible = true);
+    });
+    Future.delayed(_kStaggerStep * 2, () {
+      if (mounted) setState(() => _taglineVisible = true);
+    });
+    Future.delayed(_kStaggerStep * 3, () {
+      if (mounted) setState(() => _ctaVisible = true);
+    });
+  }
+
+  Widget _animated({required bool visible, required Widget child}) {
+    return AnimatedSlide(
+      offset: visible ? Offset.zero : _kSlideOffset,
+      duration: _kEnterDuration,
+      curve: _kEnterCurve,
+      child: AnimatedOpacity(
+        opacity: visible ? 1.0 : 0.0,
+        duration: _kEnterDuration,
+        curve: _kEnterCurve,
+        child: child,
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final pt     = PersonalityTheme.fromEnv();
+    final pt = PersonalityTheme.fromEnv();
     final height = MediaQuery.of(context).size.height;
 
     return SizedBox(
       height: height,
       child: Obx(() {
-        final ctrl     = Get.find<HomeController>();
+        final ctrl = Get.find<HomeController>();
         final imageUrl = ctrl.heroImageUrl.isEmpty ? null : ctrl.heroImageUrl;
         final overline = ctrl.heroOverline;
-        final tagline  = ctrl.heroTagline;
+        final tagline = ctrl.heroTagline;
+        final scrollPx = ctrl.scrollOffset.value;
 
         return Stack(
           fit: StackFit.expand,
+          clipBehavior: Clip.hardEdge,
           children: [
-            imageUrl != null
-                ? Image.network(imageUrl, fit: BoxFit.cover)
-                : Container(color: EColors.secondary),
+            const AmbientHeroBackground(),
+            Positioned(
+              top: -100,
+              bottom: -100,
+              left: 0,
+              right: 0,
+              child: Transform.translate(
+                offset: Offset(0, scrollPx * 0.35),
+                child: RepaintBoundary(
+                  child:
+                      imageUrl != null && imageUrl.isNotEmpty
+                          ? CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                            placeholder:
+                                (_, _) => Image.asset(
+                                  _kHeroLocalAsset,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                            errorWidget:
+                                (_, _, _) => Image.asset(
+                                  _kHeroLocalAsset,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                          )
+                          : Image.asset(
+                            _kHeroLocalAsset,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                ),
+              ),
+            ),
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -43,56 +138,63 @@ class HeroFullbleed extends StatelessWidget {
                 ),
               ),
             ),
-            Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: pt.heroContentMaxWidth),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: ESpacing.pagePaddingH),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: pt.heroTextAlign == TextAlign.left
-                        ? CrossAxisAlignment.start
-                        : CrossAxisAlignment.center,
-                    children: [
-                      if (overline.isNotEmpty)
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(bottom: ESpacing.md),
-                          child: Text(
-                            overline.toUpperCase(),
-                            style: ETextStyles.overline
-                                .copyWith(color: EColors.accent),
+            Transform.translate(
+              offset: Offset(0, scrollPx * 0.12),
+              child: RepaintBoundary(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: pt.heroContentMaxWidth),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: ESpacing.pagePaddingH),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment:
+                            pt.heroTextAlign == TextAlign.left
+                                ? CrossAxisAlignment.start
+                                : CrossAxisAlignment.center,
+                        children: [
+                          if (overline.isNotEmpty)
+                            _animated(
+                              visible: _overlineVisible,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: ESpacing.md),
+                                child: _OverlinePill(
+                                  label: overline.toUpperCase(),
+                                  align: pt.heroTextAlign,
+                                ),
+                              ),
+                            ),
+                          TextReveal(
+                            text: ctrl.heroTitle,
+                            style: ETextStyles.displayXL.copyWith(color: Colors.white),
                             textAlign: pt.heroTextAlign,
+                            trigger: _titleVisible,
                           ),
-                        ),
-                      Text(
-                        AppEnv.clientName,
-                        style: ETextStyles.displayXL
-                            .copyWith(color: Colors.white),
-                        textAlign: pt.heroTextAlign,
+                          if (tagline.isNotEmpty) ...[
+                            const SizedBox(height: ESpacing.lg),
+                            _animated(
+                              visible: _taglineVisible,
+                              child: Text(
+                                tagline,
+                                style: ETextStyles.bodyLg.copyWith(color: Colors.white70),
+                                textAlign: pt.heroTextAlign,
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: ESpacing.xxl),
+                          _animated(visible: _ctaVisible, child: HeroCta(pt: pt)),
+                        ],
                       ),
-                      if (tagline.isNotEmpty) ...[
-                        const SizedBox(height: ESpacing.lg),
-                        Text(
-                          tagline,
-                          style: ETextStyles.bodyLg
-                              .copyWith(color: Colors.white70),
-                          textAlign: pt.heroTextAlign,
-                        ),
-                      ],
-                      const SizedBox(height: ESpacing.xxl),
-                      _HeroCta(pt: pt),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
             const Positioned(
               bottom: ESpacing.xl,
-              left: 0, right: 0,
-              child: Icon(Icons.keyboard_arrow_down,
-                  color: Colors.white54, size: 32),
+              left: 0,
+              right: 0,
+              child: _PulsingScrollIndicator(),
             ),
           ],
         );
@@ -101,147 +203,71 @@ class HeroFullbleed extends StatelessWidget {
   }
 }
 
-// ─── Split hero ───────────────────────────────────────────────────────────────
-class HeroSplit extends StatelessWidget {
-  const HeroSplit({super.key});
+class _OverlinePill extends StatelessWidget {
+  const _OverlinePill({required this.label, required this.align});
+
+  final String label;
+  final TextAlign align;
 
   @override
   Widget build(BuildContext context) {
-    final pt    = PersonalityTheme.fromEnv();
-    final width = MediaQuery.of(context).size.width;
+    final pill = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 5.0),
+      decoration: BoxDecoration(
+        color: EColors.accent.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: EColors.accent, width: 0.5),
+      ),
+      child: Text(label, style: ETextStyles.overline.copyWith(color: EColors.accent)),
+    );
 
-    return Obx(() {
-      final ctrl     = Get.find<HomeController>();
-      final imageUrl = ctrl.heroImageUrl.isEmpty ? null : ctrl.heroImageUrl;
-      final overline = ctrl.heroOverline;
-      final tagline  = ctrl.heroTagline;
-
-      return Container(
-        height: 680,
-        color: EColors.surface,
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: width > ESpacing.desktopBreak
-                      ? ESpacing.pagePaddingHDesktop
-                      : ESpacing.pagePaddingH,
-                  vertical: ESpacing.xxxl,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (overline.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: ESpacing.md),
-                        child: Text(overline.toUpperCase(),
-                            style: ETextStyles.overline),
-                      ),
-                    Text(AppEnv.clientName, style: ETextStyles.displayLg),
-                    if (tagline.isNotEmpty) ...[
-                      const SizedBox(height: ESpacing.lg),
-                      Text(
-                        tagline,
-                        style: ETextStyles.bodyLg
-                            .copyWith(color: EColors.onSurfaceMuted),
-                      ),
-                    ],
-                    const SizedBox(height: ESpacing.xxl),
-                    _HeroCta(pt: pt),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: imageUrl != null
-                  ? Image.network(imageUrl,
-                      fit: BoxFit.cover, height: double.infinity)
-                  : Container(color: EColors.primaryLight),
-            ),
-          ],
-        ),
-      );
-    });
+    if (align == TextAlign.left) return pill;
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [pill]);
   }
 }
 
-// ─── Centered hero ────────────────────────────────────────────────────────────
-class HeroCentered extends StatelessWidget {
-  const HeroCentered({super.key});
+class _PulsingScrollIndicator extends StatefulWidget {
+  const _PulsingScrollIndicator();
 
   @override
-  Widget build(BuildContext context) {
-    final pt = PersonalityTheme.fromEnv();
-
-    return Obx(() {
-      final ctrl    = Get.find<HomeController>();
-      final tagline = ctrl.heroTagline;
-
-      return Container(
-        height: 600,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [EColors.primaryLight, EColors.surface],
-          ),
-        ),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: pt.heroContentMaxWidth),
-            child: Padding(
-              padding: const EdgeInsets.all(ESpacing.pagePaddingH),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(AppEnv.clientName,
-                      style: ETextStyles.displayLg,
-                      textAlign: TextAlign.center),
-                  if (tagline.isNotEmpty) ...[
-                    const SizedBox(height: ESpacing.lg),
-                    Text(
-                      tagline,
-                      style: ETextStyles.bodyLg
-                          .copyWith(color: EColors.onSurfaceMuted),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                  const SizedBox(height: ESpacing.xxl),
-                  _HeroCta(pt: pt),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    });
-  }
+  State<_PulsingScrollIndicator> createState() => _PulsingScrollIndicatorState();
 }
 
-// ─── Shared CTA ───────────────────────────────────────────────────────────────
-class _HeroCta extends StatelessWidget {
-  const _HeroCta({required this.pt});
-  final PersonalityTheme pt;
+class _PulsingScrollIndicatorState extends State<_PulsingScrollIndicator>
+    with SingleTickerProviderStateMixin {
+  static const _kPulseDuration = Duration(milliseconds: 1800);
+  static const _kMinOpacity = 0.3;
+  static const _kMaxOpacity = 0.8;
+
+  late final AnimationController _ctrl;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(vsync: this, duration: _kPulseDuration)..repeat(reverse: true);
+    _opacity = Tween<double>(
+      begin: _kMinOpacity,
+      end: _kMaxOpacity,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final showBooking = AppEnv.moduleEnabled('booking');
-    return Wrap(
-      spacing: ESpacing.md,
-      runSpacing: ESpacing.md,
-      children: [
-        if (showBooking)
-          ElevatedButton(
-            onPressed: () => Get.toNamed(ERoutes.booking),
-            child: const Text('Book Now'),
+    return AnimatedBuilder(
+      animation: _opacity,
+      builder:
+          (_, _) => Icon(
+            Icons.keyboard_arrow_down,
+            color: Colors.white.withValues(alpha: _opacity.value),
+            size: 32,
           ),
-        OutlinedButton(
-          onPressed: () => Get.toNamed(ERoutes.contact),
-          child: const Text('Get in Touch'),
-        ),
-      ],
     );
   }
 }

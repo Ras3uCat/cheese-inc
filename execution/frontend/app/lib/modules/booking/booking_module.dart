@@ -13,30 +13,30 @@ class BookingModule implements AppModule {
 
   @override
   NavItem get navItem => const NavItem(
-        label: 'Book',
-        icon: Icons.calendar_month_outlined,
-        route: ERoutes.booking,
-      );
+    label: 'Book',
+    icon: Icons.calendar_month_outlined,
+    route: ERoutes.booking,
+  );
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.booking,
-          page: () => const BookingScreen(),
-          binding: BookingBinding(),
-          transition: Transition.fadeIn,
-        ),
-        GetPage(
-          name: ERoutes.confirmation,
-          page: () => const BookingConfirmationView(),
-          transition: Transition.fadeIn,
-        ),
-        GetPage(
-          name: ERoutes.review,
-          page: () => const ReviewView(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.booking,
+      page: () => const BookingScreen(),
+      binding: BookingBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: ERoutes.confirmation,
+      page: () => const BookingConfirmationView(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: ERoutes.review,
+      page: () => const ReviewView(),
+      transition: Transition.fadeIn,
+    ),
+  ];
 
   @override
   Bindings? get binding => null; // per-route bindings used above

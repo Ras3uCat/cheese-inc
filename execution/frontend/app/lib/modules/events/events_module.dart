@@ -13,31 +13,31 @@ class EventsModule implements AppModule {
 
   @override
   NavItem? get navItem => NavItem(
-        label: 'Events',
-        icon: Icons.event_outlined,
-        route: ERoutes.events,
-      );
+    label: 'Events',
+    icon: Icons.event_outlined,
+    route: ERoutes.events,
+  );
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.events,
-          page: () => const EventsListView(),
-          binding: EventsBinding(),
-          transition: Transition.fadeIn,
-        ),
-        GetPage(
-          name: ERoutes.eventsDetail,
-          page: () => const EventDetailView(),
-          binding: EventsBinding(),
-          transition: Transition.fadeIn,
-        ),
-        GetPage(
-          name: ERoutes.eventsConfirmation,
-          page: () => const EventConfirmationView(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.events,
+      page: () => const EventsListView(),
+      binding: EventsBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: ERoutes.eventsDetail,
+      page: () => const EventDetailView(),
+      binding: EventsBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: ERoutes.eventsConfirmation,
+      page: () => const EventConfirmationView(),
+      transition: Transition.fadeIn,
+    ),
+  ];
 
   @override
   Bindings? get binding => null;

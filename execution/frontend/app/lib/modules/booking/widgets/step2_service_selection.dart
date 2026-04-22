@@ -15,15 +15,17 @@ class Step2ServiceSelection extends GetView<BookingController> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile =
-        MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
+    final isMobile = MediaQuery.sizeOf(context).width < ESpacing.mobileBreak;
     final hPad = isMobile ? ESpacing.md : ESpacing.xxl;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: hPad, vertical: ESpacing.lg),
+          padding: EdgeInsets.symmetric(
+            horizontal: hPad,
+            vertical: ESpacing.lg,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -41,31 +43,36 @@ class Step2ServiceSelection extends GetView<BookingController> {
           ),
         ),
         Expanded(
-          child: Obx(() => SingleChildScrollView(
-                padding: EdgeInsets.only(
-                    left: hPad, right: hPad, bottom: ESpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (controller.packages.isNotEmpty)
-                      _PackageRow(hPad: hPad),
-                    ..._buildServiceGroups(controller, isMobile),
-                    if (controller.isAnyArtist.value)
-                      _InlineArtistPicker(isMobile: isMobile),
-                  ],
-                ),
-              )),
+          child: Obx(
+            () => SingleChildScrollView(
+              padding: EdgeInsets.only(
+                left: hPad,
+                right: hPad,
+                bottom: ESpacing.lg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (controller.packages.isNotEmpty) _PackageRow(hPad: hPad),
+                  ..._buildServiceGroups(controller, isMobile),
+                  if (controller.isAnyArtist.value)
+                    _InlineArtistPicker(isMobile: isMobile),
+                ],
+              ),
+            ),
+          ),
         ),
-        Obx(() => DurationTotalBar(
-              canContinue: controller.canProceedStep2,
-              onContinue: () => controller.proceedFromStep2(),
-            )),
+        Obx(
+          () => DurationTotalBar(
+            canContinue: controller.canProceedStep2,
+            onContinue: () => controller.proceedFromStep2(),
+          ),
+        ),
       ],
     );
   }
 
-  List<Widget> _buildServiceGroups(
-      BookingController ctrl, bool isMobile) {
+  List<Widget> _buildServiceGroups(BookingController ctrl, bool isMobile) {
     final groups = <String, List<ServiceModel>>{};
     for (final svc in ctrl.availableServices) {
       groups.putIfAbsent(svc.category, () => []).add(svc);
@@ -76,13 +83,19 @@ class Step2ServiceSelection extends GetView<BookingController> {
       return <Widget>[
         Padding(
           padding: const EdgeInsets.only(bottom: ESpacing.sm, top: ESpacing.lg),
-          child: Row(children: [
-            Text(entry.key.toUpperCase(), style: ETextStyles.label),
-            const SizedBox(width: ESpacing.md),
-            Expanded(
+          child: Row(
+            children: [
+              Text(entry.key.toUpperCase(), style: ETextStyles.label),
+              const SizedBox(width: ESpacing.md),
+              Expanded(
                 child: Divider(
-                    color: EColors.divider, thickness: 0.5, height: 1)),
-          ]),
+                  color: EColors.divider,
+                  thickness: 0.5,
+                  height: 1,
+                ),
+              ),
+            ],
+          ),
         ),
         GridView.builder(
           shrinkWrap: true,
@@ -96,11 +109,13 @@ class Step2ServiceSelection extends GetView<BookingController> {
           itemCount: entry.value.length,
           itemBuilder: (_, i) {
             final svc = entry.value[i];
-            return Obx(() => ServiceCard(
-                  service: svc,
-                  isSelected: ctrl.selectedServiceIds.contains(svc.id),
-                  onTap: () => ctrl.toggleService(svc.id),
-                ));
+            return Obx(
+              () => ServiceCard(
+                service: svc,
+                isSelected: ctrl.selectedServiceIds.contains(svc.id),
+                onTap: () => ctrl.toggleService(svc.id),
+              ),
+            );
           },
         ),
       ];
@@ -122,13 +137,19 @@ class _PackageRow extends GetView<BookingController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: ESpacing.lg),
-          Row(children: [
-            Text('BUNDLE DEALS', style: ETextStyles.label),
-            const SizedBox(width: ESpacing.md),
-            Expanded(
+          Row(
+            children: [
+              Text('BUNDLE DEALS', style: ETextStyles.label),
+              const SizedBox(width: ESpacing.md),
+              Expanded(
                 child: Divider(
-                    color: EColors.primary, thickness: 0.5, height: 1)),
-          ]),
+                  color: EColors.primary,
+                  thickness: 0.5,
+                  height: 1,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: ESpacing.md),
           SizedBox(
             height: 130,
@@ -136,8 +157,7 @@ class _PackageRow extends GetView<BookingController> {
               scrollDirection: Axis.horizontal,
               itemCount: pkgs.length,
               separatorBuilder: (_, _) => const SizedBox(width: ESpacing.md),
-              itemBuilder: (_, i) =>
-                  Obx(() => _PackageCard(pkg: pkgs[i])),
+              itemBuilder: (_, i) => Obx(() => _PackageCard(pkg: pkgs[i])),
             ),
           ),
           const SizedBox(height: ESpacing.sm),
@@ -154,7 +174,7 @@ class _PackageCard extends GetView<BookingController> {
   @override
   Widget build(BuildContext context) {
     final isSelected = controller.selectedPackageId.value == pkg.id;
-    final price      = pkg.formattedPrice(controller.services);
+    final price = pkg.formattedPrice(controller.services);
 
     return GestureDetector(
       onTap: () => controller.selectPackage(pkg),
@@ -162,9 +182,10 @@ class _PackageCard extends GetView<BookingController> {
         width: 180,
         padding: const EdgeInsets.all(ESpacing.md),
         decoration: BoxDecoration(
-          color: isSelected
-              ? EColors.primary.withValues(alpha: 0.08)
-              : EColors.surfaceVariant,
+          color:
+              isSelected
+                  ? EColors.primary.withValues(alpha: 0.08)
+                  : EColors.surfaceVariant,
           border: Border.all(
             color: isSelected ? EColors.primary : EColors.divider,
             width: isSelected ? 1.5 : 0.5,
@@ -173,38 +194,47 @@ class _PackageCard extends GetView<BookingController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Expanded(
-                child: Text(pkg.name,
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    pkg.name,
                     style: ETextStyles.label.copyWith(
-                        color: isSelected
-                            ? EColors.primary
-                            : EColors.onSurface),
-                    overflow: TextOverflow.ellipsis),
-              ),
-              if (pkg.discountPct > 0)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: ESpacing.xs, vertical: 2),
-                  color: EColors.primary,
-                  child: Text('${pkg.discountPct}% OFF',
-                      style: ETextStyles.labelSm.copyWith(
-                          color: EColors.secondary,
-                          fontSize: 9)),
+                      color: isSelected ? EColors.primary : EColors.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-            ]),
+                if (pkg.discountPct > 0)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: ESpacing.xs,
+                      vertical: 2,
+                    ),
+                    color: EColors.primary,
+                    child: Text(
+                      '${pkg.discountPct}% OFF',
+                      style: ETextStyles.labelSm.copyWith(
+                        color: EColors.secondary,
+                        fontSize: 9,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
             const SizedBox(height: ESpacing.xs),
             Text(
               '${pkg.serviceIds.length} service${pkg.serviceIds.length == 1 ? '' : 's'}',
               style: ETextStyles.bodySmMuted,
             ),
             const Spacer(),
-            Text(price,
-                style: ETextStyles.price.copyWith(
-                    fontSize: 14,
-                    color: isSelected
-                        ? EColors.primary
-                        : EColors.onSurface)),
+            Text(
+              price,
+              style: ETextStyles.price.copyWith(
+                fontSize: 14,
+                color: isSelected ? EColors.primary : EColors.onSurface,
+              ),
+            ),
           ],
         ),
       ),
@@ -230,33 +260,45 @@ class _InlineArtistPicker extends GetView<BookingController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Text('AVAILABLE ARTISTS', style: ETextStyles.label),
-              const SizedBox(width: ESpacing.md),
-              Expanded(
+            Row(
+              children: [
+                Text('AVAILABLE ARTISTS', style: ETextStyles.label),
+                const SizedBox(width: ESpacing.md),
+                Expanded(
                   child: Divider(
-                      color: EColors.primary, thickness: 0.5, height: 1)),
-            ]),
+                    color: EColors.primary,
+                    thickness: 0.5,
+                    height: 1,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: ESpacing.md),
             if (artists.isEmpty)
-              Text('No artists offer all selected services.',
-                  style: ETextStyles.bodySmMuted)
+              Text(
+                'No artists offer all selected services.',
+                style: ETextStyles.bodySmMuted,
+              )
             else
               SizedBox(
                 height: 180,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: artists.length,
-                  separatorBuilder: (_, _) =>
-                      const SizedBox(width: ESpacing.md),
-                  itemBuilder: (_, i) => Obx(() => ArtistCard(
-                        artist: artists[i],
-                        isSelected:
-                            controller.selectedArtist.value?.id == artists[i].id,
-                        onTap: () =>
-                            controller.selectFilteredArtist(artists[i]),
-                        compact: true,
-                      )),
+                  separatorBuilder:
+                      (_, _) => const SizedBox(width: ESpacing.md),
+                  itemBuilder:
+                      (_, i) => Obx(
+                        () => ArtistCard(
+                          artist: artists[i],
+                          isSelected:
+                              controller.selectedArtist.value?.id ==
+                              artists[i].id,
+                          onTap:
+                              () => controller.selectFilteredArtist(artists[i]),
+                          compact: true,
+                        ),
+                      ),
                 ),
               ),
           ],

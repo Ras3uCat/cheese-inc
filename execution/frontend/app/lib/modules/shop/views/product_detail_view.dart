@@ -41,11 +41,12 @@ class ProductDetailView extends GetView<ShopController> {
                 height: 320,
                 child: PageView.builder(
                   itemCount: product.images.length,
-                  itemBuilder: (_, i) => CachedNetworkImage(
-                    imageUrl: product.images[i],
-                    fit: BoxFit.cover,
-                    errorWidget: (_, _, _) => _imgPlaceholder(),
-                  ),
+                  itemBuilder:
+                      (_, i) => CachedNetworkImage(
+                        imageUrl: product.images[i],
+                        fit: BoxFit.cover,
+                        errorWidget: (_, _, _) => _imgPlaceholder(),
+                      ),
                 ),
               )
             else
@@ -58,34 +59,41 @@ class ProductDetailView extends GetView<ShopController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Price
-                  Row(children: [
-                    Text(product.formattedPrice,
-                        style: ETextStyles.h2.copyWith(color: EColors.primary)),
-                    if (product.formattedCompareAt != null) ...[
-                      const SizedBox(width: ESpacing.sm),
+                  Row(
+                    children: [
                       Text(
-                        product.formattedCompareAt!,
-                        style: ETextStyles.bodyMd.copyWith(
-                          decoration: TextDecoration.lineThrough,
-                          color: EColors.onSurfaceMuted,
-                        ),
+                        product.formattedPrice,
+                        style: ETextStyles.h2.copyWith(color: EColors.primary),
                       ),
+                      if (product.formattedCompareAt != null) ...[
+                        const SizedBox(width: ESpacing.sm),
+                        Text(
+                          product.formattedCompareAt!,
+                          style: ETextStyles.bodyMd.copyWith(
+                            decoration: TextDecoration.lineThrough,
+                            color: EColors.onSurfaceMuted,
+                          ),
+                        ),
+                      ],
                     ],
-                  ]),
+                  ),
                   const SizedBox(height: ESpacing.md),
 
                   // Out of stock badge
                   if (!product.inStock)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: ESpacing.sm, vertical: 4),
+                        horizontal: ESpacing.sm,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.red.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Text('Out of stock',
-                          style: ETextStyles.bodyMd
-                              .copyWith(color: Colors.red)),
+                      child: Text(
+                        'Out of stock',
+                        style: ETextStyles.bodyMd.copyWith(color: Colors.red),
+                      ),
                     ),
 
                   // Description
@@ -99,12 +107,15 @@ class ProductDetailView extends GetView<ShopController> {
                     const SizedBox(height: ESpacing.md),
                     Wrap(
                       spacing: ESpacing.xs,
-                      children: product.tags
-                          .map((t) => Chip(
-                                label: Text(t, style: ETextStyles.bodyMd),
-                                backgroundColor: EColors.surfaceVariant,
-                              ))
-                          .toList(),
+                      children:
+                          product.tags
+                              .map(
+                                (t) => Chip(
+                                  label: Text(t, style: ETextStyles.bodyMd),
+                                  backgroundColor: EColors.surfaceVariant,
+                                ),
+                              )
+                              .toList(),
                     ),
                   ],
 
@@ -113,11 +124,12 @@ class ProductDetailView extends GetView<ShopController> {
                     const SizedBox(height: ESpacing.lg),
                     Text('Quantity', style: ETextStyles.h3),
                     const SizedBox(height: ESpacing.sm),
-                    Obx(() => Row(children: [
+                    Obx(
+                      () => Row(
+                        children: [
                           IconButton(
                             icon: const Icon(Icons.remove),
-                            onPressed:
-                                qty.value > 1 ? () => qty.value-- : null,
+                            onPressed: qty.value > 1 ? () => qty.value-- : null,
                           ),
                           Text('${qty.value}', style: ETextStyles.h3),
                           IconButton(
@@ -129,7 +141,9 @@ class ProductDetailView extends GetView<ShopController> {
                               }
                             },
                           ),
-                        ])),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: ESpacing.lg),
                     SizedBox(
                       width: double.infinity,
@@ -164,9 +178,8 @@ class ProductDetailView extends GetView<ShopController> {
   }
 
   Widget _imgPlaceholder() => Container(
-        color: EColors.surfaceVariant,
-        alignment: Alignment.center,
-        child: Icon(Icons.image_outlined,
-            color: EColors.onSurfaceMuted, size: 80),
-      );
+    color: EColors.surfaceVariant,
+    alignment: Alignment.center,
+    child: Icon(Icons.image_outlined, color: EColors.onSurfaceMuted, size: 80),
+  );
 }

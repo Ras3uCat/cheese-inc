@@ -14,28 +14,32 @@ class MenuSection extends GetView<MenuCatalogController> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: ESpacing.lg, vertical: ESpacing.xl),
+        horizontal: ESpacing.lg,
+        vertical: ESpacing.xl,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            Text('Menu', style: ETextStyles.h2),
-            const Spacer(),
-            TextButton(
-              onPressed: () => Get.toNamed(ERoutes.menu),
-              child: Text('VIEW FULL MENU',
-                  style: ETextStyles.labelSm.copyWith(color: EColors.primary)),
-            ),
-          ]),
+          Row(
+            children: [
+              Text('Menu', style: ETextStyles.h2),
+              const Spacer(),
+              TextButton(
+                onPressed: () => Get.toNamed(ERoutes.menu),
+                child: Text(
+                  'VIEW FULL MENU',
+                  style: ETextStyles.labelSm.copyWith(color: EColors.primary),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: ESpacing.md),
           Obx(() {
             if (controller.isLoading.value) {
               return const Center(child: CircularProgressIndicator());
             }
-            final preview = controller.items
-                .where((i) => i.isAvailable)
-                .take(6)
-                .toList();
+            final preview =
+                controller.items.where((i) => i.isAvailable).take(6).toList();
             if (preview.isEmpty) return const SizedBox.shrink();
             return GridView.builder(
               shrinkWrap: true,
@@ -72,12 +76,16 @@ class _MenuCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(item.name,
-              style: ETextStyles.h4,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis),
-          Text(item.displayPrice,
-              style: ETextStyles.bodySm.copyWith(color: EColors.primary)),
+          Text(
+            item.name,
+            style: ETextStyles.h4,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            item.displayPrice,
+            style: ETextStyles.bodySm.copyWith(color: EColors.primary),
+          ),
         ],
       ),
     );

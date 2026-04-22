@@ -4,7 +4,7 @@ import '../models/blog_post_model.dart';
 
 /// Loads the list of published blog posts.
 class BlogController extends GetxController {
-  final posts     = <BlogPostModel>[].obs;
+  final posts = <BlogPostModel>[].obs;
   final isLoading = false.obs;
 
   @override
@@ -21,9 +21,10 @@ class BlogController extends GetxController {
           .select()
           .eq('is_published', true)
           .order('published_at', ascending: false);
-      posts.value = (rows as List)
-          .map((r) => BlogPostModel.fromMap(r as Map<String, dynamic>))
-          .toList();
+      posts.value =
+          (rows as List)
+              .map((r) => BlogPostModel.fromMap(r as Map<String, dynamic>))
+              .toList();
     } catch (_) {
       posts.value = [];
     } finally {

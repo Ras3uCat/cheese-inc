@@ -20,11 +20,8 @@ class SupabaseCourseRepository implements CourseRepository {
 
   @override
   Future<CourseModel?> getCourseBySlug(String slug) async {
-    final data = await _client
-        .from('courses')
-        .select()
-        .eq('slug', slug)
-        .maybeSingle();
+    final data =
+        await _client.from('courses').select().eq('slug', slug).maybeSingle();
     if (data == null) return null;
     return CourseModel.fromJson(data);
   }
@@ -56,12 +53,13 @@ class SupabaseCourseRepository implements CourseRepository {
     final email = _client.auth.currentUser?.email;
     if (email == null) return null;
 
-    final data = await _client
-        .from('course_enrollments')
-        .select()
-        .eq('course_id', courseId)
-        .eq('client_email', email)
-        .maybeSingle();
+    final data =
+        await _client
+            .from('course_enrollments')
+            .select()
+            .eq('course_id', courseId)
+            .eq('client_email', email)
+            .maybeSingle();
 
     if (data == null) return null;
     return CourseEnrollment.fromJson(data);
@@ -143,22 +141,20 @@ class SupabaseCourseRepository implements CourseRepository {
 
   @override
   Future<CourseModel> createCourse(CourseModel course) async {
-    final data = await _client
-        .from('courses')
-        .insert(course.toJson())
-        .select()
-        .single();
+    final data =
+        await _client.from('courses').insert(course.toJson()).select().single();
     return CourseModel.fromJson(data);
   }
 
   @override
   Future<CourseModel> updateCourse(CourseModel course) async {
-    final data = await _client
-        .from('courses')
-        .update(course.toJson())
-        .eq('id', course.id)
-        .select()
-        .single();
+    final data =
+        await _client
+            .from('courses')
+            .update(course.toJson())
+            .eq('id', course.id)
+            .select()
+            .single();
     return CourseModel.fromJson(data);
   }
 
@@ -169,22 +165,24 @@ class SupabaseCourseRepository implements CourseRepository {
 
   @override
   Future<CourseSection> createSection(CourseSection section) async {
-    final data = await _client
-        .from('course_sections')
-        .insert(section.toJson())
-        .select()
-        .single();
+    final data =
+        await _client
+            .from('course_sections')
+            .insert(section.toJson())
+            .select()
+            .single();
     return CourseSection.fromJson(data);
   }
 
   @override
   Future<CourseSection> updateSection(CourseSection section) async {
-    final data = await _client
-        .from('course_sections')
-        .update(section.toJson())
-        .eq('id', section.id)
-        .select()
-        .single();
+    final data =
+        await _client
+            .from('course_sections')
+            .update(section.toJson())
+            .eq('id', section.id)
+            .select()
+            .single();
     return CourseSection.fromJson(data);
   }
 
@@ -195,22 +193,24 @@ class SupabaseCourseRepository implements CourseRepository {
 
   @override
   Future<CourseLesson> createLesson(CourseLesson lesson) async {
-    final data = await _client
-        .from('course_lessons')
-        .insert(lesson.toJson())
-        .select()
-        .single();
+    final data =
+        await _client
+            .from('course_lessons')
+            .insert(lesson.toJson())
+            .select()
+            .single();
     return CourseLesson.fromJson(data);
   }
 
   @override
   Future<CourseLesson> updateLesson(CourseLesson lesson) async {
-    final data = await _client
-        .from('course_lessons')
-        .update(lesson.toJson())
-        .eq('id', lesson.id)
-        .select()
-        .single();
+    final data =
+        await _client
+            .from('course_lessons')
+            .update(lesson.toJson())
+            .eq('id', lesson.id)
+            .select()
+            .single();
     return CourseLesson.fromJson(data);
   }
 
@@ -236,16 +236,17 @@ class SupabaseCourseRepository implements CourseRepository {
     String enrollmentId,
     String status,
   ) async {
-    final data = await _client
-        .from('course_enrollments')
-        .update({
-          'status': status,
-          if (status == 'active')
-            'enrolled_at': DateTime.now().toIso8601String(),
-        })
-        .eq('id', enrollmentId)
-        .select()
-        .single();
+    final data =
+        await _client
+            .from('course_enrollments')
+            .update({
+              'status': status,
+              if (status == 'active')
+                'enrolled_at': DateTime.now().toIso8601String(),
+            })
+            .eq('id', enrollmentId)
+            .select()
+            .single();
     return CourseEnrollment.fromJson(data);
   }
 }

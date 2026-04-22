@@ -46,13 +46,14 @@ class BlogManagerView extends GetView<MasterController> {
                 }
                 return ListView.separated(
                   itemCount: posts.length,
-                  separatorBuilder: (_, _) =>
-                      const Divider(height: 1, thickness: 0.5),
-                  itemBuilder: (_, i) => _PostTile(
-                    post: posts[i],
-                    onEdit: () => _openEditor(context, posts[i]),
-                    onDelete: () => _confirmDelete(context, posts[i]),
-                  ),
+                  separatorBuilder:
+                      (_, _) => const Divider(height: 1, thickness: 0.5),
+                  itemBuilder:
+                      (_, i) => _PostTile(
+                        post: posts[i],
+                        onEdit: () => _openEditor(context, posts[i]),
+                        onDelete: () => _confirmDelete(context, posts[i]),
+                      ),
                 );
               }),
             ),
@@ -65,40 +66,45 @@ class BlogManagerView extends GetView<MasterController> {
   void _openEditor(BuildContext context, BlogPostModel? existing) {
     showDialog<void>(
       context: context,
-      builder: (ctx) => _PostEditorDialog(
-        existing: existing,
-        onSave: (data) {
-          if (existing == null) {
-            controller.createBlogPost(data);
-          } else {
-            controller.updateBlogPost(existing.id, data);
-          }
-        },
-      ),
+      builder:
+          (ctx) => _PostEditorDialog(
+            existing: existing,
+            onSave: (data) {
+              if (existing == null) {
+                controller.createBlogPost(data);
+              } else {
+                controller.updateBlogPost(existing.id, data);
+              }
+            },
+          ),
     );
   }
 
   void _confirmDelete(BuildContext context, BlogPostModel post) {
     showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete Post?'),
-        content: Text('Delete "${post.title}"? This cannot be undone.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Delete Post?'),
+            content: Text('Delete "${post.title}"? This cannot be undone.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  controller.deleteBlogPost(post.id);
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {
-              Navigator.pop(ctx);
-              controller.deleteBlogPost(post.id);
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -117,9 +123,10 @@ class _PostTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateStr = post.publishedAt != null
-        ? DateFormat('MMM d, yyyy').format(post.publishedAt!.toLocal())
-        : 'Draft';
+    final dateStr =
+        post.publishedAt != null
+            ? DateFormat('MMM d, yyyy').format(post.publishedAt!.toLocal())
+            : 'Draft';
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: ESpacing.xs),
       leading: Container(
@@ -128,9 +135,8 @@ class _PostTile extends StatelessWidget {
           vertical: 2,
         ),
         decoration: BoxDecoration(
-          color: post.isPublished
-              ? EColors.primaryLight
-              : EColors.surfaceVariant,
+          color:
+              post.isPublished ? EColors.primaryLight : EColors.surfaceVariant,
           borderRadius: BorderRadius.circular(4),
         ),
         child: Text(
@@ -294,12 +300,13 @@ class _PostEditorDialogState extends State<_PostEditorDialog> {
                       ),
                       const SizedBox(height: ESpacing.sm),
                       StatefulBuilder(
-                        builder: (_, setState) => SwitchListTile(
-                          title: const Text('Published'),
-                          value: _published,
-                          activeTrackColor: EColors.primary,
-                          onChanged: (v) => setState(() => _published = v),
-                        ),
+                        builder:
+                            (_, setState) => SwitchListTile(
+                              title: const Text('Published'),
+                              value: _published,
+                              activeTrackColor: EColors.primary,
+                              onChanged: (v) => setState(() => _published = v),
+                            ),
                       ),
                     ],
                   ),

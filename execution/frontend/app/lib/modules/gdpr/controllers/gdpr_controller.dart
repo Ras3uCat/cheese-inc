@@ -13,7 +13,7 @@ class GdprController extends GetxController {
   final _declined = false.obs;
 
   bool get hasResponded => _accepted.value || _declined.value;
-  bool get accepted     => _accepted.value;
+  bool get accepted => _accepted.value;
 
   @override
   void onInit() {

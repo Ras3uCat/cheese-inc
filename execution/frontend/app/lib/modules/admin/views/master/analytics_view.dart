@@ -62,17 +62,21 @@ class _Header extends StatelessWidget {
     return Row(
       children: [
         Expanded(child: Text('Analytics', style: ETextStyles.h2)),
-        Obx(() => _PeriodChip(
-              label: 'Weekly',
-              active: controller.period.value == 'week',
-              onTap: () => controller.setPeriod('week'),
-            )),
+        Obx(
+          () => _PeriodChip(
+            label: 'Weekly',
+            active: controller.period.value == 'week',
+            onTap: () => controller.setPeriod('week'),
+          ),
+        ),
         const SizedBox(width: ESpacing.xs),
-        Obx(() => _PeriodChip(
-              label: 'Monthly',
-              active: controller.period.value == 'month',
-              onTap: () => controller.setPeriod('month'),
-            )),
+        Obx(
+          () => _PeriodChip(
+            label: 'Monthly',
+            active: controller.period.value == 'month',
+            onTap: () => controller.setPeriod('month'),
+          ),
+        ),
       ],
     );
   }
@@ -95,7 +99,9 @@ class _PeriodChip extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(
-            horizontal: ESpacing.md, vertical: ESpacing.xs),
+          horizontal: ESpacing.md,
+          vertical: ESpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: active ? EColors.primary : EColors.surfaceVariant,
           borderRadius: BorderRadius.circular(20),
@@ -120,10 +126,10 @@ class _KpiRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmt      = NumberFormat.simpleCurrency(decimalDigits: 0);
-    final revenue  = (kpis['revenue_30d'] as num?)?.toDouble() ?? 0;
+    final fmt = NumberFormat.simpleCurrency(decimalDigits: 0);
+    final revenue = (kpis['revenue_30d'] as num?)?.toDouble() ?? 0;
     final bookings = (kpis['bookings_30d'] as num?)?.toInt() ?? 0;
-    final avg      = (kpis['avg_booking_value'] as num?)?.toDouble() ?? 0;
+    final avg = (kpis['avg_booking_value'] as num?)?.toDouble() ?? 0;
 
     return Wrap(
       spacing: ESpacing.md,
@@ -193,28 +199,42 @@ class _ShopSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmt      = NumberFormat.simpleCurrency(decimalDigits: 0);
-    final kpis     = controller.shopKpis;
-    final revenue  = (kpis['revenue_30d'] as num?)?.toDouble() ?? 0;
-    final orders   = (kpis['orders_30d'] as num?)?.toInt() ?? 0;
-    final avg      = (kpis['avg_order_value'] as num?)?.toDouble() ?? 0;
+    final fmt = NumberFormat.simpleCurrency(decimalDigits: 0);
+    final kpis = controller.shopKpis;
+    final revenue = (kpis['revenue_30d'] as num?)?.toDouble() ?? 0;
+    final orders = (kpis['orders_30d'] as num?)?.toInt() ?? 0;
+    final avg = (kpis['avg_order_value'] as num?)?.toDouble() ?? 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          const Icon(Icons.store_outlined, size: 20),
-          const SizedBox(width: ESpacing.sm),
-          Text('Shop', style: ETextStyles.h2),
-        ]),
+        Row(
+          children: [
+            const Icon(Icons.store_outlined, size: 20),
+            const SizedBox(width: ESpacing.sm),
+            Text('Shop', style: ETextStyles.h2),
+          ],
+        ),
         const SizedBox(height: ESpacing.md),
         Wrap(
           spacing: ESpacing.md,
           runSpacing: ESpacing.md,
           children: [
-            _KpiCard(label: 'Shop Revenue (30d)', value: fmt.format(revenue), icon: Icons.attach_money),
-            _KpiCard(label: 'Orders (30d)', value: orders.toString(), icon: Icons.shopping_bag_outlined),
-            _KpiCard(label: 'Avg Order Value', value: fmt.format(avg), icon: Icons.trending_up),
+            _KpiCard(
+              label: 'Shop Revenue (30d)',
+              value: fmt.format(revenue),
+              icon: Icons.attach_money,
+            ),
+            _KpiCard(
+              label: 'Orders (30d)',
+              value: orders.toString(),
+              icon: Icons.shopping_bag_outlined,
+            ),
+            _KpiCard(
+              label: 'Avg Order Value',
+              value: fmt.format(avg),
+              icon: Icons.trending_up,
+            ),
           ],
         ),
         const SizedBox(height: ESpacing.xl),

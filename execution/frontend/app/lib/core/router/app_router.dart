@@ -62,15 +62,15 @@ class ERoutes {
   static const adminEventsAttendees = '/admin/events/:id/attendees';
   static const services = '/services';
   static const serviceDetail = '/services/:slug';
-  static const courses                = '/courses';
-  static const courseDetail           = '/courses/:slug';
-  static const lessonPlayer           = '/courses/:slug/lesson/:id';
-  static const adminCourses           = '/admin/courses';
-  static const adminCourseEditor      = '/admin/courses/:id/edit';
+  static const courses = '/courses';
+  static const courseDetail = '/courses/:slug';
+  static const lessonPlayer = '/courses/:slug/lesson/:id';
+  static const adminCourses = '/admin/courses';
+  static const adminCourseEditor = '/admin/courses/:id/edit';
   static const adminCourseEnrollments = '/admin/courses/:id/enrollments';
   static const adminCompliance = '/admin/compliance';
-  static const menu           = '/menu';
-  static const adminMenu      = '/admin/menu';
+  static const menu = '/menu';
+  static const adminMenu = '/admin/menu';
   static const adminLocations = '/admin/locations';
   static const notFound = '/404';
 }

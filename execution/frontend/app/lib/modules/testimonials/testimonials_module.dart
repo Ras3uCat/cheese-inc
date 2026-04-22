@@ -11,20 +11,20 @@ class TestimonialsModule implements AppModule {
 
   @override
   NavItem? get navItem => const NavItem(
-        label: 'Reviews',
-        icon: Icons.format_quote_outlined,
-        route: ERoutes.testimonials,
-      );
+    label: 'Reviews',
+    icon: Icons.format_quote_outlined,
+    route: ERoutes.testimonials,
+  );
 
   @override
   List<GetPage> get routes => [
-        GetPage(
-          name: ERoutes.testimonials,
-          page: () => const TestimonialsView(),
-          binding: TestimonialsBinding(),
-          transition: Transition.fadeIn,
-        ),
-      ];
+    GetPage(
+      name: ERoutes.testimonials,
+      page: () => const TestimonialsView(),
+      binding: TestimonialsBinding(),
+      transition: Transition.fadeIn,
+    ),
+  ];
 
   @override
   Bindings? get binding => null;

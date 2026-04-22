@@ -12,14 +12,14 @@ class ReferralsModule implements AppModule {
   NavItem? get navItem => const NavItem(
     label: 'Refer a Friend',
     route: ERoutes.referrals,
-    icon:  Icons.share_outlined,
+    icon: Icons.share_outlined,
   );
 
   @override
   List<GetPage> get routes => [
     GetPage(
-      name:       ERoutes.referrals,
-      page:       () => const ReferralsView(),
+      name: ERoutes.referrals,
+      page: () => const ReferralsView(),
       transition: Transition.fadeIn,
     ),
   ];
