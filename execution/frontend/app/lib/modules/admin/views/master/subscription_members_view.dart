@@ -150,7 +150,7 @@ class _SubscriptionMembersViewState extends State<SubscriptionMembersView> {
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: ESpacing.xs,
-                              vertical: ESpacing.xxs,
+                              vertical: ESpacing.xs,
                             ),
                             color: _statusColor(status).withValues(alpha: 0.12),
                             child: Text(

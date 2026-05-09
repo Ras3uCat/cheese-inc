@@ -1,5 +1,85 @@
 # Frontend Design — Detailed Implementation Guide
 
+---
+
+## PROJECT WIDGET CATALOG — Check This Before Building Anything
+
+**Rule**: Before writing a single animation widget from scratch, search this table. If the need is covered, import the existing widget. Do not rebuild what already exists.
+
+| Design Need | Widget | File (relative to `lib/`) | Notes |
+|---|---|---|---|
+| Branded cursor (web) | `CursorOverlay` | `core/widgets/cursor_overlay.dart` | Already at root in `main.dart` — no re-wiring needed |
+| Magnetic CTA / nav hover | `MagneticWidget` | `core/widgets/magnetic_widget.dart` | Wrap `ElevatedButton`, `TextButton`, nav icons |
+| 3D perspective card hover | `TiltCard` | `core/widgets/tilt_card.dart` | Wrap any card; `maxAngleDeg` default 8° |
+| Scroll-triggered section reveal | `RevealOnScroll` | `core/widgets/reveal_on_scroll.dart` | `delay:` for stagger; fires once at 20% visibility |
+| Word/character headline entrance | `TextReveal` | `core/widgets/text_reveal.dart` | `trigger: bool`; mode `word` (default) or `character` |
+| Drag carousel with spring decay | `InertiaCarousel` | `core/widgets/inertia_carousel.dart` | `itemWidth` required |
+| Hero ambient background | `AmbientHeroBackground` | `core/widgets/ambient_hero_background.dart` | Slow gradient drift + noise; use as first Stack child in hero |
+| Section divider | `SectionDivider` | `core/widgets/section_divider.dart` | Gold hairline + diamond ornament; replaces plain `Divider()` between sections |
+| Shimmer image placeholder | `ShimmerPlaceholder` | `core/widgets/shimmer_placeholder.dart` | `slot:` param for `/image-gen` targeting |
+| Page enter loader + curtain | `AppLoader` | `core/widgets/app_loader.dart` | Already wired in `main.dart`; ring animation + curtain reveal |
+| Scrolling text strip | `MarqueeSection` | `core/widgets/marquee_section.dart` | Use between hero and first content section |
+| Cheese wheel hero element | `WheelLayer` | `modules/home/views/hero/_wheel_layer.dart` | Cheese-specific; port the rotation+tilt pattern for other brands |
+
+---
+
+## PREMIUM DESIGN CHECKLIST — Run Before Marking Any Screen Complete
+
+**Every screen, every section, every feature. No exceptions.**
+
+### Motion
+- [ ] Sections entering the viewport use `RevealOnScroll` with staggered `delay:` values (50ms increments)
+- [ ] Hero headline uses `TextReveal` (word mode for long copy, character mode for short punchy copy)
+- [ ] Primary CTA button is wrapped in `MagneticWidget`
+- [ ] Content cards (service, product, portfolio) are wrapped in `TiltCard`
+- [ ] Carousels and horizontal scroll sections use `InertiaCarousel`
+- [ ] Hero section has `AmbientHeroBackground` as the first `Stack` child
+
+### Typography
+- [ ] All section overlines/eyebrows use `ETextStyles.eyebrow` (JetBrains Mono, tracked) — **never** raw `overline` style
+- [ ] Hero headline on editorial/artisan builds: `ETextStyles.displaySerif` (Playfair Display 900 italic)
+- [ ] Catalogue numbers use `ETextStyles.svcNum`; catalogue tags use `ETextStyles.svcTag`
+- [ ] No raw `TextStyle(...)` anywhere in widget files — use `ETextStyles.*` only
+
+### Color
+- [ ] No raw hex values in widget files — use `EColors.*`
+- [ ] Muted secondary labels use `EColors.onSurfaceDim` (not `onSurfaceMuted` which is 50% opacity)
+- [ ] No `.withOpacity()` — use `.withValues(alpha:)` throughout
+
+### Structure
+- [ ] Between home sections: `SectionDivider` not `Divider()`
+- [ ] All files ≤ 300 lines; extract at 250
+- [ ] `flutter analyze` returns zero errors
+
+---
+
+## COLOR ROLE QUICK REFERENCE
+
+```
+EColors.surface          #0D0907  page background (near-black)
+EColors.primary          #FF4500  orange — CTAs, price, accent pill
+EColors.secondary        #D4A853  gold — dividers, ornaments, line-art illustrations
+EColors.accent           #E8650A  warm orange — specks, highlights, hover states
+EColors.onSurface        #F0E6D0  parchment cream — primary body text
+EColors.onSurfaceDim     #A89B80  warm taupe — eyebrow labels, tags, secondary text
+EColors.onSurfaceMuted              onSurface at 0.5 — captions, placeholders
+```
+
+## TYPOGRAPHY QUICK REFERENCE
+
+```
+ETextStyles.displaySerif    Playfair Display 900 italic  hero headlines on editorial builds
+ETextStyles.displayXL       Space Grotesk 800            hero headlines on bold/corporate builds
+ETextStyles.eyebrow         JetBrains Mono w500 3.0ls    ALL section overlines, eyebrow labels
+ETextStyles.svcNum          Playfair Display 700 italic  catalogue card numbers (01, 02…)
+ETextStyles.svcTag          JetBrains Mono w400 1.5ls    catalogue tags, right-aligned mono labels
+ETextStyles.h1 – h3         Space Grotesk                section headings
+ETextStyles.bodyLg / body   Playfair Display             editorial body copy
+ETextStyles.label / caption Space Grotesk                UI chrome, nav, buttons
+```
+
+---
+
 ## Design Token System Setup
 
 ### lib/core/theme/e_colors.dart
@@ -726,87 +806,31 @@ class _InertiaCarouselState extends State<InertiaCarousel>
 ```
 
 ### CursorOverlay — branded cursor (web/desktop)
+
+**IMPORTANT**: Never use `setState` in the cursor overlay — it rebuilds the entire widget tree 60×/second and causes visible mouse lag. The correct pattern uses `ValueNotifier` + `CustomPainter(repaint: Listenable.merge([...]))` so only the canvas layer repaints. This is already built at `core/widgets/cursor_overlay.dart` — import it, don't recreate it.
+
 ```dart
-// Place at the root Stack, above all content.
-// Set SystemMouseCursors.none on the outermost MouseRegion.
-class CursorOverlay extends StatefulWidget {
-  final Widget child;
-  const CursorOverlay({super.key, required this.child});
+// ✅ Correct pattern (already in codebase — import don't rebuild)
+// Uses ValueNotifier<Offset> for cursor + ring positions.
+// CustomPainter with super(repaint: Listenable.merge([cursorPos, ringPos]))
+// Ticker lerps ring at 0.15/frame with NO setState.
+// RepaintBoundary isolates canvas from app widget tree.
+// kIsWeb guard — returns bare child on native.
 
-  @override
-  State<CursorOverlay> createState() => _CursorOverlayState();
-}
+import 'core/widgets/cursor_overlay.dart';
 
-class _CursorOverlayState extends State<CursorOverlay>
-    with SingleTickerProviderStateMixin {
+// In main.dart builder:
+builder: (context, child) => CursorOverlay(child: child ?? const SizedBox());
+```
+
+```dart
+// ❌ Wrong — causes mouse lag (rebuilds full tree on every hover event + every tick)
+class _Bad extends State<CursorOverlay> {
   Offset _dot = Offset.zero;
-  Offset _ring = Offset.zero;
-  bool _visible = false;
-  bool _expanded = false;
   late final Ticker _ticker;
-
-  @override
   void initState() {
-    super.initState();
-    _ticker = createTicker((_) {
-      setState(() => _ring = Offset.lerp(_ring, _dot, 0.15)!);
-    })..start();
+    _ticker = createTicker((_) => setState(() { ... })); // ← full rebuild 60fps
   }
-
-  @override
-  void dispose() {
-    _ticker.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const ringSize = 40.0;
-    const ringExpanded = 64.0;
-    const dotSize = 12.0;
-    final current = _expanded ? ringExpanded : ringSize;
-
-    return MouseRegion(
-      cursor: SystemMouseCursors.none,
-      onEnter: (_) => setState(() => _visible = true),
-      onExit: (_) => setState(() => _visible = false),
-      onHover: (e) => setState(() => _dot = e.position),
-      child: Stack(
-        children: [
-          widget.child,
-          if (_visible) ...[
-            // Ring (lags)
-            Positioned(
-              left: _ring.dx - current / 2,
-              top: _ring.dy - current / 2,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeOutCubic,
-                width: current,
-                height: current,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: EColors.primary, width: 1.5),
-                ),
-              ),
-            ),
-            // Dot (instant)
-            Positioned(
-              left: _dot.dx - dotSize / 2,
-              top: _dot.dy - dotSize / 2,
-              child: Container(
-                width: dotSize,
-                height: dotSize,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: EColors.primary,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
+  // onHover: (e) => setState(() => _dot = e.position); // ← full rebuild on move
 }
 ```

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart';
 import 'package:get/get.dart';
 import '../../../core/config/app_env.dart';
 import '../../../shared/services/supabase_service.dart';
@@ -12,10 +14,17 @@ class HomeController extends GetxController {
   final services = <ServiceModel>[].obs; // active services for homepage grid
   final teamMembers = <ArtistModel>[].obs; // staff profiles for team section
   final scrollOffset = 0.0.obs;
+  final loaderDone = false.obs;
+  // Normalized −1..1 per axis, driven by hero MouseRegion above the Stack.
+  final heroTilt = ValueNotifier<Offset>(Offset.zero);
 
   @override
   void onInit() {
     super.onInit();
+    if (!AppEnv.showLoader) loaderDone.value = true;
+    Future.delayed(const Duration(seconds: 6), () {
+      if (!loaderDone.value) loaderDone.value = true;
+    });
     load();
   }
 

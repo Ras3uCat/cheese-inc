@@ -10,9 +10,11 @@ import 'core/config/app_env.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/e_colors.dart';
 import 'core/theme/e_text_styles.dart';
+import 'core/widgets/app_loader.dart';
 import 'core/theme/theme_factory.dart';
 import 'core/utils/e_platform.dart';
 import 'modules/_registry/module_registry.dart';
+import 'modules/home/controllers/home_controller.dart';
 import 'modules/admin/admin_module.dart';
 import 'modules/auth/auth_module.dart';
 import 'modules/blog/blog_module.dart';
@@ -90,7 +92,7 @@ void main() async {
     if (AppEnv.coursesEnabled || AppEnv.moduleEnabled('courses')) CoursesModule(),
   ]);
 
-  runApp(const RaspucatApp());
+  runApp(const _AppRoot());
 
   // Deep link handling for native — routes Stripe redirects and universal links.
   if (!kIsWeb) {
@@ -124,6 +126,39 @@ void _handleDeepLink(Uri uri) {
   final path = uri.path.isEmpty ? '/' : uri.path;
   final safe = allowed.any((p) => path == p || path.startsWith('$p/'));
   if (safe) Get.toNamed(path, parameters: uri.queryParameters);
+}
+
+class _AppRoot extends StatefulWidget {
+  const _AppRoot();
+
+  @override
+  State<_AppRoot> createState() => _AppRootState();
+}
+
+class _AppRootState extends State<_AppRoot> {
+  bool _loaded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark(),
+        home: Scaffold(
+          backgroundColor: EColors.surface,
+          body: AppLoader(
+            onComplete: () => setState(() => _loaded = true),
+            onDismiss: () {
+              if (Get.isRegistered<HomeController>()) {
+                Get.find<HomeController>().loaderDone.value = true;
+              }
+            },
+          ),
+        ),
+      );
+    }
+    return const RaspucatApp();
+  }
 }
 
 class RaspucatApp extends StatelessWidget {

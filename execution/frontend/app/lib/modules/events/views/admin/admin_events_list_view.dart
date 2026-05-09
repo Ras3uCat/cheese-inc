@@ -107,7 +107,7 @@ class _EventRow extends StatelessWidget {
             Text(event.formattedDateShort, style: ETextStyles.caption),
             if (event.venue != null)
               Text(event.venue!, style: ETextStyles.caption),
-            const SizedBox(height: ESpacing.xxs),
+            const SizedBox(height: ESpacing.xs),
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: ESpacing.xs,

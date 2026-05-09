@@ -203,7 +203,7 @@ class _PlanCardState extends State<_PlanCard> {
             const SizedBox(height: ESpacing.md),
             ...plan.features.map(
               (f) => Padding(
-                padding: const EdgeInsets.only(bottom: ESpacing.xxs),
+                padding: const EdgeInsets.only(bottom: ESpacing.xs),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

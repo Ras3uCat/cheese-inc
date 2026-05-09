@@ -209,7 +209,7 @@ class _StatCard extends StatelessWidget {
       child: Column(
         children: [
           Text('$value', style: ETextStyles.h3),
-          const SizedBox(height: ESpacing.xxs),
+          const SizedBox(height: ESpacing.xs),
           Text(label, style: ETextStyles.bodySmMuted),
         ],
       ),

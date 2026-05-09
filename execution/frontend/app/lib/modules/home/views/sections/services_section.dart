@@ -9,6 +9,7 @@ import '../../../../core/config/app_env.dart';
 import '../../../booking/models/artist_model.dart';
 import '../../../booking/models/service_model.dart';
 import '../../controllers/home_controller.dart';
+import '_catalogue_card.dart';
 import 'section_shared_widgets.dart';
 
 const _kDemoServices = [
@@ -44,7 +45,6 @@ class ServicesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pt = PersonalityTheme.fromEnv();
     final isDesktop = MediaQuery.sizeOf(context).width > ESpacing.tabletBreak;
 
     return Obx(() {
@@ -57,22 +57,16 @@ class ServicesSection extends StatelessWidget {
             OrnamentalHeader(title: ctrl.servicesTitle),
             const SizedBox(height: ESpacing.xxl),
             if (isDesktop)
-              _ServicesIconRow(items: items)
+              _CatalogueGrid(items: items)
             else
               Column(
-                children:
-                    items
-                        .map(
-                          (s) => Padding(
-                            padding: const EdgeInsets.only(bottom: ESpacing.lg),
-                            child: ServiceCard(
-                              service: s,
-                              pt: pt,
-                              onTap: () => Get.toNamed('${ERoutes.services}/${s.slug}'),
-                            ),
-                          ),
-                        )
-                        .toList(),
+                children: [
+                  for (var i = 0; i < items.length; i++)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: ESpacing.lg),
+                      child: CatalogueCard(service: items[i], index: i),
+                    ),
+                ],
               ),
           ],
         ),
@@ -81,86 +75,21 @@ class ServicesSection extends StatelessWidget {
   }
 }
 
-// ─── Services Icon Row (desktop) ─────────────────────────────────────────────
+// ─── Catalogue Grid (desktop) ─────────────────────────────────────────────────
 
-class _ServicesIconRow extends StatelessWidget {
-  const _ServicesIconRow({required this.items});
+class _CatalogueGrid extends StatelessWidget {
+  const _CatalogueGrid({required this.items});
   final List<ServiceModel> items;
 
-  static IconData _iconFor(String slug) => switch (slug) {
-    'cheese-tasting' => Icons.wine_bar_outlined,
-    'cheese-board-curation' => Icons.grid_view_outlined,
-    'cheesemaking-class' => Icons.science_outlined,
-    _ => Icons.star_outline,
-  };
-
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (var i = 0; i < items.length; i++) ...[
-            if (i > 0)
-              VerticalDivider(
-                color: EColors.secondary.withValues(alpha: 0.3),
-                width: 1,
-                thickness: 1,
-              ),
-            Expanded(child: _ServiceIconCol(service: items[i], icon: _iconFor(items[i].slug))),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _ServiceIconCol extends StatefulWidget {
-  const _ServiceIconCol({required this.service, required this.icon});
-  final ServiceModel service;
-  final IconData icon;
-
-  @override
-  State<_ServiceIconCol> createState() => _ServiceIconColState();
-}
-
-class _ServiceIconColState extends State<_ServiceIconCol> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-        decoration: BoxDecoration(
-          color: _hovered ? EColors.secondary.withValues(alpha: 0.06) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: ESpacing.xl, vertical: ESpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(widget.icon, color: _hovered ? EColors.primary : EColors.secondary, size: 40),
-            const SizedBox(height: ESpacing.md),
-            Text(
-              widget.service.name,
-              style: ETextStyles.h3.copyWith(color: EColors.onSurface),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: ESpacing.sm),
-            Text(
-              widget.service.description,
-              style: ETextStyles.bodyMuted,
-              textAlign: TextAlign.center,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
+    return GridView.count(
+      crossAxisCount: 3,
+      crossAxisSpacing: ESpacing.lg,
+      mainAxisSpacing: ESpacing.lg,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [for (var i = 0; i < items.length; i++) CatalogueCard(service: items[i], index: i)],
     );
   }
 }

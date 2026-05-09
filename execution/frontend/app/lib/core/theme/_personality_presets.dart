@@ -40,24 +40,25 @@ final _playful = PersonalityTheme._(
   dividerStyle: DividerStyleToken.wave,
 );
 
-// ─── ARTISAN — cafes, bakeries, pottery, florists, independent bookshops ─────
+// ─── ARTISAN — cheese-inc editorial dark: zero-radius, dramatic motion ────────
 final _artisan = PersonalityTheme._(
-  cardRadius: 8,
-  buttonRadius: 4,
-  inputRadius: 4,
-  animDuration: const Duration(milliseconds: 380),
-  animCurve: Curves.easeInOut,
+  cardRadius: 0,
+  buttonRadius: 0,
+  inputRadius: 0,
+  animDuration: const Duration(milliseconds: 700),
+  animCurve: Curves.easeOutQuint,
+  animCurveInteractive: Curves.easeInOutCubic,
   heroTextAlign: TextAlign.left,
-  heroContentMaxWidth: 640,
+  heroContentMaxWidth: 800,
   sectionLayout: SectionLayout.leftAligned,
   navElevation: 0,
-  navBackgroundOpacity: 1.0,
-  headingWeight: FontWeight.w600,
-  headingLetterSpacing: 0.5,
+  navBackgroundOpacity: 0.0,
+  headingWeight: FontWeight.w900,
+  headingLetterSpacing: -0.02,
   useSerifPrimary: true,
   buttonStyle: ButtonStyleToken.outlined,
   cardStyle: CardStyleToken.bordered,
-  dividerStyle: DividerStyleToken.wave,
+  dividerStyle: DividerStyleToken.thinRule,
 );
 
 // ─── WELLNESS — spas, yoga studios, meditation, holistic health ───────────────

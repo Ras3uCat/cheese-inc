@@ -60,6 +60,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/textures/
 
 # ─── Native mobile: splash screen ────────────────────────────────────────────
 # Run: dart run flutter_native_splash:create

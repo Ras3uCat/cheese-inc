@@ -84,10 +84,10 @@ class _EventCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(event.title, style: ETextStyles.h4),
-                  const SizedBox(height: ESpacing.xxs),
+                  const SizedBox(height: ESpacing.xs),
                   Text(event.formattedDate, style: ETextStyles.caption),
                   if (event.venue != null) ...[
-                    const SizedBox(height: ESpacing.xxs),
+                    const SizedBox(height: ESpacing.xs),
                     Text(event.venue!, style: ETextStyles.caption),
                   ],
                   const SizedBox(height: ESpacing.sm),
@@ -149,7 +149,7 @@ class _TicketPriceLabelState extends State<_TicketPriceLabel> {
       return Container(
         padding: const EdgeInsets.symmetric(
           horizontal: ESpacing.sm,
-          vertical: ESpacing.xxs,
+          vertical: ESpacing.xs,
         ),
         color: EColors.error.withValues(alpha: 0.15),
         child: Text(

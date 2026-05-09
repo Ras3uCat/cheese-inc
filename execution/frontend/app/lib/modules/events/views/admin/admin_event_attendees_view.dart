@@ -255,7 +255,7 @@ class _AttendeeRow extends StatelessWidget {
               children: [
                 Text(ticket.buyerName, style: ETextStyles.label),
                 Text(ticket.buyerEmail, style: ETextStyles.caption),
-                const SizedBox(height: ESpacing.xxs),
+                const SizedBox(height: ESpacing.xs),
                 Row(
                   children: [
                     Container(

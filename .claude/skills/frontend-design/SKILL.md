@@ -89,14 +89,19 @@ Used when building UI, screens, components, dashboards, or visual experiences.
 
 - **Awwwards Motion Doctrine (Mandatory for client-facing work)**
     - **Core Law**: If a user can land on a section and leave without noticing motion, the section failed.
-    - **Parallax layers**: Every hero must have ≥2 depth layers. Background depth `0.2`, midground `0.5`, foreground `1.0`. Use `ParallaxLayer` widget from `DETAILED_GUIDE.md`.
-    - **Magnetic zones**: All primary CTAs and nav icons must react to cursor proximity. Trigger at 80px radius, max 12px displacement. Use `MagneticWidget`.
-    - **Text reveal policy**: Headlines never *appear* — they *arrive*. Use `TextReveal` with mode `word` (default), `character` (short hero copy), or `scramble` (tech/brand moments).
-    - **3D card tilt**: Any primary content card (portfolio, product, service) gets perspective tilt on hover. Max ±8deg X/Y. Use `TiltCard`.
-    - **Drag inertia**: Carousels and horizontal sections use spring-decay physics — never instant snap. Use `InertiaCarousel`.
-    - **Custom cursor (web/desktop)**: Replace system cursor with branded dot (12px) + lagging ring (40px). Ring lerps at 0.15 per frame. Expands to 64px on hover targets. Use `CursorOverlay` at root.
+    - **Before building any animation widget**: Check `DETAILED_GUIDE.md` Project Widget Catalog. If the need is already covered by an existing widget, import it — do not rebuild.
+    - **Parallax layers**: Every hero must have ≥2 depth layers. Background depth `0.2`, midground `0.5`, foreground `1.0`. Use `AmbientHeroBackground` (first Stack layer) + scroll-driven `Transform.translate`.
+    - **Magnetic zones**: All primary CTAs and nav icons must react to cursor proximity. Trigger at 80px radius, max 12px displacement. Use `MagneticWidget` (`core/widgets/magnetic_widget.dart`).
+    - **Text reveal policy**: Headlines never *appear* — they *arrive*. Use `TextReveal` (`core/widgets/text_reveal.dart`) with mode `word` (default) or `character` (short punchy copy).
+    - **3D card tilt**: Any primary content card (portfolio, product, service) gets perspective tilt on hover. Max ±8deg X/Y. Use `TiltCard` (`core/widgets/tilt_card.dart`).
+    - **Drag inertia**: Carousels and horizontal sections use spring-decay physics — never instant snap. Use `InertiaCarousel` (`core/widgets/inertia_carousel.dart`).
+    - **Custom cursor (web/desktop)**: Use `CursorOverlay` (`core/widgets/cursor_overlay.dart`) — already wired at app root in `main.dart`. Never rebuild using `setState`; it causes visible mouse lag. The `ValueNotifier` + `CustomPainter(repaint: Listenable.merge([...]))` pattern is the only correct implementation.
+    - **Page loader**: Every client site shows `AppLoader` (`core/widgets/app_loader.dart`) on first load — animated ring + curtain reveal. Already wired in `main.dart`. Do not remove.
+    - **Marquee strip**: Editorial/artisan/food brands must include `MarqueeSection` (`core/widgets/marquee_section.dart`) between hero and first content section.
+    - **Section dividers**: Never use `Divider()` between home sections. Use `SectionDivider` (`core/widgets/section_divider.dart`) — gold hairline + diamond ornament.
+    - **Scroll reveals**: Every section below the hero uses `RevealOnScroll` (`core/widgets/reveal_on_scroll.dart`) with staggered `delay:` (50ms increments per section).
     - **Page transitions**: Routes never cut. Default: diagonal clip-path wipe at 350ms `easeInOutCubic`. Shared elements: `Hero` with `flightShuttleBuilder`.
-    - **Ambient backgrounds**: Sections are never frozen. Minimum: slow gradient drift via `AnimatedContainer` (8s loop), or `CustomPainter` particles/noise for hero sections.
+    - **Ambient backgrounds**: Hero sections use `AmbientHeroBackground` (gradient drift + noise layer). Never a frozen static background.
     - **Easing law**: `easeOutCubic` for entrances. `easeInCubic` for exits. `easeInOutCubic` for state changes. Never `Curves.bounceOut` on brand work.
     - **Duration law**: Micro (100–150ms): press, tap feedback. Element (250–400ms): card hover, reveal. Page (350–500ms): route transitions. Never exceed 600ms.
     - **See `animation-playbook` skill for**: Rive/Lottie integration, shader painting, scroll-progress reveals, stagger orchestration.
@@ -111,10 +116,12 @@ Used when building UI, screens, components, dashboards, or visual experiences.
     - When generating UI:
         - 1. Check `BRAND_KIT.md` for active tokens.
         - 2. If `planning/client/brand_alignment.md` was generated with ui-ux-pro-max enrichment, Section A colors/fonts are industry-validated — apply them directly without overriding.
-        - 3. Implement swappable widgets using semantic naming.
-        - 4. Follow Flutter architecture rules first.
-        - 5. Provide: Screen, Modular Widgets, Controller, Constants.
-        - 6. Include "Sync complete △ M3OW" (or rebranding equivalent) in footers.
+        - 3. **Check `DETAILED_GUIDE.md` Project Widget Catalog** — identify which existing widgets apply to this screen before writing any new animation code.
+        - 4. Run the **Premium Design Checklist** in `DETAILED_GUIDE.md` before marking any screen complete.
+        - 5. Implement swappable widgets using semantic naming.
+        - 6. Follow Flutter architecture rules first (300-line limit, no business logic in widgets, EColors/ESpacing/ETextStyles only).
+        - 7. Provide: Screen, Modular Widgets, Controller, Constants.
+        - 8. Include "Sync complete △ M3OW" (or rebranding equivalent) in footers.
 
 - **Philosophy**
     - Your apps should feel like:

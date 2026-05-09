@@ -3,6 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show Ticker;
 import '../theme/e_colors.dart';
 
+/// Global signal — interactive widgets (buttons, links) flip this on enter/exit.
+/// The cursor painter reads it to toggle between idle and hover modes.
+class CursorState {
+  CursorState._();
+  static final isInteractive = ValueNotifier<bool>(false);
+  static final position = ValueNotifier<Offset>(Offset.zero);
+}
+
 class CursorOverlay extends StatefulWidget {
   const CursorOverlay({super.key, required this.child});
   final Widget child;
@@ -45,21 +53,21 @@ class _CursorOverlayState extends State<CursorOverlay> with SingleTickerProvider
 
     return MouseRegion(
       cursor: SystemMouseCursors.none,
-      onHover: (event) => _cursorPos.value = event.position,
+      onHover: (event) {
+        _cursorPos.value = event.position;
+        CursorState.position.value = event.position;
+      },
       child: Stack(
         children: [
           widget.child,
           IgnorePointer(
-            child: RepaintBoundary(
-              child: CustomPaint(
-                painter: _CursorPainter(
-                  cursorPos: _cursorPos,
-                  ringPos: _ringPos,
-                  dotColor: EColors.accent,
-                  ringColor: EColors.accent.withValues(alpha: 0.6),
-                ),
-                child: const SizedBox.expand(),
+            child: CustomPaint(
+              painter: _CursorPainter(
+                cursorPos: _cursorPos,
+                ringPos: _ringPos,
+                isInteractive: CursorState.isInteractive,
               ),
+              child: const SizedBox.expand(),
             ),
           ),
         ],
@@ -69,37 +77,53 @@ class _CursorOverlayState extends State<CursorOverlay> with SingleTickerProvider
 }
 
 class _CursorPainter extends CustomPainter {
-  _CursorPainter({
-    required this.cursorPos,
-    required this.ringPos,
-    required this.dotColor,
-    required this.ringColor,
-  }) : super(repaint: Listenable.merge([cursorPos, ringPos]));
+  _CursorPainter({required this.cursorPos, required this.ringPos, required this.isInteractive})
+    : super(repaint: Listenable.merge([cursorPos, ringPos, isInteractive]));
 
   final ValueNotifier<Offset> cursorPos;
   final ValueNotifier<Offset> ringPos;
-  final Color dotColor;
-  final Color ringColor;
+  final ValueNotifier<bool> isInteractive;
 
-  static const _kDotRadius = 6.0;
-  static const _kRingRadius = 20.0;
+  static const _kDotRadius = 2.0;
+  static const _kRingRadiusIdle = 7.0;
+  static const _kRingRadiusHover = 23.0;
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawCircle(
-      ringPos.value,
-      _kRingRadius,
-      Paint()
-        ..color = ringColor
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5,
-    );
+    final hovering = isInteractive.value;
+    final ringRadius = hovering ? _kRingRadiusHover : _kRingRadiusIdle;
+
+    if (hovering) {
+      // Filled primary circle with difference blend — on dark bg appears as primary,
+      // on primary-colored buttons appears near-black (primary − primary ≈ 0).
+      canvas.drawCircle(
+        ringPos.value,
+        ringRadius,
+        Paint()
+          ..color = EColors.primary
+          ..style = PaintingStyle.fill
+          ..blendMode = BlendMode.difference,
+      );
+    } else {
+      // Idle: primary stroke ring with difference blend.
+      canvas.drawCircle(
+        ringPos.value,
+        ringRadius,
+        Paint()
+          ..color = EColors.primary
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5
+          ..blendMode = BlendMode.difference,
+      );
+    }
+
+    // Small dot — cream + difference blend, matches reference cursor-dot.
     canvas.drawCircle(
       cursorPos.value,
       _kDotRadius,
       Paint()
-        ..color = dotColor
-        ..style = PaintingStyle.fill,
+        ..color = EColors.onSurface
+        ..blendMode = BlendMode.difference,
     );
   }
 

@@ -13,6 +13,7 @@ class PersonalityTheme {
     required this.inputRadius,
     required this.animDuration,
     required this.animCurve,
+    this.animCurveInteractive = Curves.easeInOutCubic,
     required this.heroTextAlign,
     required this.heroContentMaxWidth,
     required this.sectionLayout,
@@ -34,6 +35,9 @@ class PersonalityTheme {
   // Motion
   final Duration animDuration;
   final Curve animCurve;
+
+  /// Secondary curve for interactive gestures (tap, drag, hover).
+  final Curve animCurveInteractive;
 
   // Layout
   final TextAlign heroTextAlign;

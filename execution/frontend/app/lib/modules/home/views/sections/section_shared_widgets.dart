@@ -51,7 +51,7 @@ class SectionHeader extends StatelessWidget {
         if (overline != null && overline!.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(bottom: ESpacing.xs),
-            child: Text(overline!.toUpperCase(), style: ETextStyles.overline, textAlign: textAlign),
+            child: Text(overline!.toUpperCase(), style: ETextStyles.eyebrow, textAlign: textAlign),
           ),
         Text(title, style: ETextStyles.displayMd, textAlign: textAlign),
         if (subtitle != null && subtitle!.isNotEmpty) ...[
@@ -173,7 +173,7 @@ class OrnamentalHeader extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: ESpacing.lg),
           child: Text(
             title.toUpperCase(),
-            style: ETextStyles.overline.copyWith(
+            style: ETextStyles.eyebrow.copyWith(
               color: EColors.onSurface,
               fontSize: 13,
               fontWeight: FontWeight.w700,

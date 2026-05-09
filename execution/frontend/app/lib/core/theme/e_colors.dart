@@ -25,8 +25,20 @@ class EColors {
   static Color get surfaceVariant => onSurface.withValues(alpha: 0.05);
   // Cream alternate background — used for alternating section backgrounds.
   static Color get surfaceAlt => secondary;
-  static Color get divider => onSurface.withValues(alpha: 0.12);
   static Color get onSurfaceMuted => onSurface.withValues(alpha: 0.5);
+  static Color get onSurfaceDim => _hex(AppEnv.colorOnSurfaceDim);
+
+  static Color get surface2 => _hex(AppEnv.colorSurface2);
+  static Color get surface3 => _hex(AppEnv.colorSurface3);
+  static Color get parchment => _hex(AppEnv.colorParchment);
+  static Color get rind => _hex(AppEnv.colorRind);
+  static Color get mold => _hex(AppEnv.colorMold);
+
+  static Color get borderSubtle => onSurface.withValues(alpha: 0.08);
+  static Color get borderMedium => onSurface.withValues(alpha: 0.12);
+  static Color get borderStrong => onSurface.withValues(alpha: 0.25);
+  static Color get divider => borderMedium;
+
   static Color get transparent => Colors.transparent;
   static Color get white => Colors.white;
   static Color get black => Colors.black;

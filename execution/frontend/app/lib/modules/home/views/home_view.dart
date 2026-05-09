@@ -11,6 +11,7 @@ import '../../blog/widgets/blog_section.dart';
 import '../../gallery/widgets/gallery_section.dart';
 import '../../menu/menu_section.dart';
 import '../../testimonials/widgets/testimonials_section.dart';
+import '../../../core/widgets/marquee_section.dart';
 import '../controllers/home_controller.dart';
 import 'hero/hero_fullbleed.dart';
 import 'sections/services_section.dart';
@@ -25,7 +26,9 @@ class HomeView extends StatelessWidget {
       description: 'Welcome to ${AppEnv.clientName}.',
       child: NotificationListener<ScrollNotification>(
         onNotification: (n) {
-          Get.find<HomeController>().scrollOffset.value = n.metrics.pixels;
+          if (n.depth == 0) {
+            Get.find<HomeController>().scrollOffset.value = n.metrics.pixels;
+          }
           return false;
         },
         child: AppShell(
@@ -44,24 +47,28 @@ class HomeView extends StatelessWidget {
   }
 
   List<Widget> _buildSections() {
-    final sections =
-        AppEnv.homeSectionList
-            .where((s) => s != 'hero')
-            .map(_sectionForId)
-            .whereType<Widget>()
-            .toList();
+    final ids = AppEnv.homeSectionList.where((s) => s != 'hero').toList();
 
     final result = <Widget>[];
-    for (var i = 0; i < sections.length; i++) {
-      if (i > 0) result.add(const SectionDivider());
-      final delay = Duration(milliseconds: 50 + i * 50);
-      result.add(RevealOnScroll(delay: delay, child: sections[i]));
+    var revealIndex = 0;
+    for (final id in ids) {
+      final widget = _sectionForId(id);
+      if (widget == null) continue;
+      if (result.isNotEmpty) result.add(const SectionDivider());
+      if (id == 'marquee') {
+        result.add(widget);
+      } else {
+        final delay = Duration(milliseconds: 50 + revealIndex * 50);
+        result.add(RevealOnScroll(delay: delay, child: widget));
+        revealIndex++;
+      }
     }
     return result;
   }
 
   Widget? _sectionForId(String id) {
     return switch (id) {
+      'marquee' => const MarqueeSection(),
       'services' => const ServicesSection(),
       'team' => const TeamSection(),
       'testimonials' => AppEnv.moduleEnabled('testimonials') ? const TestimonialsSection() : null,

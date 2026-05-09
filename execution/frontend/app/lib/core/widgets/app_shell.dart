@@ -146,24 +146,27 @@ class _TopBarShellState extends State<_TopBarShell> {
   @override
   Widget build(BuildContext context) {
     final pt = PersonalityTheme.fromEnv();
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          controller: _scroll,
-          physics: const BouncingScrollPhysics(),
-          child: widget.child,
-        ),
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            color: EColors.surface.withValues(alpha: _opacity),
-            child: _NavBar(elevation: _opacity * pt.navElevation),
+    return Material(
+      type: MaterialType.transparency,
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            controller: _scroll,
+            physics: const BouncingScrollPhysics(),
+            child: widget.child,
           ),
-        ),
-      ],
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              color: EColors.surface.withValues(alpha: _opacity),
+              child: _NavBar(elevation: _opacity * pt.navElevation),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -198,7 +201,10 @@ class _SidebarShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [SizedBox(width: 240, child: _NavDrawer()), Expanded(child: child)]);
+    return Material(
+      type: MaterialType.transparency,
+      child: Row(children: [SizedBox(width: 240, child: _NavDrawer()), Expanded(child: child)]),
+    );
   }
 }
 
